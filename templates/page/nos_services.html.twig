@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos services{% endblock %}
+
+{% block body %}
+<!-- Page Header Start -->
+<div class="page-header parallaxie">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Page Header Box Start -->
+                <div class="page-header-box">
+                    <h1 class="text-anime-style-2" data-cursor="-opaque">Nos services</h1>
+                    <nav class="wow fadeInUp">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('accueil') }}">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Nos services</li>
+                        </ol>
+                    </nav>
+                </div>
+                <!-- Page Header Box End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<!-- Page Services Start -->
+<div class="light-bg-section py-5">
+    <div class="container py-5">
+        <div class="row">
+            <!-- Services Slide Start -->
+                {% for article in articles %}
+                <div class="col-lg-3 col-md-6">
+                    <!-- Service Item Start -->
+                    <div class="service-item wow fadeInUp">
+                        <!-- Service Image Start -->
+                        <div class="service-image">
+                            <a href="/{{article.category.slug}}/{{article.slug}}" data-cursor-text="Voir">
+                                <figure class="image-anime">
+                                    <img src="{{ asset('services-' ~ loop.index ~ '.jpg') }}" alt="{{ article.title }} - ESPACE HYGIENE 3D ">
+                                </figure>
+                            </a>
+                        </div>
+                        <!-- Service Image End -->
+
+                        <!-- Service Body Start -->
+                        <div class="service-body">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-service-item-1.svg') }}" alt="">
+                            </div>
+                            <div class="service-content">
+                                <h3><a href="/{{article.category.slug}}/{{article.slug}}">{{ article.title }}</a></h3>
+                                <p>Solutions sur mesure pour protéger votre domicile contre les parasites courants.</p>
+                            </div>
+                            <div class="service-btn">
+                                <a href="/{{article.category.slug}}/{{article.slug}}" class="readmore-btn">En savoir plus</a>
+                            </div>                      
+                        </div>
+                        <!-- Service Body End -->
+                    </div>
+                    <!-- Service Item End -->
+                </div>
+                {% endfor %}
+                <!-- Services Slide End -->
+            
+        </div>
+    </div>
+</div>
+<!-- Page Services End -->
+
+<!-- Our Features Section Start -->
+<div class="light-bg-section py-5" style="background-color: #dddddd;">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="our-features-content">
+                    <!-- Section Title Start -->
+                    <div class="section-title">
+                        <h3 class="wow fadeInUp">Nos méthodes</h3>
+                        <h2 class="text-anime-style-2" data-cursor="-opaque">Excellence et innovation dans le <span>contrôle des parasites</span></h2>
+                        <p class="wow fadeInUp" data-wow-delay="0.2s">Notre approche combine expertise technique, produits de qualité et respect de l'environnement. Nous utilisons les dernières technologies et méthodes éprouvées pour garantir des résultats durables et sécurisants.</p>
+                    </div>
+                    <!-- Section Title End -->
+
+                    <!-- Our Features List Start -->
+                    <div class="our-features-list">
+                        <!-- Features Item Start -->
+                        <div class="features-item wow fadeInUp">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-features-item-1.svg') }}" alt="">
+                            </div>
+                            <div class="features-item-content">
+                                <h3>Inspection approfondie</h3>
+                                <p>Analyse complète de votre infestation avant tout traitement.</p>
+                            </div>
+                        </div>
+                        <!-- Features Item End -->
+
+                        <!-- Features Item Start -->
+                        <div class="features-item wow fadeInUp" data-wow-delay="0.2s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-features-item-2.svg') }}" alt="">
+                            </div>
+                            <div class="features-item-content">
+                                <h3>Produits professionnels</h3>
+                                <p>Utilisation exclusive de produits certifiés et respectueux de l'environnement.</p>
+                            </div>
+                        </div>
+                        <!-- Features Item End -->
+
+                        <!-- Features Item Start -->
+                        <div class="features-item wow fadeInUp" data-wow-delay="0.4s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-features-item-3.svg') }}" alt="">
+                            </div>
+                            <div class="features-item-content">
+                                <h3>Techniques avancées</h3>
+                                <p>Méthodes modernes et efficaces pour une éradication complète.</p>
+                            </div>
+                        </div>
+                        <!-- Features Item End -->
+
+                        <!-- Features Item Start -->
+                        <div class="features-item wow fadeInUp" data-wow-delay="0.6s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-features-item-4.svg') }}" alt="">
+                            </div>
+                            <div class="features-item-content">
+                                <h3>Garantie anti-réinfestation</h3>
+                                <p>Protection garantie contre les réapparitions de parasites.</p>
+                            </div>
+                        </div>
+                        <!-- Features Item End -->
+                    </div>
+                    <!-- Our Features List End -->
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <!-- Features Image Start -->
+                <div class="features-image">
+                    <figure class="image-anime reveal">
+                        <img src="{{ asset('services-10.jpg') }}" alt="">
+                    </figure>
+
+                    <!-- Contact Us Circle Start -->
+                    <div class="contact-us-circle">
+                        <a href="{{ path('contact') }}">
+                            <img src="{{ asset('images/contact-us-circle.svg') }}" alt="">
+                        </a>
+                    </div>
+                    <!-- Contact Us Circle End -->
+                </div>
+                <!-- Features Image End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Our Features Section End -->
+{% endblock %}

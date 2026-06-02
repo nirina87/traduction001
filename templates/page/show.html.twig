@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notre Entreprise{% endblock %}
+
+{% block body %}
+<!-- Page Service Single Start -->
+    <div class="page-service-single" style="background-color:#fff">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <!-- Page Single Sidebar Start -->
+                    <div class="page-single-sidebar">
+                        <!-- Page Category List Start -->
+                        <div class="page-catagery-list wow fadeInUp">
+                            <h3>Nos services</h3>
+                            <ul>
+                                {% for menu_article in articles %}
+                                    <li><a href="/{{ menu_article.category.slug}}/{{ menu_article.slug }}">{{menu_article.title}}</a></li>
+                                {% endfor %}
+                            </ul>
+                            
+                        </div>
+                        <!-- Page Category List End -->
+
+                        <!-- Sidebar CTA Box Start -->
+                        <div class="page-cta-box sidebar-cta-box wow fadeInUp" data-wow-delay="0.2s">
+                            <!-- Page Cta Box Info Start -->
+                            <div class="page-cta-box-info">
+                                <h3><a  href="/contact">Devis gratuit</h3>
+                            </div>
+                            <!-- Page Cta Box Info End -->
+        
+                            <!-- Cta Contact Box Start -->
+                            <div class="cta-contact-box">
+                                <p>Appelez-nous</p>
+                                <div class="cta-contact-item">
+                                    <div class="icon-box">
+                                        <img src="images/icon-cta-phone.svg" alt="">
+                                    </div>
+                                    <div class="cta-contact-item-content">
+                                        <h3><a href="tel:+33699474222" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">+33 6 99 47 42 22</a></h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Cta Contact Box End -->
+                        </div>
+                        <!-- Sidebar CTA Box End -->
+                    </div>
+                    <!-- Page Single Sidebar End -->
+                </div>
+                
+                <div class="col-lg-8">
+                    <!-- Service Single Content Start -->
+                    <div class="service-single-content">
+                        <!-- Service Featured Image Start -->
+                        <div class="service-featured-image">
+                            <figure class="image-anime reveal">
+                                <img src="{{ asset('extermination-prevention-nuisible-4.jpg') }}" alt="{{ article.title }}">
+                            </figure>
+                        </div>
+                        <!-- Service Featured Image End -->
+
+                        <!-- Service Entry Start -->
+                        <div class="service-entry">
+                            <h1 class="mt-5">{{ article.title }}</h1>
+                            <hr>
+                            {% if article.images %}
+                                <div class="images">
+                                    {% for image in article.images|split(',') %}
+                                        <img src="{{ image|trim }}" style="max-width:300px; margin:10px;">
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if article.words %}
+                                <div class="resume">
+                                    <p>{{ article.words|raw }}</p>
+                                </div>
+                            {% endif %}
+                            
+                            <p style="text-align: center; margin: 40px 0;">
+                                <a href="tel:+33699474222" class="btn-default" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">Appelez-nous !</a> 
+                            </p>
+
+                            
+                            <div class="content">
+                                {{ article.content1|raw }}
+                            </div>
+                            
+                            <p style="text-align: center; margin: 40px 0;">
+                                <a href="/cotnact" class="btn-default">Contactez-nous !</a> 
+                            </p>
+                            
+                            
+                            <!-- fin content -->
+                        </div>
+                        <!-- Service Entry End -->
+
+                        <!-- FAQs section start -->
+                        <div class="page-single-faqs page-faq-accordion">
+                            <div class="section-title">
+                                <h2 class="text-anime-style-2" data-cursor="-opaque">Expertise  <span>reconnue</span></h2>
+                            </div>
+                            {% if article.content2 %}
+                                <div class="content">
+                                    {{ article.content2|raw }}
+                                </div>
+                            {% endif %}
+                            <p style="text-align: center; margin: 40px 0;">
+                                <a href="tel:+33699474222" class="btn-default" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">Appelez-nous !</a> 
+                            </p>
+                        </div>
+                        <!-- FAQs section End -->
+                    </div>
+                    <!-- Service Single Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Service Single End-->
+{% endblock %}

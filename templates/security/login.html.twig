@@ -1,0 +1,191 @@
+{% block title %}{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .login-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 400px;
+        padding: 40px;
+    }
+    
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .login-header h1 {
+        color: #333;
+        font-size: 28px;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .login-header p {
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .login-button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .login-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .login-button:active {
+        transform: translateY(0);
+    }
+    
+    .alert-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+    
+    .login-footer {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #999;
+    }
+    
+    .credentials-info {
+        background-color: #e7f3ff;
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        font-size: 13px;
+    }
+    
+    .credentials-info strong {
+        display: block;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .credentials-info p {
+        margin: 4px 0;
+        color: #555;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-header">
+        <h1>🔐 Connexion</h1>
+        <p>Tableau de Bord KS Nature Services</p>
+    </div>
+    
+    {% if error %}
+        <div class="alert alert-danger">
+            <strong>Erreur de connexion!</strong><br>
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+    
+    {% if not app.user %}
+        <div class="credentials-info">
+            <!--strong>📋 Identifiants de test:</strong>
+            <p><strong>Admin:</strong> olivier88 / olivier88</p>
+            <p><strong>Utilisateur:</strong> olivier88_user / olivier88_user</p-->
+        </div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="alert alert-success" style="background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px;">
+            Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>
+            <a href="{{ path('admin') }}" style="display: block; margin-top: 10px; color: #004085;">
+                → Accéder au Dashboard
+            </a>
+        </div>
+    {% else %}
+        <form method="post" novalidate>
+            <div class="form-group">
+                <label for="inputUsername">Nom d'utilisateur</label>
+                <input type="text" 
+                       value="{{ last_username }}" 
+                       name="_username" 
+                       id="inputUsername" 
+                       placeholder="Entrez votre nom d'utilisateur"
+                       required 
+                       autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="inputPassword">Mot de passe</label>
+                <input type="password" 
+                       name="_password" 
+                       id="inputPassword" 
+                       placeholder="Entrez votre mot de passe"
+                       required>
+            </div>
+            
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            
+            <button type="submit" class="login-button">
+                ✓ Se connecter
+            </button>
+        </form>
+    {% endif %}
+    
+    <div class="login-footer">
+        © 2026 KS Nature Services - Tous droits réservés
+    </div>
+</div>
+{% endblock %}

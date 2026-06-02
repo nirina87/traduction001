@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Services d'extermination des nuisibles à Paris & Île-de-France{% endblock %}</title>
+        <!-- Meta -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <meta name="description" content="Services d'extermination des nuisibles à Paris & Île-de-France">
+        <meta name="keywords" content="extermination, nuisibles, Paris, Île-de-France, punaises, rats, souris, blattes, cafards, frelons, guêpes">
+        <meta name="author" content="Hygiène Services">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('logo-eh-3d.png') }}">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ asset('css/slicknav.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/swiper-bundle.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/all.min.css') }}" rel="stylesheet" media="screen">
+        <link href="{{ asset('css/animate.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/magnific-popup.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/mousecursor.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/custom.css') }}" rel="stylesheet" media="screen">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- 2. Waypoints (souvent requis) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+
+        <!-- 3. CounterUp -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0.0/jquery.counterup.min.js"></script>
+        {% block stylesheets %}
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-775541421"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-775541421');
+        </script>
+    </head>
+    <body>
+
+        {% include 'header.html.twig' %}
+
+        {% block body %}{% endblock %}
+
+        {% include 'footer.html.twig' %}
+
+        <!-- Jquery Js -->
+        <script src="{{ asset('js/jquery-3.7.1.min.js') }}"></script>
+        <!-- Bootstrap Js -->
+        <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+        <!-- SlickNav Js -->
+        <script src="{{ asset('js/jquery.slicknav.js') }}"></script>
+        <!-- Swiper Js -->
+        <script src="{{ asset('js/swiper-bundle.min.js') }}"></script>
+        <!-- Magnific Popup Js -->
+        <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
+        <!-- Mouse Cursor Js -->
+        <script src="{{ asset('js/magiccursor.js') }}"></script>
+        <!-- Wow Js -->
+        <script src="{{ asset('js/wow.min.js') }}"></script>
+        <!-- Main Custom Js -->
+        <script src="{{ asset('js/function.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales{% endblock %}
+
+{% block body %}
+<!-- Page Header Start -->
+<div class="page-header parallaxie">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- Page Header Box Start -->
+                <div class="page-header-box">
+                    <h1 class="text-anime-style-2" data-cursor="-opaque">Mentions légales</h1>
+                    <nav class="wow fadeInUp">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('accueil') }}">Accueil</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Mentions légales</li>
+                        </ol>
+                    </nav>
+                </div>
+                <!-- Page Header Box End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+<section class="mentions-legales container py-5" >
+
+    <h2>Éditeur du site</h2>
+    <p>
+        La société <strong>Espace Hygiène 3D</strong> est le propriétaire du présent site web.
+    </p>
+    <ul>
+        <li><strong>Siège social :</strong> 5 rue Henri Dunant, 94370 Sucy-en-Brie</li>
+        <li><strong>SIRET :</strong> 83534234600029</li>
+    </ul>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>
+        La société <strong>Espace Hygiène 3D</strong> est propriétaire de l’ensemble du contenu présent sur ce site (textes, images, graphismes, logo, etc.).
+        Toute reproduction, distribution, modification ou utilisation, totale ou partielle, de ces contenus est strictement interdite sans autorisation préalable écrite.
+    </p>
+
+    <h2>Hébergement du site</h2>
+    <p>
+        Le site est hébergé par :
+    </p>
+    <ul>
+        <li><strong>O2Switch</strong></li>
+        <li>222 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France</li>
+        <li>SIRET : 510 909 807 00032</li>
+        <li>Site : <a href="https://www.o2switch.fr" target="_blank" rel="noopener noreferrer">www.o2switch.fr</a></li>
+    </ul>
+
+    <h2>Responsabilité</h2>
+    <p>
+        Les informations diffusées sur le site 
+        <a href="https://www.espacehygiene3d.fr" target="_blank">www.espacehygiene3d.fr</a> 
+        sont fournies à titre informatif. La société Espace Hygiène 3D s’efforce de garantir leur exactitude, mais ne saurait être tenue responsable des omissions, inexactitudes ou défauts de mise à jour.
+    </p>
+
+</section>
+{% endblock %}

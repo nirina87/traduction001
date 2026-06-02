@@ -1,0 +1,172 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact{% endblock %}
+
+{% block body %}
+    <!-- Page Header Start -->
+    <div class="page-header parallaxie">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Page Header Box Start -->
+                    <div class="page-header-box">
+                        <h1 class="text-anime-style-2" data-cursor="-opaque">Contactez-nous</h1>
+                        <nav class="wow fadeInUp">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ path('accueil') }}">Accueil</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Contactez-nous</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- Page Header Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+    <!-- Page Contact Us Start -->
+    <div class="page-contact-us">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Contact Info Box Start -->
+                    <div class="contact-info-box">
+                        <!-- Contact Info Item Start -->
+                        <div class="contact-info-item wow fadeInUp">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-mail.svg') }}" alt="">
+                            </div>
+                            <div class="contact-info-content">
+                                <h3>Adresse email</h3>
+                                <p><a href="mailto:contact@espacehygiene3d.com" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/wFbwCJya0p8cEK2l5_EC'});">contact@espacehygiene3d.com</a></p>
+                            </div>
+                        </div>
+                        <!-- Contact Info Item End -->
+
+                        <!-- Contact Info Item Start -->
+                        <div class="contact-info-item wow fadeInUp" data-wow-delay="0.2s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-phone.svg') }}" alt="">
+                            </div>
+                            <div class="contact-info-content">
+                                <h3>Contactez-nous</h3>
+                                <p><a href="tel:+33699474222" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">+33 6 99 47 42 22</a></p>
+                            </div>
+                        </div>
+                        <!-- Contact Info Item End -->
+
+                        <!-- Contact Info Item Start -->
+                        <div class="contact-info-item wow fadeInUp" data-wow-delay="0.4s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-location.svg') }}" alt="">
+                            </div>
+                            <div class="contact-info-content">
+                                <h3>Adresse</h3>
+                                <p>5 Rue Henri Dunant,<br> 94370 Sucy-En-Brie</p>
+                            </div>
+                        </div>
+                        <!-- Contact Info Item End -->
+
+                        <!-- Contact Info Item Start -->
+                        <div class="contact-info-item wow fadeInUp" data-wow-delay="0.6s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-clock.svg') }}" alt="">
+                            </div>
+                            <div class="contact-info-content">
+                                <h3>Horaires d'ouverture</h3>
+                                <p>7J/7 - 24h/24</p>
+                                
+                            </div>
+                        </div>
+                        <!-- Contact Info Item End -->
+                    </div>
+                    <!-- Contact Info Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Contact Us End -->
+
+    <!-- Contact Form Section Start -->
+    <div class="contact-form-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Contact Us Box Start -->
+                    <div class="contact-us-box">
+                        <!-- Contact Us Form Start -->
+                        <div class="contact-us-form">
+                            <!-- Section Title Start -->
+                            <div class="section-title">
+                                <h2 class="text-anime-style-2" data-cursor="-opaque"> Besoin d'une solution  ? <span> Contactez-nous dès maintenant!</span></h2>
+                            </div>
+                            <!-- Section Title End -->
+
+                            <form id="contactForm" class="contact-form wow fadeInUp">
+                                <div class="row">
+                                    <div class="form-group col-md-6 mb-4">
+                                        <input type="text" name="nom" class="form-control" id="fname" placeholder="Prénom" required>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-6 mb-4">
+                                        <input type="text" name="prenom" class="form-control" id="lname" placeholder="Nom" required>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-6 mb-4">
+                                        <input type="email" name ="email" class="form-control" id="email" placeholder="E-mail" required>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-6 mb-4">
+                                        <input type="text" name="telephone" class="form-control" id="telephone" placeholder="Téléphone" required>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="form-group col-md-12 mb-5">
+                                        <textarea name="message" class="form-control" id="message" rows="4" placeholder="Message"></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn-default" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/eUeXCI7b0J8cEK2l5_EC'});"><span>Envoyer le message</span></button>
+                                        <div id="msgSubmit" class="h3 hidden"></div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Contact Us Form End -->
+
+                        <!-- Contact Us Image Start -->
+                        <div class="contact-us-image">
+                            <figure class="image-anime">
+                                <img src="{{ asset('services-11.jpg') }}" alt="Contactez-nous - Espace Hygiène 3D">
+                            </figure>
+                        </div>
+                        <!-- Contact Us Image End -->
+                    </div>
+                    <!-- Contact Us Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Contact Form Section End -->
+
+    <!-- Google Map Section Start -->
+    <div class="google-map">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Google Map IFrame Start -->
+                    <div class="google-map-iframe">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d447512.10215011594!2d2.52842!3d48.76574!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e597fc7d2235c2d%3A0xb11564c09ab2b17d!2sEspace%20Hygiene%203d!5e1!3m2!1sfr!2sus!4v1775571283517!5m2!1sfr!2sus" width="100" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <!-- Google Map IFrame End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Google Map Section End -->
+{% endblock %}

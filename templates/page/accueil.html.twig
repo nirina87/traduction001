@@ -1,0 +1,830 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <!-- Hero Section Start -->
+    <div class="hero dark-section parallaxie">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <!-- Hero Content Start -->
+                    <div class="hero-content">
+                        <!-- Section Title Start -->
+                        <div class="section-title">
+                            <h3 class="wow fadeInUp">Bienvenue chez ESPACE HYGIENE 3D</h3>
+                            <h1 class="text-anime-style-2" data-cursor="-opaque">Extermination & Prévention des Nuisibles - <span>Entreprise agréée</span></h1>
+                            <p class="wow fadeInUp" data-wow-delay="0.2s">ESPACE HYGIENE 3D est votre spécialiste en extermination et prévention des nuisibles. Nous protégeons votre domicile et votre entreprise avec des solutions reconnues et fiables. Des termites aux rongeurs, nous éliminons les parasites rapidement et en toute sécurité.</p>
+                        </div>
+                        <!-- Section Title End -->
+
+                        <!-- Hero Button Start -->
+                        <div class="hero-btn wow fadeInUp" data-wow-delay="0.4s">
+                            <a href="{{ path('contact') }}" class="btn-default btn-highlighted">Réserver un service</a>
+                            <a href="{{ path('nos_services') }}" class="hero-service-btn">Voir tous les services</a>
+                        </div>
+                        <!-- Hero Button End -->
+                    </div>
+                    <!-- Hero Content End -->
+                </div>
+
+                <div class="col-lg-6">
+                    <!-- Hero Image Start -->
+                    <div class="hero-image">
+                        <figure>
+                            <img src="{{ asset('images/hero-image.png') }}" alt="">
+                        </figure>
+                    </div>
+                    <!-- Hero Image End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Hero Section End -->
+    <!-- Best Services Section Start -->
+    <div class="best-services light-bg-section">
+        <div class="container-fluid">
+            <div class="row no-gutters">
+                <div class="col-lg-12">
+                    <!-- Best Services Box Start -->
+                    <div class="best-services-box">
+                        <!-- Best Service Item Start -->
+                        <div class="best-service-item wow fadeInUp">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-best-service-1.svg') }}" alt="">
+                            </div>
+                            <div class="best-service-item-content">
+                                <h3> Entreprise agréée </h3>
+                            </div>
+                        </div>
+                        <!-- Best Service Item End -->
+
+                        <!-- Best Service Item Start -->
+                        <div class="best-service-item wow fadeInUp" data-wow-delay="0.2s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-best-service-2.svg') }}" alt="">
+                            </div>
+                            <div class="best-service-item-content">
+                                <h3>Réponses rapides</h3>
+                            </div>
+                        </div>
+                        <!-- Best Service Item End -->
+
+                        <!-- Best Service Item Start -->
+                        <div class="best-service-item wow fadeInUp" data-wow-delay="0.4s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-best-service-3.svg') }}" alt="">
+                            </div>
+                            <div class="best-service-item-content">
+                                <h3>Résultat garanti</h3>
+                            </div>
+                        </div>
+                        <!-- Best Service Item End -->
+
+                        <!-- Best Service Item Start -->
+                        <div class="best-service-item wow fadeInUp" data-wow-delay="0.6s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-best-service-4.svg') }}" alt="">
+                            </div>
+                            <div class="best-service-item-content">
+                                <h3>Intervention 24/7</h3>
+                            </div>
+                        </div>
+                        <!-- Best Service Item End -->
+                    </div>
+                    <!-- Best Services Box End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Best Services Section End -->
+    <!-- About Us Section Start -->
+    <div class="about-us light-bg-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5">
+                    <!-- About Us Images Start -->
+                    <div class="about-us-images">
+                        <!-- About Us Image Start -->
+                        <div class="about-us-image">
+                            <figure class="image-anime">
+                                <img src="{{ asset('images/about-us-image.jpg') }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- About Us Image End -->
+
+                        <!-- About Us Circle Image Start -->
+                        <div class="about-us-circle-img-1">
+                            <figure class="image-anime">
+                                <img src="{{ asset('images/about-circle-img-1.jpg') }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- About Us Circle Image End -->
+
+                        <!-- About Us Circle Image Start -->
+                        <div class="about-us-circle-img-2">
+                            <figure class="image-anime">
+                                <img src="{{ asset('images/about-circle-img-2.jpg') }}" alt="">
+                            </figure>
+                        </div>
+                        <!-- About Us Circle Image End -->
+                    </div>
+                    <!-- About Us Images End -->
+                </div>
+
+                <div class="col-lg-7">
+                    <!-- About us Content Start -->
+                    <div class="about-us-content">
+                        <!-- Section Title Start -->
+                        <div class="section-title">
+                            <h3 class="wow fadeInUp">À propos d'ESPACE HYGIENE 3D</h3>
+                            <h2 class="text-anime-style-2" data-cursor="-opaque">Experts en extermination et <span>prévention des nuisibles</span></h2>
+                            <p class="wow fadeInUp" data-wow-delay="0.2s">ESPACE HYGIENE 3D est une entreprise spécialisée dans l'extermination et la prévention des nuisibles. Avec des années d'expertise et une approche centrée sur le client, nous garantissons un environnement sain et sécurisé. Nous allons au-delà pour éliminer complètement les parasites et empêcher leur réapparition grâce à nos méthodes innovantes.</p>
+                        </div>
+                        <!-- Section Title End -->
+
+                        <div class="about-us-body">
+                            <div class="about-us-list wow fadeInUp" data-wow-delay="0.4s">
+                                <ul>
+                                    <li>Expertise fiable</li>
+                                    <li>Disponibilité 24/7</li>
+                                    <li>Certifié Certibiocide</li>
+                                    <li>Tarifs abordables</li>
+                                    <li>Éco responsable</li>
+                                    <li>Techniques avancées</li>
+                                    <li>Service client</li>
+                                    <li>Excellence garantie</li>
+                                </ul>
+                            </div>
+
+                            <div class="about-us-video-image wow fadeInUp" data-wow-delay="0.4s">
+                                <figure class="image-anime">
+                                    <img src="{{ asset('biocide.png') }}" style="max-width: 155px; aspect-ratio:1/1;"  alt="Certification biocide - ESPACE HYGIENE 3D">
+                                </figure>
+                            </div>
+                        </div>
+
+                        <!-- About Counter List Start -->
+                        <div class="about-counter-list">
+                            <!-- About Counter Item Start -->
+                            <div class="about-counter-item">
+                               <h2><span class="counter">26</span>+</h2>
+                               <p>ans d’expertise</p>
+                            </div>
+                            <!-- About Counter Item End -->
+
+                            <!-- About Counter Item Start -->
+                            <div class="about-counter-item">
+                                <h2><span class="counter">500</span></h2>
+                                <p>Projets terminés</p>
+                            </div>
+                            <!-- About Counter Item End -->
+
+                            <!-- About Counter Item Start -->
+                            <div class="about-counter-item">
+                                <h2><span class="counter">25</span></h2>
+                                <p>Équipe dédiée</p>
+                            </div>
+                            <!-- About Counter Item End -->
+
+                            <!-- About Counter Item Start -->
+                            <div class="about-counter-item">
+                                <h2><span class="counter">98</span>%</h2>
+                                <p>Clients satisfaits</p>
+                            </div>
+                            <!-- About Counter Item End -->
+                        </div>
+                        <!-- About Counter List End -->
+                    </div>
+                    <!-- About us Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About us Section End -->
+    
+    <!-- Our Services bloc Section Start -->
+    <div class="our-services light-bg-section">
+        <div class="container">
+            <div class="row section-row align-items-center">
+                <div class="col-lg-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title section-title-center">
+                        <h3 class="wow fadeInUp">Nos Services</h3>
+                        <h2 class="text-anime-style-2" data-cursor="-opaque">Solutions expertes pour chaque <span>problème de nuisibles</span></h2>
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Services Slider Start -->
+                    <div class="services-slider">
+                        <div class="swiper">
+                            <div class="swiper-wrapper">
+                                <!-- Services Slide Start -->
+                                {% for article in articles %}
+
+                                <div class="swiper-slide">
+                                    <div class="service-item">
+                                        <div class="service-image">
+                                            <a href="/{{article.category.slug}}/{{article.slug}}" data-cursor-text="Voir">
+                                                <figure class="image-anime">
+                                                    <img src="{{ asset('images/service-image-' ~ loop.index ~ '.jpg') }}" alt="{{ article.title }} - ESPACE HYGIENE 3D ">
+                                                </figure>
+                                            </a>
+                                        </div>
+                                        <div class="service-body">
+                                            <div class="icon-box">
+                                                <img src="{{ asset('images/icon-service-item-1.svg') }}" alt="">
+                                            </div>
+                                            <div class="service-content">
+                                                <h3><a href="/{{article.category.slug}}/{{article.slug}}">{{ article.title }}</a></h3>
+                                                <p>{{ article.words|striptags|slice(0, 100) }}...</p>
+                                            </div>
+                                            <div class="service-btn">
+                                                <a href="/{{article.category.slug}}/{{article.slug}}" class="readmore-btn">en savoir plus</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                <!-- Services Slide End -->
+
+                                
+                            </div>
+                            <div class="services-pagination"></div>
+                        </div>
+                    </div>
+                    <!-- Services Slider End -->
+                </div>
+
+                <div class="col-lg-12">
+                    <!-- Section Footer Text Start -->
+                    <div class="section-footer-text wow fadeInUp" data-wow-delay="0.2s">
+                        <p>Prêt pour un environnement sans nuisibles ? <a href="{{ path('contact') }}">Contactez-nous dès maintenant !</a></p>
+                    </div>
+                    <!-- Section Footer Text End -->
+                </div>
+            </div>          
+        </div>
+    </div>
+    <!-- Our Services Section End -->
+    
+
+    <!-- Our Features Section Start -->
+    <div class="our-features" style="background-color: #dddddd;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="our-features-content">
+                        <!-- Section Title Start -->
+                        <div class="section-title">
+                            <h3 class="wow fadeInUp">ESPACE HYGIENE 3D - Nos avantages</h3>
+                            <h2 class="text-anime-style-2" data-cursor="-opaque">Le partenaire <span> agrée </span> fiable pour l'extermination et <span>la prévention efficace</span></h2>
+                            <p class="wow fadeInUp" data-wow-delay="0.2s">Chez ESPACE HYGIENE 3D, nous comprenons à quel point les parasites peuvent être frustrants. Nous nous engageons à fournir des solutions complètes, rapides et efficaces. Avec une équipe d'experts certifiés, des méthodes innovantes et un service client de qualité, nous garantissons votre tranquillité d'esprit.</p>
+                        </div>
+                        <!-- Section Title End -->
+
+                        <!-- Our Features List Start -->
+                        <div class="our-features-list">
+                            <!-- Features Item Start -->
+                            <div class="features-item wow fadeInUp">
+                                <div class="icon-box">
+                                    <img src="{{ asset('images/icon-features-item-1.svg') }}" alt="">
+                                </div>
+                                <div class="features-item-content">
+                                    <h3>Services d'urgence</h3>
+                                    <p>Nous sommes disponibles 24h/24 pour répondre à vos besoins.</p>
+                                </div>
+                            </div>
+                            <!-- Features Item End -->
+
+                            <!-- Features Item Start -->
+                            <div class="features-item wow fadeInUp" data-wow-delay="0.2s">
+                                <div class="icon-box">
+                                    <img src="{{ asset('images/icon-features-item-2.svg') }}" alt="">
+                                </div>
+                                <div class="features-item-content">
+                                    <h3>Traitement efficace</h3>
+                                    <p>Chaque propriété est unique, nous offrons donc des solutions personnalisées.</p>
+                                </div>
+                            </div>
+                            <!-- Features Item End -->
+
+                            <!-- Features Item Start -->
+                            <div class="features-item wow fadeInUp" data-wow-delay="0.4s">
+                                <div class="icon-box">
+                                    <img src="{{ asset('images/icon-features-item-3.svg') }}" alt="">
+                                </div>
+                                <div class="features-item-content">
+                                    <h3>Professionnels certifiés</h3>
+                                    <p>Notre équipe est entièrement formée, certifiée et expérimentée.</p>
+                                </div>
+                            </div>
+                            <!-- Features Item End -->
+
+                            <!-- Features Item Start -->
+                            <div class="features-item wow fadeInUp" data-wow-delay="0.6s">
+                                <div class="icon-box">
+                                    <img src="{{ asset('images/icon-features-item-4.svg') }}" alt="">
+                                </div>
+                                <div class="features-item-content">
+                                    <h3>Résultats garantis</h3>
+                                    <p>Nous garantissons nos services avec une garantie de satisfaction.</p>
+                                </div>
+                            </div>
+                            <!-- Features Item End -->
+                        </div>
+                        <!-- Our Features List End -->
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <!-- Features Image Start -->
+                    <div class="features-image">
+                        <figure class="image-anime">
+                            <img src="{{ asset('hygiene-1.jpg') }}" alt="">
+                        </figure>
+
+                        <!-- Contact Us Circle Start -->
+                        <div class="contact-us-circle"> 
+                            <a href="{{ path('contact') }}">
+                                <img src="{{ asset('images/contact-us-circle.svg') }}" alt="">
+                            </a>
+                        </div>
+                        <!-- Contact Us Circle End -->
+                    </div>
+                    <!-- Features Image End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Our Features Section End -->
+
+    <!-- Our Projects Section Start -->
+    <div class="our-project light-bg-section">
+        <div class="container">
+            <div class="row section-row align-items-center">
+                <div class="col-lg-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title section-title-center">
+                        <h3 class="wow fadeInUp">Portfolio ESPACE HYGIENE 3D</h3>
+                        <h2 class="text-anime-style-2" data-cursor="-opaque">Cas de succès en extermination et <span>prévention des nuisibles</span></h2>
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+					<!-- Project Item Boxes start -->
+					<div class="row project-item-boxes align-items-center">
+						<div class="col-lg-4 col-md-6 project-item-box eco-friendly">
+                            <!-- Project Item Start -->
+                            <div class="project-item wow fadeInUp">
+                                <div class="project-image">
+                                    <figure>
+                                        <img src="{{ asset('hygiene-1.jpg') }}" alt="Protection contre les parasites à domicile">
+                                    </figure>
+                                </div>
+                                <div class="project-content">
+                                    <h3>Protection contre les parasites à domicile</h3>
+                                    <a href="#"><img src="{{ asset('images/arrow-white.svg') }}" alt=""></a>
+                                </div>
+                            </div>
+                            <!-- Project Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 project-item-box termite">
+                            <!-- Project Item Start -->
+                            <div class="project-item wow fadeInUp" data-wow-delay="0.2s">
+                                <div class="project-image">
+                                    <figure>
+                                        <img src="{{ asset('hygiene-2.jpg') }}" alt="Méthodes de répulsifs d'insectes non toxiques">
+                                    </figure>
+                                </div>
+                                <div class="project-content">
+                                    <h3>Méthodes de répulsifs d'insectes non toxiques</h3>
+                                    <a href="#"><img src="{{ asset('images/arrow-white.svg') }}" alt=""></a>
+                                </div>
+                            </div>
+                            <!-- Project Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 project-item-box outdoor">
+                            <!-- Project Item Start -->
+                            <div class="project-item wow fadeInUp" data-wow-delay="0.4s">
+                                <div class="project-image">
+                                    <figure>
+                                        <img src="{{ asset('hygiene-3.jpg') }}" alt="Techniques de prévention des parasites intérieurs">
+                                    </figure>
+                                </div>
+                                <div class="project-content">
+                                    <h3>Techniques de prévention des parasites intérieurs</h3>
+                                    <a href="#"><img src="{{ asset('images/arrow-white.svg') }}" alt=""></a>
+                                </div>
+                            </div>
+                            <!-- Project Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 project-item-box commercial">
+                            <!-- Project Item Start -->
+                            <div class="project-item wow fadeInUp" data-wow-delay="0.6s">
+                                <div class="project-image">
+                                    <figure>
+                                        <img src="{{ asset('hygiene-4.jpg') }}" alt="Contrôle des parasites utilisant la nanotechnologie">
+                                    </figure>
+                                </div>
+                                <div class="project-content">
+                                    <h3>Contrôle des parasites utilisant la nanotechnologie</h3>
+                                    <a href="#"><img src="{{ asset('images/arrow-white.svg') }}" alt=""></a>
+                                </div>
+                            </div>
+                            <!-- Project Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 project-item-box home">
+                            <!-- Project Item Start -->
+                            <div class="project-item wow fadeInUp" data-wow-delay="0.8s">
+                                <div class="project-image">
+                                    <figure>
+                                        <img src="{{ asset('hygiene-5.jpg') }}" alt="Gestion des moustiques sans produits chimiques">
+                                    </figure>
+                                </div>
+                                <div class="project-content">
+                                    <h3>Gestion des moustiques sans produits chimiques</h3>
+                                    <a href="#"><img src="{{ asset('images/arrow-white.svg') }}" alt=""></a>
+                                </div>
+                            </div>
+                            <!-- Project Item End -->
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 project-item-box home">
+                            <!-- Project Item Start -->
+                            <div class="project-item wow fadeInUp" data-wow-delay="1s">
+                                <div class="project-image">
+                                    <figure>
+                                        <img src="{{ asset('hygiene-6.jpg') }}" alt="Approches de contrôle des parasites biorationnelles">
+                                    </figure>
+                                </div>
+                                <div class="project-content">
+                                    <h3>Approches de contrôle des parasites biorationnelles</h3>
+                                    <a href="#"><img src="{{ asset('images/arrow-white.svg') }}" alt=""></a>
+                                </div>
+                            </div>
+                            <!-- Project Item End -->
+                        </div>
+                    </div>
+                    <!-- Project Item Boxes End -->
+                </div>
+
+                <div class="col-lg-12">
+                    <!-- Our Project Button Start -->
+                    <div class="our-project-btn wow fadeInUp" data-wow-delay="0.2s">
+                        <a href="tel:+33699474222" class="btn-default" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">Appelez-nous</a>
+                    </div>
+                    <!-- Our Project Button End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Our Projects Section End -->
+    <!-- Why Choose Us Section Start -->
+    <div class="light-bg-section">
+        <div class="container">
+            <div class="row section-row">
+                <div class="col-lg-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title section-title-center">
+                        <h2 class="text-anime-style-2" data-cursor="-opaque">Pourquoi choisir <span>ESPACE HYGIENE 3D</span></h2>
+                        <p class="wow fadeInUp" data-wow-delay="0.2s">ESPACE HYGIENE 3D est le partenaire expert pour votre sécurité. Nous proposons des solutions d'extermination et de prévention des nuisibles rapides, fiables et adaptées à vos besoins.</p>
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Why Choose Box Start -->
+                    <div class="why-choose-box">
+                        <!-- Why Choose Item Start -->
+                        <div class="why-choose-item wow fadeInUp">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-why-choose-1.svg') }}" alt="">
+                            </div>
+                            <div class="why-choose-item-content">
+                                <h3>Services d'urgence</h3>
+                                <p>Nous sommes disponibles 24h/24 pour répondre à vos besoins.</p>
+                            </div>
+                        </div>
+                        <!-- Why Choose Item End -->
+
+                        <!-- Why Choose Item Start -->
+                        <div class="why-choose-item wow fadeInUp" data-wow-delay="0.2s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-why-choose-2.svg') }}" alt="">
+                            </div>
+                            <div class="why-choose-item-content">
+                                <h3>Traitement personnalisé</h3>
+                                <p>Chaque propriété est unique, nous offrons donc des solutions sur mesure.</p>
+                            </div>
+                        </div>
+                        <!-- Why Choose Item End -->
+
+                        <!-- Why Choose Item Start -->
+                        <div class="why-choose-item wow fadeInUp" data-wow-delay="0.4s">
+                            <div class="icon-box">
+                                <img src="{{ asset('images/icon-why-choose-3.svg') }}" alt="">
+                            </div>
+                            <div class="why-choose-item-content">
+                                <h3>Professionnels certifiés</h3>
+                                <p>Notre équipe est entièrement formée et certifiée.</p>
+                            </div>
+                        </div>
+                        <!-- Why Choose Item End -->
+
+                        <!-- Page Cta Box Start -->
+                        <div class="page-cta-box wow fadeInUp" data-wow-delay="0.6s">
+                            <!-- Page Cta Box Info Start -->
+                            <div class="page-cta-box-info">
+                                <h3>ESPACE HYGIENE 3D - Votre Solution Complète aux Nuisibles</h3>
+                            </div>
+                            <!-- Page Cta Box Info End -->
+
+                            <!-- Cta Contact Box Start -->
+                            <div class="cta-contact-box">
+                                <p>appelez maintenant</p>
+                                <div class="cta-contact-item">
+                                    <div class="icon-box">
+                                        <img src="{{ asset('images/icon-cta-phone.svg') }}" alt="">
+                                    </div>
+                                    <div class="cta-contact-item-content">
+                                        <h3><a href="tel:+33699474222" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">+33 6 99 47 42 22</a></h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Cta Contact Box End -->
+                        </div>
+                        <!-- Page Cta Box End -->
+                    </div>
+                    <!-- Why Choose Box End -->
+                </div>
+
+                <div class="col-lg-12 my-5">
+                    <!-- Section Footer Text Start -->
+                    <div class="section-footer-text wow fadeInUp" data-wow-delay="0.8s">
+                        <p><span>Devis gratuit </span>ESPACE HYGIENE 3D - Votre expert en extermination - <a href="{{ path('contact') }}"> Nous contacter maintenant !</a></p>
+                    </div>
+                    <!-- Section Footer Text End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Why Choose Us Section End -->
+
+    <!-- Our Faqs Section Start -->
+    <div class="our-faqs dark-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <!-- Our Faqs Images Start -->
+                    <div class="our-faqs-images">
+                        <!-- Faqs Image 1 Start -->
+                        <div class="faqs-img-1">
+                            <figure class="image-anime reveal">
+                                <img src="{{ asset('extermination-prevention-nuisible-10.jpg') }}" alt="Désinsectisation résidentielle">
+                            </figure>
+                        </div>
+                        <!-- Faqs Image 1 End -->
+
+                        <!-- Faqs Image 2 Start -->
+                        <div class="faqs-img-2">
+                            <figure class="image-anime reveal">
+                                <img src="{{ asset('extermination-prevention-nuisible-11.jpg') }}" alt="Solutions antiparasitaires commerciales">
+                            </figure>
+                        </div>
+                        <!-- Faqs Image 2 End -->
+
+                        <!-- Faqs Image 3 Start -->
+                        <div class="faqs-img-3">
+                            <figure class="image-anime reveal">
+                                <img src="{{ asset('extermination-prevention-nuisible-12.jpg') }}" alt="Contrôle termites et rongeurs">
+                            </figure>
+                        </div>
+                        <!-- Faqs Image 3 End -->
+                    </div>
+                    <!-- Our Faqs Images End -->
+                </div>
+
+                <div class="col-lg-6">
+                    <!-- Our Faqs Content Start -->
+                    <div class="our-faqs-content">
+                        <!-- Section Title Start -->
+                        <div class="section-title">
+                            <h3 class="wow fadeInUp">Questions sur ESPACE HYGIENE 3D</h3>
+                            <h2 class="text-anime-style-2" data-cursor="-opaque">Réponses à vos questions sur l'extermination et la <span>prévention des nuisibles</span></h2>
+                        </div>
+                        <!-- Section Title End -->
+
+                        <!-- FAQ Accordion Start -->
+                        <div class="faq-accordion" id="accordion">
+                            <!-- FAQ Item Start -->
+                            <div class="accordion-item wow fadeInUp">
+                                <h2 class="accordion-header" id="heading1">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                        1. Quels types de parasites traitez-vous ?
+                                    </button>
+                                </h2>
+                                <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#accordion">
+                                    <div class="accordion-body">
+                                        <p>Nous traitons un large éventail de parasites, y compris les rongeurs, fourmis, cafards, termites, punaises de lit, moustiques, araignées et animaux sauvages.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item End -->
+
+                            <!-- FAQ Item Start -->
+                            <div class="accordion-item wow fadeInUp" data-wow-delay="0.2s">
+                                <h2 class="accordion-header" id="heading2">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                        2. Vos méthodes de contrôle des parasites sont-elles sûres pour mes animaux ?
+                                    </button>
+                                </h2>
+                                <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#accordion">
+                                    <div class="accordion-body">
+                                        <p>Oui, nous utilisons des méthodes respectueuses de l'environnement et des produits sûrs pour vos animaux de compagnie. Nous pouvons adapter nos traitements selon vos besoins spécifiques.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item End -->
+
+                            <!-- FAQ Item Start -->
+                            <div class="accordion-item wow fadeInUp" data-wow-delay="0.4s">
+                                <h2 class="accordion-header" id="heading3">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                        3. À quelle fréquence dois-je programmer les services de contrôle des parasites ?
+                                    </button>
+                                </h2>
+                                <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#accordion">
+                                    <div class="accordion-body">
+                                        <p>La fréquence dépend de votre situation spécifique. Pour la plupart des propriétés, nous recommandons un traitement tous les 3-6 mois pour une protection optimale.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item End -->
+
+                            <!-- FAQ Item Start -->
+                            <div class="accordion-item wow fadeInUp" data-wow-delay="0.6s">
+                                <h2 class="accordion-header" id="heading4">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                                        4. Offrez-vous des services d'urgence de contrôle des parasites ?
+                                    </button>
+                                </h2>
+                                <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#accordion">
+                                    <div class="accordion-body">
+                                        <p>Oui, nous offrons des services d'urgence 24/7 pour les infestations graves. Contactez-nous immédiatement en cas d'urgence.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item End -->
+
+                            <!-- FAQ Item Start -->
+                            <div class="accordion-item wow fadeInUp" data-wow-delay="0.8s">
+                                <h2 class="accordion-header" id="heading5">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+                                        5. Comment savoir si j'ai une infestation de parasites ?
+                                    </button>
+                                </h2>
+                                <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#accordion">
+                                    <div class="accordion-body">
+                                        <p>Les signes incluent des excréments, des dommages aux structures, des bruits inhabituels, des odeurs étranges ou la vue directe de parasites. Nos techniciens peuvent effectuer une inspection gratuite.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- FAQ Item End -->
+                        </div>
+                        <!-- FAQ Accordion End -->
+                    </div>
+                    <!-- Our Faqs Content End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Our Faqs Section End -->
+
+    <!-- Our Testimonials Section Start -->
+    <div class="our-testimonials">
+        <div class="container">
+            <div class="row section-row">
+                <div class="col-lg-12">
+                    <!-- Section Title Start -->
+                    <div class="section-title section-title-center">
+                        <h3 class="wow fadeInUp">Témoignages de nos clients</h3>
+                        <h2 class="text-anime-style-2" data-cursor="-opaque">Découvrez pourquoi les clients font confiance à <span>ESPACE HYGIENE 3D</span></h2>
+                    </div>
+                    <!-- Section Title End -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- Testimonial Slider Start -->
+                    <div class="testimonial-slider">
+                        <div class="swiper">
+                            <div class="swiper-wrapper" data-cursor-text="Glisser">
+                                <!-- Testimonial Slide Start -->
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-author">
+                                            <div class="author-image">
+                                                <figure class="image-anime">
+                                                    <img src="{{ asset('user-1.jpg') }}" alt="clients satisfaits de ESPACE HYGIENE 3D">
+                                                </figure>
+                                            </div>
+                                            <div class="author-content">
+                                                <h3>Marie Olivia</h3>
+                                                <p>Propriétaire, Sucy-en-Brie</p>
+                                            </div>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </div>
+                                        <div class="testimonial-content">
+                                            <p>"Service excellent ! Nous avions un gros problème de punaises de lit, et ils s'en sont occupés rapidement et professionnellement."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Testimonial Slide End -->
+
+                                <!-- Testimonial Slide Start -->
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-author">
+                                            <div class="author-image">
+                                                <figure class="image-anime">
+                                                    <img src="{{ asset('user-2.jpg') }}" alt="clients satisfaits de ESPACE HYGIENE 3D">
+                                                </figure>
+                                            </div>
+                                            <div class="author-content">
+                                                <h3>Jeanne Martin</h3>
+                                                <p>Propriétaire, Sucy-en-Brie</p>
+                                            </div>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </div>
+                                        <div class="testimonial-content">
+                                            <p>"Équipe très professionnelle et efficace. Ils ont résolu notre infestation de rats en un temps record. Hautement recommandés !"</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Testimonial Slide End -->
+
+                                <!-- Testimonial Slide Start -->
+                                <div class="swiper-slide">
+                                    <div class="testimonial-item">
+                                        <div class="testimonial-author">
+                                            <div class="author-image">
+                                                <figure class="image-anime">
+                                                    <img src="{{ asset('user-3.jpg') }}" alt="clients satisfaits de ESPACE HYGIENE 3D">
+                                                </figure>
+                                            </div>
+                                            <div class="author-content">
+                                                <h3>Stéphane Leroy</h3>
+                                                <p>Propriétaire, Sucy-en-Brie</p>
+                                            </div>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </div>
+                                        <div class="testimonial-content">
+                                            <p>"Service rapide et discret. Parfait pour un établissement commercial. Les produits utilisés sont respectueux de l'environnement."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Testimonial Slide End -->
+                            </div>
+                            <div class="testimonials-pagination"></div>
+                        </div>
+                    </div>
+                    <!-- Testimonial Slider End -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Our Testimonials Section End -->
+{% endblock %}
