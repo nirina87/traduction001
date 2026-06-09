@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion client{% endblock %}
+
+{% block body %}
+<div class="main" role="main">
+    <section class="section section-no-border pb-0">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
+                        <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Espace client</p>
+                        <h1 class="font-weight-bold text-7 mb-2">Connexion client</h1>
+                        <p class="text-muted mb-4">Connectez-vous pour retrouver votre panier, finaliser votre commande et payer sur Stripe.</p>
+
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                        {% endif %}
+
+                        {% if app.user %}
+                            <div class="alert alert-success">Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}.</div>
+                        {% else %}
+                            <form method="post" class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label" for="inputUsername">Email ou identifiant</label>
+                                    <input type="text" class="form-control" id="inputUsername" name="_username" value="{{ last_username }}" required autofocus />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label" for="inputPassword">Mot de passe</label>
+                                    <input type="password" class="form-control" id="inputPassword" name="_password" required />
+                                </div>
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                <div class="col-12 d-flex flex-wrap gap-2">
+                                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                                    <a href="{{ path('app_register') }}" class="btn btn-outline-primary">Créer un compte</a>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

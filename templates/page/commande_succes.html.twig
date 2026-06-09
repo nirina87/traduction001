@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement validé{% endblock %}
+
+{% block body %}
+<div class="main" role="main">
+    <section class="section section-no-border pb-0">
+        <div class="container py-5">
+            <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
+                <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Paiement Stripe</p>
+                <h1 class="font-weight-bold text-7 mb-3">Commande confirmée</h1>
+                <p class="text-3 text-muted mb-4">Votre paiement a bien été enregistré. Vous pouvez consulter votre facture ci-dessous.</p>
+                {% if order %}
+                    <ul class="list-unstyled mb-4">
+                        <li><strong>Numéro de commande :</strong> {{ order.invoiceNumber }}</li>
+                        <li><strong>Total payé :</strong> {{ order.total }} €</li>
+                        <li><strong>Statut :</strong> {{ order.status }}</li>
+                    </ul>
+                    <a href="{{ path('commande_facture', {'id': order.id}) }}" class="btn btn-primary">Voir la facture</a>
+                {% endif %}
+                <a href="{{ path('accueil') }}" class="btn btn-outline-primary ms-2">Retour à l’accueil</a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

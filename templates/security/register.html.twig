@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="main" role="main">
+    <section class="section section-no-border pb-0">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
+                        <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Créer un compte</p>
+                        <h1 class="font-weight-bold text-7 mb-3">Inscription client pour finaliser votre commande</h1>
+                        <p class="text-3 text-muted mb-4">Créez un compte sécurisé pour valider vos informations, confirmer votre commande et payer sur Stripe.</p>
+
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger">{{ message }}</div>
+                        {% endfor %}
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success">{{ message }}</div>
+                        {% endfor %}
+
+                        <form method="post" class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Prénom</label>
+                                <input type="text" name="firstName" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nom</label>
+                                <input type="text" name="lastName" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Téléphone</label>
+                                <input type="text" name="phone" class="form-control" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Société</label>
+                                <input type="text" name="company" class="form-control" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Mot de passe (8 caractères minimum)</label>
+                                <input type="password" name="password" class="form-control" required minlength="8" />
+                            </div>
+                            <div class="col-12 d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-primary">Créer mon compte</button>
+                                <a href="{{ path('app_user_login') }}" class="btn btn-outline-primary">Déjà inscrit ? Se connecter</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

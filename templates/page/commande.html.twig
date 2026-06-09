@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande{% endblock %}
+
+{% block body %}
+<div class="main" role="main">
+    <section class="section section-no-border pb-0">
+        <div class="container py-5">
+            <div class="row align-items-end justify-content-between mb-4">
+                <div class="col-lg-8">
+                    <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Finalisation</p>
+                    <h1 class="font-weight-bold text-8 mb-2">Commander vos traductions assermentées</h1>
+                    <p class="text-3 mb-0">Connectez-vous ou créez un compte, vérifiez votre panier puis payez en ligne avec Stripe.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <a href="{{ path('panier') }}" class="btn btn-outline-primary">Retour au panier</a>
+                </div>
+            </div>
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                        <h2 class="text-5 font-weight-semibold mb-3">Résumé de commande</h2>
+                        {% if cart is empty %}
+                            <p class="mb-0 text-muted">Votre panier est vide.</p>
+                        {% else %}
+                            {% set total = 0 %}
+                            {% for item in cart %}
+                                {% set product = products[item.id] %}
+                                {% set total = total + (product.price * item.quantity) %}
+                                <div class="border rounded-4 p-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-start gap-3">
+                                        <div>
+                                            <h3 class="text-4 mb-1">{{ item.title }}</h3>
+                                            <p class="mb-1 text-muted">{{ item.description }}</p>
+                                            <span class="badge bg-primary text-light">Qté : {{ item.quantity }}</span>
+                                        </div>
+                                        <strong>{{ (product.price * item.quantity) / 100 }} €</strong>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
+                                <span class="text-4 font-weight-semibold">Total TTC</span>
+                                <strong class="text-5">{{ total / 100 }} €</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                        {% if user %}
+                            <h2 class="text-5 font-weight-semibold mb-2">Compte connecté</h2>
+                            <p class="text-muted mb-3">Vous êtes connecté en tant que <strong>{{ user.email }}</strong>.</p>
+                            <p class="text-muted mb-4">Vos données seront utilisées pour la facture et le paiement Stripe.</p>
+                            <a href="{{ path('commande_checkout') }}" class="btn btn-primary btn-lg w-100">Payer avec Stripe</a>
+                            <p class="small text-muted mt-3 mb-0">Paiement 100 % sécurisé. Les données bancaires sont traitées par Stripe.</p>
+                        {% else %}
+                            <h2 class="text-5 font-weight-semibold mb-2">Connexion ou inscription</h2>
+                            <p class="text-muted mb-4">Pour commander et payer, vous devez d’abord vous connecter ou créer un compte client.</p>
+                            <a href="{{ path('app_user_login') }}" class="btn btn-primary btn-lg w-100 mb-3">Connexion client</a>
+                            <a href="{{ path('app_register') }}" class="btn btn-outline-primary btn-lg w-100">Créer un compte</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

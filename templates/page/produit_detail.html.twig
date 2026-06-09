@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block body %}
+<div class="main" role="main">
+    <section class="section section-no-border pb-0">
+        <div class="container py-5">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-5">
+                    <img src="{{ asset(product.image) }}" class="img-fluid rounded-4 shadow" alt="{{ product.title }}" style="max-height: 420px; object-fit: cover; width: 100%;" />
+                </div>
+                <div class="col-lg-7">
+                    <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Produit / document</p>
+                    <h1 class="font-weight-bold text-8 mb-3">{{ product.title }}</h1>
+                    <p class="text-4 mb-4">{{ product.description }}</p>
+                    <p class="text-3 text-muted mb-4">Ce document de traduction assermentée est destiné à vos démarches juridiques, administratives et professionnelles avec une mise en forme claire et certifiée.</p>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <form method="post" action="{{ path('panier_ajouter', {'id': productId}) }}" class="d-inline-block">
+                            <button type="submit" class="btn btn-primary btn-lg">Ajouter au panier</button>
+                        </form>
+                        <a href="{{ path('panier') }}" class="btn btn-outline-primary btn-lg">Voir le panier</a>
+                    </div>
+                    <a href="{{ path('accueil') }}" class="btn btn-light btn-lg">Retour à l’accueil</a>
+                </div>
+            </div>
+
+            <div class="row mt-5 pt-3">
+                <div class="col-12">
+                    <h2 class="font-weight-normal text-6 mb-3">Autres documents disponibles</h2>
+                    <div class="row g-4">
+                        {% for id, item in products %}
+                            {% if id != productId %}
+                            <div class="col-md-6 col-xl-4">
+                                <article class="border rounded-4 p-3 h-100 bg-light-5 shadow-sm">
+                                    <img src="{{ asset(item.image) }}" class="img-fluid rounded-3 mb-3" alt="{{ item.title }}" style="height: 110px; object-fit: cover; width: 100%;" />
+                                    <h3 class="text-4 mb-2">{{ id }}. {{ item.title }}</h3>
+                                    <p class="mb-3 text-muted">{{ item.description }}</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <a href="{{ path('produit_detail', {'id': id}) }}" class="btn btn-outline-primary btn-sm">Voir le détail</a>
+                                        <form method="post" action="{{ path('panier_ajouter', {'id': id}) }}" class="d-inline-block">
+                                            <button type="submit" class="btn btn-primary btn-sm">Ajouter au panier</button>
+                                        </form>
+                                    </div>
+                                </article>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

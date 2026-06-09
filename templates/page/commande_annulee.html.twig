@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annulé{% endblock %}
+
+{% block body %}
+<div class="main" role="main">
+    <section class="section section-no-border pb-0">
+        <div class="container py-5">
+            <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
+                <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Paiement Stripe</p>
+                <h1 class="font-weight-bold text-7 mb-3">Paiement annulé</h1>
+                <p class="text-3 text-muted mb-4">Le paiement n’a pas été finalisé. Vous pouvez retourner au panier et réessayer.</p>
+                <a href="{{ path('panier') }}" class="btn btn-primary">Retour au panier</a>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

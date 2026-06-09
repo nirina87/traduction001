@@ -75,8 +75,8 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="get-started text-start text-lg-end">
-                        <a href="#" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3">Commencez Maintenant</a>
-                        <div class="learn-more">ou <a href="/">en savoir plus.</a></div>
+                        <a href="/#products" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3">Commencez Maintenant</a>
+                        <div class="learn-more">ou <a href="{{ path('services') }}">En savoir plus.</a></div>
                     </div>
                 </div>
             </div>
@@ -114,19 +114,19 @@
                     <span class="cloud"></span>
                     <div class="col-lg-2 ms-lg-auto">
                         <div class="process-image">
-                            <img src="img/home/home-concept-item-1.png" alt="" />
+                            <img src="{{ asset('traduction-assermentee-1.jpg') }}" alt="Traduction assermentée - Analyse des documents" />
                             <strong>Analyse</strong>
                         </div>
                     </div>
                     <div class="col-lg-2">
                         <div class="process-image process-image-on-middle">
-                            <img src="img/home/home-concept-item-2.png" alt="" />
+                            <img src="{{ asset('traduction-assermentee-2.jpg') }}" alt="Traduction assermentée - Traduction" />
                             <strong>Traduction</strong>
                         </div>
                     </div>
                     <div class="col-lg-2">
                         <div class="process-image">
-                            <img src="img/home/home-concept-item-3.png" alt="" />
+                            <img src="{{ asset('traduction-assermentee-3.jpg') }}" alt="Traduction assermentée - Certification" />
                             <strong>Certification</strong>
                         </div>
                     </div>
@@ -134,9 +134,9 @@
                         <div class="project-image">
                             <div id="fcSlideshow" class="fc-slideshow">
                                 <ul class="fc-slides">
-                                    <li><a href="portfolio-single-wide-slider.html" aria-label=""><img class="img-fluid" src="img/projects/project-home-1.jpg" alt="" /></a></li>
-                                    <li><a href="portfolio-single-wide-slider.html" aria-label=""><img class="img-fluid" src="img/projects/project-home-2.jpg" alt="" /></a></li>
-                                    <li><a href="portfolio-single-wide-slider.html" aria-label=""><img class="img-fluid" src="img/projects/project-home-3.jpg" alt="" /></a></li>
+                                    <li><a href="/services" aria-label=""><img class="img-fluid" src="img/projects/project-home-1.jpg" alt="" /></a></li>
+                                    <li><a href="/services" aria-label=""><img class="img-fluid" src="img/projects/project-home-2.jpg" alt="" /></a></li>
+                                    <li><a href="/services" aria-label=""><img class="img-fluid" src="img/projects/project-home-3.jpg" alt="" /></a></li>
                                 </ul>
                             </div>
                             <strong class="our-work">Nos Traductions</strong>
@@ -294,7 +294,7 @@
 
         <hr class="solid my-5">
 
-        <div class="row mb-5">
+        <div class="row mb-5" id="products">
             <div class="col-12">
                 <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
                     <div class="row align-items-end justify-content-between mb-4">
@@ -404,9 +404,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="blog-post.html">Nos services de traduction pour les avocats</a></h4>
+                                                    <h4 class="text-primary text-4"><a class="d-block" href="{{ path('contact') }}">Nos services de traduction pour les avocats</a></h4>
                                                     <p class="pe-4 mb-0">Comment nous aidons les professionnels du droit dans leurs besoins de traduction.</p>
-                                                    <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
+                                                    <a href="{{ path('contact') }}" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
                                                 </div>
                                             </div>
                                         </article>
@@ -421,9 +421,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="blog-post.html">Les défis de la traduction technique et commerciale</a></h4>
+                                                    <h4 class="text-primary text-4"><a class="d-block" href="{{ path('contact') }}">Les défis de la traduction technique et commerciale</a></h4>
                                                     <p class="pe-4 mb-0">Comment nous assurons la précision dans les traductions spécialisées.</p>
-                                                    <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
+                                                    <a href="{{ path('contact') }}" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
                                                 </div>
                                             </div>
                                         </article>
@@ -440,9 +440,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="blog-post.html">Certification et reconnaissance internationale des traductions</a></h4>
+                                                    <h4 class="text-primary text-4"><a class="d-block" href="{{ path('contact') }}">Certification et reconnaissance internationale des traductions</a></h4>
                                                     <p class="pe-4 mb-0">Comprendre le processus d'assermentation et ses avantages légaux.</p>
-                                                    <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
+                                                    <a href="{{ path('contact') }} " class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
                                                 </div>
                                             </div>
                                         </article>
@@ -457,7 +457,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="blog-post.html">Comment choisir le bon service de traduction pour votre projet</a></h4>
+                                                    <h4 class="text-primary text-4"><a class="d-block" href="/#products">Comment choisir le bon service de traduction pour votre projet</a></h4>
                                                     <p class="pe-4 mb-0">Critères essentiels à considérer pour une traduction de qualité.</p>
                                                     <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
                                                 </div>
@@ -476,7 +476,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a href="blog-post.html">Traduction de contrats internationaux : nos bonnes pratiques</a></h4>
+                                                    <h4 class="text-primary text-4"><a href="/#products">Traduction de contrats internationaux : nos bonnes pratiques</a></h4>
                                                     <p class="pe-4 mb-0">Les étapes cruciales pour une traduction juridique sans risque.</p>
                                                     <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
                                                 </div>
@@ -493,7 +493,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a href="blog-post.html">Traductions urgentes : solutions rapides et fiables</a></h4>
+                                                    <h4 class="text-primary text-4"><a href="/">Traductions urgentes : solutions rapides et fiables</a></h4>
                                                     <p class="pe-4 mb-0">Nos services express pour les délais serrés.</p>
                                                     <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
                                                 </div>
