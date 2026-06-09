@@ -25,7 +25,7 @@ class Article
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length:191, unique: true)]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]

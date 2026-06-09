@@ -1,172 +1,113 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Contact{% endblock %}
+{% block title %}Contact - Traduction Légales{% endblock %}
 
 {% block body %}
-    <!-- Page Header Start -->
-    <div class="page-header parallaxie">
+<div role="main" class="main">
+    <section class="page-header page-header-classic page-header-md">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Page Header Box Start -->
-                    <div class="page-header-box">
-                        <h1 class="text-anime-style-2" data-cursor="-opaque">Contactez-nous</h1>
-                        <nav class="wow fadeInUp">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="{{ path('accueil') }}">Accueil</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Contactez-nous</li>
-                            </ol>
-                        </nav>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="text-8 mb-0">Contact</h1>
+                    <p class="lead mb-0 text-4">Nous sommes à votre écoute pour vos traductions assermentées et juridiques.</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <ul class="breadcrumb d-block text-md-end mb-0">
+                        <li><a href="{{ path('accueil') }}">Accueil</a></li>
+                        <li class="active">Contact</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row py-4">
+            <div class="col-lg-6">
+                <h2 class="font-weight-bold text-8 mt-2 mb-0">Contactez-nous !</h2>
+                <p class="mb-4">Pour une traduction assermentée et un devis rapide.</p>
+
+                <form class="contact-form" action="php/contact-form.php" method="POST">
+                    <div class="contact-form-success alert alert-success d-none mt-4">
+                        <strong>Success!</strong> Your message has been sent to us.
                     </div>
-                    <!-- Page Header Box End -->
+
+                    <div class="contact-form-error alert alert-danger d-none mt-4">
+                        <strong>Error!</strong> There was an error sending your message.
+                        <span class="mail-error-message text-1 d-block"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-lg-6">
+                            <label class="form-label mb-1 text-2">Nom et prénom</label>
+                            <input type="text" value="" data-msg-required="Veuillez saisir votre nom." maxlength="100" class="form-control text-3 h-auto py-2" name="name" required>
+                        </div>
+                        <div class="form-group col-lg-6">
+                            <label class="form-label mb-1 text-2">Adresse email</label>
+                            <input type="email" value="" data-msg-required="Veuillez saisir votre adresse email." data-msg-email="Veuillez saisir une adresse email valide." maxlength="100" class="form-control text-3 h-auto py-2" name="email" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col">
+                            <label class="form-label mb-1 text-2">Objet</label>
+                            <input type="text" value="" data-msg-required="Veuillez saisir l’objet de votre demande." maxlength="100" class="form-control text-3 h-auto py-2" name="subject" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col">
+                            <label class="form-label mb-1 text-2">Message</label>
+                            <textarea maxlength="5000" data-msg-required="Veuillez saisir votre message." rows="8" class="form-control text-3 h-auto py-2" name="message" required></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col">
+                            <input type="submit" value="Envoyer ma demande" class="btn btn-primary btn-modern" data-loading-text="Envoi...">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="appear-animation" data-appear-animation="fadeIn" data-appear-animation-delay="800">
+                    <h4 class="mt-2 mb-1">Notre <strong>bureau</strong></h4>
+                    <ul class="list list-icons list-icons-style-2 mt-2">
+                        <li><i class="fas fa-map-marker-alt top-6"></i> <strong class="text-dark">Adresse :</strong> Paris, France</li>
+                        <li><i class="fas fa-phone top-6"></i> <strong class="text-dark">Téléphone :</strong> +33 1 00 00 00 00</li>
+                        <li><i class="fas fa-envelope top-6"></i> <strong class="text-dark">Email :</strong> <a href="mailto:contact@traductionlegales.fr">contact@traductionlegales.fr</a></li>
+                    </ul>
+                </div>
+
+                <div class="appear-animation" data-appear-animation="fadeIn" data-appear-animation-delay="950">
+                    <h4 class="pt-5">Services <strong>de traduction</strong></h4>
+                    <ul class="list list-icons list-dark mt-2">
+                        <li><i class="far fa-clock top-6"></i> 24h/24 - 7j/7</li>
+                        <li><i class="far fa-check-circle top-6"></i> Traductions assermentées certifiées</li>
+                        <li><i class="far fa-check-circle top-6"></i> Confidentialité garantie</li>
+                    </ul>
+                </div>
+
+                <h4 class="pt-5">Prenez <strong>contact</strong></h4>
+                <p class="lead mb-0 text-4">Nous vous accompagnons pour vos traductions assermentées, juridiques et administratives avec une réponse rapide et une confidentialité garantie.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="call-to-action call-to-action-default with-button-arrow content-align-center call-to-action-in-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 col-lg-9">
+                <div class="call-to-action-content">
+                    <h2 class="font-weight-normal text-6 mb-0">Besoin d’une traduction rapide et conforme ?</h2>
+                    <p class="mb-0">Nous vous accompagnons pour vos démarches juridiques, administratives et internationales.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3">
+                <div class="call-to-action-btn">
+                    <a href="{{ path('contact') }}" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3">Demander un devis</a><span class="arrow hlb d-none d-md-block" data-appear-animation="rotateInUpLeft" style="top: -40px; left: 70%;"></span>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Page Header End -->
-
-    <!-- Page Contact Us Start -->
-    <div class="page-contact-us">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Contact Info Box Start -->
-                    <div class="contact-info-box">
-                        <!-- Contact Info Item Start -->
-                        <div class="contact-info-item wow fadeInUp">
-                            <div class="icon-box">
-                                <img src="{{ asset('images/icon-mail.svg') }}" alt="">
-                            </div>
-                            <div class="contact-info-content">
-                                <h3>Adresse email</h3>
-                                <p><a href="mailto:contact@espacehygiene3d.com" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/wFbwCJya0p8cEK2l5_EC'});">contact@espacehygiene3d.com</a></p>
-                            </div>
-                        </div>
-                        <!-- Contact Info Item End -->
-
-                        <!-- Contact Info Item Start -->
-                        <div class="contact-info-item wow fadeInUp" data-wow-delay="0.2s">
-                            <div class="icon-box">
-                                <img src="{{ asset('images/icon-phone.svg') }}" alt="">
-                            </div>
-                            <div class="contact-info-content">
-                                <h3>Contactez-nous</h3>
-                                <p><a href="tel:+33699474222" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">+33 6 99 47 42 22</a></p>
-                            </div>
-                        </div>
-                        <!-- Contact Info Item End -->
-
-                        <!-- Contact Info Item Start -->
-                        <div class="contact-info-item wow fadeInUp" data-wow-delay="0.4s">
-                            <div class="icon-box">
-                                <img src="{{ asset('images/icon-location.svg') }}" alt="">
-                            </div>
-                            <div class="contact-info-content">
-                                <h3>Adresse</h3>
-                                <p>5 Rue Henri Dunant,<br> 94370 Sucy-En-Brie</p>
-                            </div>
-                        </div>
-                        <!-- Contact Info Item End -->
-
-                        <!-- Contact Info Item Start -->
-                        <div class="contact-info-item wow fadeInUp" data-wow-delay="0.6s">
-                            <div class="icon-box">
-                                <img src="{{ asset('images/icon-clock.svg') }}" alt="">
-                            </div>
-                            <div class="contact-info-content">
-                                <h3>Horaires d'ouverture</h3>
-                                <p>7J/7 - 24h/24</p>
-                                
-                            </div>
-                        </div>
-                        <!-- Contact Info Item End -->
-                    </div>
-                    <!-- Contact Info Box End -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Page Contact Us End -->
-
-    <!-- Contact Form Section Start -->
-    <div class="contact-form-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Contact Us Box Start -->
-                    <div class="contact-us-box">
-                        <!-- Contact Us Form Start -->
-                        <div class="contact-us-form">
-                            <!-- Section Title Start -->
-                            <div class="section-title">
-                                <h2 class="text-anime-style-2" data-cursor="-opaque"> Besoin d'une solution  ? <span> Contactez-nous dès maintenant!</span></h2>
-                            </div>
-                            <!-- Section Title End -->
-
-                            <form id="contactForm" class="contact-form wow fadeInUp">
-                                <div class="row">
-                                    <div class="form-group col-md-6 mb-4">
-                                        <input type="text" name="nom" class="form-control" id="fname" placeholder="Prénom" required>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6 mb-4">
-                                        <input type="text" name="prenom" class="form-control" id="lname" placeholder="Nom" required>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6 mb-4">
-                                        <input type="email" name ="email" class="form-control" id="email" placeholder="E-mail" required>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-6 mb-4">
-                                        <input type="text" name="telephone" class="form-control" id="telephone" placeholder="Téléphone" required>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="form-group col-md-12 mb-5">
-                                        <textarea name="message" class="form-control" id="message" rows="4" placeholder="Message"></textarea>
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn-default" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/eUeXCI7b0J8cEK2l5_EC'});"><span>Envoyer le message</span></button>
-                                        <div id="msgSubmit" class="h3 hidden"></div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                        <!-- Contact Us Form End -->
-
-                        <!-- Contact Us Image Start -->
-                        <div class="contact-us-image">
-                            <figure class="image-anime">
-                                <img src="{{ asset('services-11.jpg') }}" alt="Contactez-nous - Espace Hygiène 3D">
-                            </figure>
-                        </div>
-                        <!-- Contact Us Image End -->
-                    </div>
-                    <!-- Contact Us Box End -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Contact Form Section End -->
-
-    <!-- Google Map Section Start -->
-    <div class="google-map">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                    <!-- Google Map IFrame Start -->
-                    <div class="google-map-iframe">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d447512.10215011594!2d2.52842!3d48.76574!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e597fc7d2235c2d%3A0xb11564c09ab2b17d!2sEspace%20Hygiene%203d!5e1!3m2!1sfr!2sus!4v1775571283517!5m2!1sfr!2sus" width="100" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                    <!-- Google Map IFrame End -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Google Map Section End -->
+</section>
 {% endblock %}

@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Category;
 use App\Entity\Contact;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +17,22 @@ use Symfony\Component\Mime\Address;
 
 class PageController extends AbstractController
 {
+    private function getProductCatalog(): array
+    {
+        return [
+            1 => ['title' => 'Acte de naissance', 'description' => 'Traduction officielle pour démarches administratives, études ou visas.', 'image' => 'img/logos/logo-1.png'],
+            2 => ['title' => 'Certificat de mariage', 'description' => 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image' => 'img/logos/logo-2.png'],
+            3 => ['title' => 'Acte de décès', 'description' => 'Traduction conforme pour succession, héritage et formalités officielles.', 'image' => 'img/logos/logo-3.png'],
+            4 => ['title' => 'Diplôme universitaire', 'description' => 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image' => 'img/logos/logo-4.png'],
+            5 => ['title' => 'Relevé de notes', 'description' => 'Document académique traduit avec rigueur et précision.', 'image' => 'img/logos/logo-5.png'],
+            6 => ['title' => 'Contrat de travail', 'description' => 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image' => 'img/logos/logo-6.png'],
+            7 => ['title' => 'Statuts de société', 'description' => 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image' => 'img/projects/project-home-1.jpg'],
+            8 => ['title' => 'Procès-verbal judiciaire', 'description' => 'Traduction officielle pour procédures légales et contentieux.', 'image' => 'img/projects/project-home-2.jpg'],
+            9 => ['title' => 'Attestation de résidence', 'description' => 'Document administratif traduit pour établissement, visa ou résidences.', 'image' => 'img/projects/project-home-3.jpg'],
+            10 => ['title' => 'Fiche de salaire', 'description' => 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image' => 'img/clients/client-1.jpg'],
+        ];
+    }
+
     #[Route('/', name: 'accueil')]
     public function accueil(EntityManagerInterface $em): Response
     {
@@ -28,8 +43,61 @@ class PageController extends AbstractController
         return $this->render('page/accueil.html.twig', ['articles' => $articles]);
     }
 
-    #[Route('/nos-services', name: 'nos_services')]
-    public function nosServices(EntityManagerInterface $em): Response
+    #[Route('/produit/{id}', name: 'produit_detail')]
+    public function produitDetail(int $id): Response
+    {
+        $products = $this->getProductCatalog();
+
+        if (!isset($products[$id])) {
+            throw $this->createNotFoundException('Produit non trouvé.');
+        }
+
+        return $this->render('page/produit_detail.html.twig', [
+            'product' => $products[$id],
+            'productId' => $id,
+            'products' => $products,
+        ]);
+    }
+
+    #[Route('/panier', name: 'panier')]
+    public function panier(Request $request): Response
+    {
+        $cart = $request->getSession()->get('cart', []);
+
+        return $this->render('page/panier.html.twig', [
+            'cart' => $cart,
+            'products' => $this->getProductCatalog(),
+        ]);
+    }
+
+    #[Route('/panier/ajouter/{id}', name: 'panier_ajouter', methods: ['POST'])]
+    public function ajouterAuPanier(int $id, Request $request): Response
+    {
+        $products = $this->getProductCatalog();
+
+        if (!isset($products[$id])) {
+            throw $this->createNotFoundException('Produit non trouvé.');
+        }
+
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        $cart[$id] = [
+            'id' => $id,
+            'title' => $products[$id]['title'],
+            'description' => $products[$id]['description'],
+            'image' => $products[$id]['image'],
+            'quantity' => ($cart[$id]['quantity'] ?? 0) + 1,
+        ];
+
+        $session->set('cart', $cart);
+        $this->addFlash('success', 'Le document a été ajouté au panier.');
+
+        return $this->redirectToRoute('panier');
+    }
+
+    #[Route('/services', name: 'services')]
+    public function Services(EntityManagerInterface $em): Response
     {
         $articles = $em->getRepository(Article::class)->findBy(
             [],

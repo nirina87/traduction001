@@ -1,71 +1,37 @@
-    <!-- Topbar Section Start -->
-    <div class="topbar">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-9">
-                    <!-- Topbar Contact Information Start -->
-                    <div class="topbar-contact-info">
-                        <ul>
-                            <li><i class="fa-regular fa-envelope"></i><a href="mailto:contact@espacehygiene3d.com" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/wFbwCJya0p8cEK2l5_EC'});">contact@espacehygiene3d.com</a></li>
-                            <li><i class="fa-solid fa-phone"></i><a href="tel:+33699474222" onclick="gtag('event', 'conversion', {'send_to': 'AW-775541421/0t-5CP3f0Z8cEK2l5_EC'});">+33 6 99 47 42 22</a></li>
-                            <li><i class="fa-solid fa-location-dot"></i>Paris & Île-de-France</li>
-                        </ul>
-                    </div>
-                    <!-- Topbar Contact Information End -->
-                </div>
-
-                <div class="col-md-3">
-                    <!-- Topbar Social Links Start -->
-                    <div class="topbar-social-links">
-                        <ul>
-                            <li><a href="https://www.facebook.com/profile.php?id=100063489035030"><i class="fa-brands fa-facebook-f"></i></a></li>
-                            <li><a href="https://www.instagram.com/hygienesouris?igsh=MW1pdDk4cjJrOW1keg%3D%3D&utm_source=qr"><i class="fa-brands fa-instagram"></i></a></li>
-                            <li><a href="https://youtube.com/@espacehygiene3d?feature=shared"><i class="fa-brands fa-youtube"></i></a></li>
-                            <li><a href="https://www.tiktok.com/@espace.hygiene3d"><i class="fa-brands fa-tiktok"></i></a></li>
-                        </ul>
-                    </div>
-                    <!-- Topbar Social Links End -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Topbar Section End -->
-
-    <!-- Header Start -->
-	<header class="main-header light-bg-section">
-		<div class="header-sticky">
-			<nav class="navbar navbar-expand-lg">
-				<div class="container">
-					<!-- Logo Start -->
-					<a class="navbar-brand" href="{{ path('accueil') }}">
-						<img src="{{ asset('logo-eh-3d.png') }}" alt="Hygiène Services - Extermination des nuisibles à Paris & Île-de-France">
-					</a>
-					<!-- Logo End -->
-
-					<!-- Main Menu Start -->
-					<div class="collapse navbar-collapse main-menu">
-                        <div class="nav-menu-wrapper">
-                            <ul class="navbar-nav mr-auto" id="menu">
-                                <li class="nav-item"><a class="nav-link" href="{{ path('accueil') }}">Accueil</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ path('nos_services') }}">Nos services</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ path('agroalimentaire') }}">Agroalimentaire</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ path('qui_sommes_nous') }}">Qui sommes-nous</a></li>
-                                
-                                <li class="nav-item"><a class="nav-link" href="{{ path('contact') }}">Contact</a></li>
-                            </ul>
-                        </div>
-
-                        <!-- Header Btn Start -->
-                        <div class="header-btn">
-                            <a href="{{ path('contact') }}" class="btn-default"> Demander un devis </a>
-                        </div>
-                        <!-- Header Btn End -->
+<header id="header" class="header-effect-shrink custom-header-1" data-plugin-options="{'stickyEnabled': true, 'stickyEffect': 'shrink', 'stickyEnableOnBoxed': true, 'stickyEnableOnMobile': false, 'stickyStartAt': 70, 'stickyChangeLogo': false, 'stickyHeaderContainerHeight': 70}">
+				<div class="header-body border-top-0 bg-dark box-shadow-none">
+					<div class="header-container container-fluid">
+						<div class="header-row p-relative px-0">
+							<div class="header-column px-lg-3">
+								<div class="header-row">
+									<div class="header-logo">
+										<a href="/"><img alt="Porto" width="220" data-sticky-width="82" data-sticky-height="40" data-sticky-top="0" src="logo-tl.png" ></a>
+									</div>
+								</div>
+							</div>
+							<div class="header-column w-100 ms-2 ms-xl-5 ps-2 pe-lg-3">
+								<div class="header-row justify-content-end justify-content-lg-start">
+									<div class="header-nav header-nav-links header-nav-light-text justify-content-lg-start">
+										<div class="header-nav-main header-nav-main-square header-nav-main-dropdown-no-borders header-nav-main-mobile-dark header-nav-main-dropdown-border-radius header-nav-main-text-capitalize header-nav-main-text-size-5 header-nav-main-arrows header-nav-main-effect-1 header-nav-main-sub-effect-1">
+											<nav class="collapse">
+												<ul class="nav nav-pills" id="mainNav">
+													<li><a href="/"> ACCUEIL </a></li>
+													<li><a href="/services"> SERVICES </a></li>
+                                                    <li><a href="/contact"> CONTACT </a> </li>
+												</ul>
+											</nav>
+										</div>
+									</div>
+									<div class="d-flex">
+										<div class="d-none d-xxl-flex custom-header-1-extra-links">
+											<a class="btn btn-primary font-weight-semibold text-3 py-3 border-radius p-relative bottom-1 custom-header-1-btn-1 btn-gradient" href="/produits">
+                                            <span class="px-4 d-block ws-nowrap"> Traiter les documents</span></a>
+										</div>
+										<button class="btn header-btn-collapse-nav" data-bs-toggle="collapse" data-bs-target=".header-nav-main nav"><i class="fa fa-bars"></i></button>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<!-- Main Menu End -->
-					<div class="navbar-toggle"></div>
 				</div>
-			</nav>
-			<div class="responsive-menu"></div>
-		</div>
-	</header>
-	<!-- Header End -->
+			</header>
