@@ -18,6 +18,3 @@
 /phpunit.xml
 /public/php/newsletter-subscribe.php
 ###< symfony/phpunit-bridge ###
-
-###> symfony/asset-mapper ###
-###< symfony/asset-mapper ###
