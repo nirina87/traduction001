@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
+use App\Repository\ProductRepository;
+use App\Service\StripeCheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
+use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,59 +19,31 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CheckoutController extends AbstractController
 {
-    private function createStripeCheckoutSession(array $lineItems, string $customerEmail, string $successUrl, string $cancelUrl, string $stripeSecret, string $userId): array
-    {
-        $payload = json_encode([
-            'mode' => 'payment',
-            'customer_email' => $customerEmail,
-            'success_url' => $successUrl,
-            'cancel_url' => $cancelUrl,
-            'metadata' => ['user_id' => $userId],
-            'line_items' => $lineItems,
-        ], JSON_THROW_ON_ERROR);
-
-        $ch = curl_init('https://api.stripe.com/v1/checkout/sessions');
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Bearer ' . $stripeSecret,
-            'Content-Type: application/json',
-            'Accept: application/json',
-        ]);
-
-        $response = curl_exec($ch);
-        $error = curl_error($ch);
-        $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($response === false || $statusCode >= 400) {
-            throw new \RuntimeException($error ?: 'Impossible de créer la session Stripe (HTTP ' . $statusCode . ').');
-        }
-
-        $decoded = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
-
-        if (!isset($decoded['id'], $decoded['url'])) {
-            throw new \RuntimeException('Réponse Stripe invalide.');
-        }
-
-        return $decoded;
+    public function __construct(
+        private readonly StripeCheckoutService $stripeCheckoutService,
+        private readonly ProductRepository $productRepository,
+    ) {
     }
 
     private function getCatalog(): array
     {
-        return [
-            1 => ['title' => 'Acte de naissance', 'description' => 'Traduction officielle pour démarches administratives, études ou visas.', 'image' => 'img/logos/logo-1.png', 'price' => 4500],
-            2 => ['title' => 'Certificat de mariage', 'description' => 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image' => 'img/logos/logo-2.png', 'price' => 4200],
-            3 => ['title' => 'Acte de décès', 'description' => 'Traduction conforme pour succession, héritage et formalités officielles.', 'image' => 'img/logos/logo-3.png', 'price' => 4300],
-            4 => ['title' => 'Diplôme universitaire', 'description' => 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image' => 'img/logos/logo-4.png', 'price' => 4700],
-            5 => ['title' => 'Relevé de notes', 'description' => 'Document académique traduit avec rigueur et précision.', 'image' => 'img/logos/logo-5.png', 'price' => 3900],
-            6 => ['title' => 'Contrat de travail', 'description' => 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image' => 'img/logos/logo-6.png', 'price' => 5200],
-            7 => ['title' => 'Statuts de société', 'description' => 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image' => 'img/projects/project-home-1.jpg', 'price' => 6500],
-            8 => ['title' => 'Procès-verbal judiciaire', 'description' => 'Traduction officielle pour procédures légales et contentieux.', 'image' => 'img/projects/project-home-2.jpg', 'price' => 7000],
-            9 => ['title' => 'Attestation de résidence', 'description' => 'Document administratif traduit pour établissement, visa ou résidences.', 'image' => 'img/projects/project-home-3.jpg', 'price' => 3800],
-            10 => ['title' => 'Fiche de salaire', 'description' => 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image' => 'img/clients/client-1.jpg', 'price' => 3500],
-        ];
+        $catalog = [];
+
+        foreach ($this->productRepository->findCatalogProducts() as $product) {
+            $id = $product->getId();
+            if (null === $id) {
+                continue;
+            }
+
+            $catalog[$id] = [
+                'title' => $product->getTitle(),
+                'description' => $product->getDescription(),
+                'image' => $product->getImage(),
+                'price' => $product->getPrice(),
+            ];
+        }
+
+        return $catalog;
     }
 
     #[Route('/inscription', name: 'app_register')]
@@ -150,7 +125,6 @@ class CheckoutController extends AbstractController
             if (!$product) {
                 continue;
             }
-            $unitAmount = (int) ($product['price'] * 100 / 100);
             $quantity = (int) ($item['quantity'] ?? 1);
             $total += $product['price'] * $quantity;
 
@@ -173,31 +147,42 @@ class CheckoutController extends AbstractController
             return $this->redirectToRoute('panier');
         }
 
-        $stripeSecret = $_ENV['STRIPE_SECRET_KEY'] ?? null;
-        if (!$stripeSecret) {
-            $this->addFlash('error', 'La clé Stripe n’est pas configurée.');
+        // Stripe exige le placeholder littéral {CHECKOUT_SESSION_ID} (non encodé en %7B...%7D).
+        $successUrl = $router->generate(
+            'commande_succes',
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        ) . '?session_id={CHECKOUT_SESSION_ID}';
+        $cancelUrl = $router->generate(
+            'commande_annulee',
+            [],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        try {
+            $session = $this->stripeCheckoutService->createCheckoutSession(
+                $lineItems,
+                (string) $user->getEmail(),
+                $successUrl,
+                $cancelUrl,
+                (string) $user->getId(),
+            );
+        } catch (ApiErrorException $e) {
+            $this->addFlash('error', 'Impossible d’initialiser le paiement Stripe. Veuillez réessayer.');
+
+            return $this->redirectToRoute('commande');
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
 
             return $this->redirectToRoute('commande');
         }
-
-        $successUrl = $router->generate('commande_succes', ['session_id' => '{CHECKOUT_SESSION_ID}'], UrlGeneratorInterface::ABSOLUTE_URL);
-        $cancelUrl = $router->generate('commande_annulee', [], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $session = $this->createStripeCheckoutSession(
-            $lineItems,
-            (string) $user->getEmail(),
-            $successUrl,
-            $cancelUrl,
-            $stripeSecret,
-            (string) $user->getId(),
-        );
 
         $order = new Order();
         $order->setUser($user);
         $order->setTotal((string) number_format($total / 100, 2, '.', ''));
         $order->setCurrency('EUR');
         $order->setStatus('pending');
-        $order->setStripeSessionId($session['id']);
+        $order->setStripeSessionId($session->id);
         $order->setInvoiceNumber('FACT-' . date('Ymd') . '-' . random_int(1000, 9999));
 
         foreach ($cart as $item) {
@@ -222,25 +207,34 @@ class CheckoutController extends AbstractController
         $em->persist($order);
         $em->flush();
 
-        return $this->redirect($session['url'], 303);
+        return $this->redirect($session->url, 303);
     }
 
     #[Route('/commande/succes', name: 'commande_succes')]
     public function success(Request $request, EntityManagerInterface $em): Response
     {
         $sessionId = (string) $request->query->get('session_id', '');
-        if (!$sessionId) {
+        if ('' === $sessionId) {
             throw $this->createNotFoundException('Session Stripe introuvable.');
         }
 
         $order = $em->getRepository(Order::class)->findOneBy(['stripeSessionId' => $sessionId]);
-        if ($order) {
+
+        try {
+            $stripeSession = $this->stripeCheckoutService->retrieveCheckoutSession($sessionId);
+        } catch (ApiErrorException) {
+            throw $this->createNotFoundException('Session Stripe introuvable ou invalide.');
+        }
+
+        if ($order && 'paid' === $stripeSession->payment_status) {
             $order->setStatus('paid');
             $em->flush();
+            $request->getSession()->remove('cart');
         }
 
         return $this->render('page/commande_succes.html.twig', [
             'order' => $order,
+            'paymentConfirmed' => 'paid' === $stripeSession->payment_status,
         ]);
     }
 
