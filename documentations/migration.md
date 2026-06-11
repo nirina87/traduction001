@@ -180,6 +180,144 @@ Vérifie que le mapping Doctrine est cohérent et que la base est synchronisée 
 
 ---
 
+## Migration en production
+
+En production, on distingue deux actions distinctes :
+
+1. **Schéma** (structure des tables, ex. colonnes `image` et `price` sur `product`) → **migration Doctrine**
+2. **Données** (les 10 produits du catalogue) → script SQL `database/product.sql`
+
+> En production, **ne pas utiliser** `doctrine:schema:update --force`. Toujours passer par les migrations.
+
+### Étape 1 — Préparer la migration (en local / développement)
+
+Après modification d'une entité dans `src/Entity/`, générer une migration :
+
+```bash
+php bin/console make:migration
+```
+
+Ouvrir le fichier généré dans `migrations/` et vérifier le SQL. Exemple attendu pour le catalogue produits :
+
+```sql
+ALTER TABLE product ADD image VARCHAR(255) DEFAULT NULL, ADD price INT DEFAULT NULL;
+```
+
+Tester en local avant déploiement :
+
+```bash
+php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:schema:validate
+```
+
+**Commiter et déployer** le code source ainsi que le fichier de migration sur le serveur de production.
+
+---
+
+### Étape 2 — Déployer le code sur le serveur
+
+Sur le serveur (SSH), dans le répertoire du projet :
+
+```bash
+git pull origin main   # adapter la branche si nécessaire
+composer install --no-dev --optimize-autoloader
+```
+
+Vérifier que `.env.local` (ou les variables d'environnement du serveur) pointent vers la **base de production** avec `APP_ENV=prod`.
+
+---
+
+### Étape 3 — Sauvegarde (recommandé)
+
+Avant toute modification de schéma :
+
+```bash
+mysqldump -u VOTRE_USER -p VOTRE_BASE > backup_$(date +%Y%m%d_%H%M).sql
+```
+
+---
+
+### Étape 4 — Exécuter les migrations en production
+
+```bash
+# Voir l'état actuel
+php bin/console doctrine:migrations:status --env=prod
+
+# Prévisualiser le SQL sans l'exécuter (optionnel)
+php bin/console doctrine:migrations:migrate --dry-run --env=prod
+
+# Appliquer les migrations en attente
+php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+```
+
+Vérification :
+
+```bash
+php bin/console doctrine:schema:validate --env=prod
+```
+
+Résultat attendu : `[OK] The database schema is in sync with the mapping files.`
+
+---
+
+### Étape 5 — Insérer les données du catalogue (`database/product.sql`)
+
+Ce script insère les 10 documents à traduire dans la table `product`. Il s'agit d'une **insertion de données**, distincte des migrations Doctrine.
+
+```bash
+mysql -u VOTRE_USER -p VOTRE_BASE < database/product.sql
+```
+
+**Points d'attention :**
+
+- À exécuter **une seule fois**
+- À lancer **après** l'application des migrations (colonnes `image` et `price` doivent exister)
+- Si des lignes existent déjà (IDs 1 à 10), l'`INSERT` échouera — vérifier d'abord :
+
+```bash
+mysql -u VOTRE_USER -p VOTRE_BASE -e "SELECT id, title FROM product;"
+```
+
+Les prix dans `database/product.sql` sont exprimés en **centimes d'euro** (ex. `4500` = 45,00 €).
+
+---
+
+### Étape 6 — Vider le cache Symfony
+
+```bash
+php bin/console cache:clear --env=prod
+```
+
+---
+
+### Checklist production
+
+| Étape | Commande / action |
+|-------|-------------------|
+| 1 | `make:migration` en local + test |
+| 2 | `git pull` + `composer install --no-dev` |
+| 3 | Sauvegarde MySQL (`mysqldump`) |
+| 4 | `doctrine:migrations:migrate --no-interaction --env=prod` |
+| 5 | `mysql ... < database/product.sql` |
+| 6 | `cache:clear --env=prod` |
+| 7 | Tester `/panier`, `/produit/1` sur le site en ligne |
+
+---
+
+### Première installation en production (base vide)
+
+Si la base de production est neuve :
+
+```bash
+php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+mysql -u VOTRE_USER -p VOTRE_BASE < database/product.sql
+php bin/console cache:clear --env=prod
+```
+
+La migration initiale `Version20260609110232` crée toutes les tables. Les migrations suivantes ajoutent les évolutions de schéma (ex. colonnes catalogue sur `product`).
+
+---
+
 ## Environnement de test
 
 Pour les tests PHPUnit, la base de test utilise un suffixe configuré dans `config/packages/doctrine.yaml` :

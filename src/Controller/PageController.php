@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Category;
 use App\Entity\Contact;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,20 +18,30 @@ use Symfony\Component\Mime\Address;
 
 class PageController extends AbstractController
 {
+    public function __construct(
+        private readonly ProductRepository $productRepository,
+    ) {
+    }
+
     private function getProductCatalog(): array
     {
-        return [
-            1 => ['title' => 'Acte de naissance', 'description' => 'Traduction officielle pour démarches administratives, études ou visas.', 'image' => 'img/logos/logo-1.png', 'price' => 4500],
-            2 => ['title' => 'Certificat de mariage', 'description' => 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image' => 'img/logos/logo-2.png', 'price' => 4200],
-            3 => ['title' => 'Acte de décès', 'description' => 'Traduction conforme pour succession, héritage et formalités officielles.', 'image' => 'img/logos/logo-3.png', 'price' => 4300],
-            4 => ['title' => 'Diplôme universitaire', 'description' => 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image' => 'img/logos/logo-4.png', 'price' => 4700],
-            5 => ['title' => 'Relevé de notes', 'description' => 'Document académique traduit avec rigueur et précision.', 'image' => 'img/logos/logo-5.png', 'price' => 3900],
-            6 => ['title' => 'Contrat de travail', 'description' => 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image' => 'img/logos/logo-6.png', 'price' => 5200],
-            7 => ['title' => 'Statuts de société', 'description' => 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image' => 'img/projects/project-home-1.jpg', 'price' => 6500],
-            8 => ['title' => 'Procès-verbal judiciaire', 'description' => 'Traduction officielle pour procédures légales et contentieux.', 'image' => 'img/projects/project-home-2.jpg', 'price' => 7000],
-            9 => ['title' => 'Attestation de résidence', 'description' => 'Document administratif traduit pour établissement, visa ou résidences.', 'image' => 'img/projects/project-home-3.jpg', 'price' => 3800],
-            10 => ['title' => 'Fiche de salaire', 'description' => 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image' => 'img/clients/client-1.jpg', 'price' => 3500],
-        ];
+        $catalog = [];
+
+        foreach ($this->productRepository->findCatalogProducts() as $product) {
+            $id = $product->getId();
+            if (null === $id) {
+                continue;
+            }
+
+            $catalog[$id] = [
+                'title' => $product->getTitle(),
+                'description' => $product->getDescription(),
+                'image' => $product->getImage(),
+                'price' => $product->getPrice(),
+            ];
+        }
+
+        return $catalog;
     }
 
     #[Route('/', name: 'accueil')]
