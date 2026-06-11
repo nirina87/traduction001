@@ -13,6 +13,10 @@ security:
                     olivier88_user:
                         password: '$2y$13$wuLhPybpdtuI2BaVC80euuy9hoq.mqSPgm7yp9VRnEbZMmAGU/ZOW'
                         roles: [ROLE_USER]
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -31,7 +35,7 @@ security:
         main:
             pattern: ^/
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider
             form_login:
                 login_path: app_user_login
                 check_path: app_user_login
