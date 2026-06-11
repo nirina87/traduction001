@@ -5,48 +5,208 @@
 {% block body %}
 <div class="main" role="main">
     <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="row align-items-end justify-content-between mb-4">
+        <div class="container py-4 py-lg-5">
+            <div class="row align-items-end justify-content-between mb-4 mb-lg-5">
                 <div class="col-lg-8">
                     <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Panier</p>
-                    <h1 class="font-weight-bold text-8 mb-2">Votre sélection de documents</h1>
-                    <p class="text-3 mb-0">Les documents ajoutés au panier sont conservés pendant votre session.</p>
+                    <h1 class="font-weight-bold text-7 text-lg-8 mb-2">Votre sélection de documents</h1>
+                    <p class="text-3 mb-0 text-muted">Modifiez les quantités ou retirez un document avant de passer commande.</p>
                 </div>
                 <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <a href="{{ path('accueil') }}" class="btn btn-outline-primary">Retour à l’accueil</a>
+                    <a href="{{ path('accueil') }}" class="btn btn-outline-primary w-100 w-lg-auto">
+                        <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>Continuer mes achats
+                    </a>
                 </div>
             </div>
 
             {% for message in app.flashes('success') %}
-                <div class="alert alert-success mb-4">{{ message }}</div>
+                <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4" role="alert">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" role="alert">{{ message }}</div>
             {% endfor %}
 
             {% if cart is empty %}
-                <div class="card border-0 shadow-sm rounded-4 p-4">
-                    <p class="mb-0 text-muted">Votre panier est actuellement vide. Ajoutez un document depuis la page d’accueil ou la page détail.</p>
+                <div class="cart-empty card border-0 shadow-sm rounded-4 p-4 p-lg-5 text-center">
+                    <div class="cart-empty__icon mx-auto mb-4">
+                        <i class="fas fa-shopping-basket" aria-hidden="true"></i>
+                    </div>
+                    <h2 class="text-5 font-weight-semibold mb-2">Votre panier est vide</h2>
+                    <p class="text-muted mb-4 mx-auto" style="max-width: 32rem;">Ajoutez des documents à traduire depuis notre catalogue pour démarrer votre commande.</p>
+                    <a href="{{ path('accueil') }}" class="btn btn-primary btn-lg">Découvrir nos documents</a>
                 </div>
             {% else %}
-                <div class="row g-4">
-                    {% for item in cart %}
-                        <div class="col-md-6 col-xl-4">
-                            <article class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                                <img src="{{ asset(products[item.id].image) }}" class="img-fluid rounded-3 mb-3" alt="{{ item.title }}" style="height: 110px; object-fit: cover; width: 100%;" />
-                                <h3 class="text-4 mb-2">{{ item.title }}</h3>
-                                <p class="text-muted mb-3">{{ item.description }}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-primary text-light">Quantité : {{ item.quantity }}</span>
-                                    <a href="{{ path('produit_detail', {'id': item.id}) }}" class="btn btn-outline-primary btn-sm">Détail</a>
-                                </div>
-                            </article>
-                        </div>
-                    {% endfor %}
-                </div>
+                {% set totalQty = 0 %}
+                {% set totalCents = 0 %}
+                {% for item in cart %}
+                    {% set product = products[item.id] %}
+                    {% set totalQty = totalQty + item.quantity %}
+                    {% set totalCents = totalCents + (product.price * item.quantity) %}
+                {% endfor %}
 
-                <div class="d-flex justify-content-end mt-4">
-                    <a href="{{ path('commande') }}" class="btn btn-primary btn-lg">Passer la commande</a>
+                <div class="row g-4 g-lg-5">
+                    <div class="col-lg-8">
+                        <div class="cart-items card border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="cart-items__header d-none d-md-flex">
+                                <span>Document</span>
+                                <span class="text-center">Quantité</span>
+                                <span class="text-end">Total</span>
+                                <span class="text-end"><span class="visually-hidden">Actions</span></span>
+                            </div>
+
+                            {% for item in cart %}
+                                {% set product = products[item.id] %}
+                                {% set lineTotal = product.price * item.quantity %}
+                                <article class="cart-item" aria-label="{{ item.title }}">
+                                    <div class="cart-item__product">
+                                        <a href="{{ path('produit_detail', {'id': item.id}) }}" class="cart-item__thumb-link">
+                                            <img src="{{ asset(product.image) }}" class="cart-item__thumb" alt="{{ item.title }}" loading="lazy" />
+                                        </a>
+                                        <div class="cart-item__info">
+                                            <h2 class="cart-item__title">
+                                                <a href="{{ path('produit_detail', {'id': item.id}) }}">{{ item.title }}</a>
+                                            </h2>
+                                            <p class="cart-item__desc">{{ item.description }}</p>
+                                            <p class="cart-item__unit-price mb-0">
+                                                <span class="text-muted">Prix unitaire :</span>
+                                                <strong>{{ (product.price / 100)|number_format(2, ',', ' ') }} €</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="cart-item__quantity" aria-label="Quantité">
+                                        <span class="cart-item__mobile-label d-md-none">Quantité</span>
+                                        <div class="cart-qty" role="group" aria-label="Modifier la quantité">
+                                            <form method="post" action="{{ path('panier_modifier', {'id': item.id}) }}" class="cart-qty__form">
+                                                <input type="hidden" name="quantity" value="{{ item.quantity > 1 ? item.quantity - 1 : 1 }}">
+                                                <button type="submit" class="cart-qty__btn" {% if item.quantity <= 1 %}disabled aria-disabled="true"{% endif %} aria-label="Diminuer la quantité">
+                                                    <i class="fas fa-minus" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                            <span class="cart-qty__value" aria-live="polite">{{ item.quantity }}</span>
+                                            <form method="post" action="{{ path('panier_modifier', {'id': item.id}) }}" class="cart-qty__form">
+                                                <input type="hidden" name="quantity" value="{{ item.quantity < 99 ? item.quantity + 1 : 99 }}">
+                                                <button type="submit" class="cart-qty__btn" {% if item.quantity >= 99 %}disabled aria-disabled="true"{% endif %} aria-label="Augmenter la quantité">
+                                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="cart-item__line-total">
+                                        <span class="cart-item__mobile-label d-md-none">Total ligne</span>
+                                        <strong class="cart-item__price">{{ (lineTotal / 100)|number_format(2, ',', ' ') }} €</strong>
+                                    </div>
+
+                                    <div class="cart-item__actions">
+                                        <form method="post" action="{{ path('panier_supprimer', {'id': item.id}) }}" class="cart-item__remove-form" id="cart-remove-form-{{ item.id }}">
+                                            <button
+                                                type="button"
+                                                class="cart-item__remove"
+                                                aria-label="Retirer {{ item.title }} du panier"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#cartRemoveModal"
+                                                data-product-title="{{ item.title }}"
+                                                data-remove-form="cart-remove-form-{{ item.id }}"
+                                            >
+                                                <i class="far fa-trash-alt" aria-hidden="true"></i>
+                                                <span class="d-none d-md-inline">Retirer</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <aside class="cart-summary card border-0 shadow-sm rounded-4 p-4">
+                            <h2 class="text-5 font-weight-semibold mb-4">Récapitulatif</h2>
+
+                            <dl class="cart-summary__lines mb-4">
+                                <div class="cart-summary__line">
+                                    <dt>Documents distincts</dt>
+                                    <dd>{{ cart|length }}</dd>
+                                </div>
+                                <div class="cart-summary__line">
+                                    <dt>Exemplaires au total</dt>
+                                    <dd>{{ totalQty }}</dd>
+                                </div>
+                                <div class="cart-summary__line cart-summary__line--total">
+                                    <dt>Total TTC</dt>
+                                    <dd>{{ (totalCents / 100)|number_format(2, ',', ' ') }} €</dd>
+                                </div>
+                            </dl>
+
+                            <a href="{{ path('commande') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                Passer la commande
+                            </a>
+                            <p class="small text-muted text-center mb-0">
+                                <i class="fas fa-lock me-1" aria-hidden="true"></i>
+                                Paiement sécurisé via Stripe
+                            </p>
+                        </aside>
+                    </div>
                 </div>
             {% endif %}
         </div>
     </section>
 </div>
+
+{% if cart is not empty %}
+<div class="modal fade cart-remove-modal" id="cartRemoveModal" tabindex="-1" aria-labelledby="cartRemoveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-body p-4 p-md-5 text-center">
+                <div class="cart-remove-modal__icon mx-auto mb-4" aria-hidden="true">
+                    <i class="far fa-trash-alt"></i>
+                </div>
+                <h2 class="modal-title h4 font-weight-semibold mb-2" id="cartRemoveModalLabel">Retirer ce document ?</h2>
+                <p class="text-muted mb-1">Vous êtes sur le point de retirer</p>
+                <p class="cart-remove-modal__product mb-4" id="cartRemoveProductTitle"></p>
+                <p class="small text-muted mb-0">Cette action est réversible : vous pourrez l’ajouter à nouveau depuis le catalogue.</p>
+            </div>
+            <div class="modal-footer border-0 px-4 px-md-5 pb-4 pb-md-5 pt-0 justify-content-center gap-2 flex-column flex-sm-row">
+                <button type="button" class="btn btn-light btn-lg w-100 w-sm-auto px-4" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger btn-lg w-100 w-sm-auto px-4" id="cartRemoveConfirm">
+                    <i class="far fa-trash-alt me-2" aria-hidden="true"></i>Retirer du panier
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('cartRemoveModal');
+    if (!modal) {
+        return;
+    }
+
+    const titleEl = document.getElementById('cartRemoveProductTitle');
+    const confirmBtn = document.getElementById('cartRemoveConfirm');
+    let pendingForm = null;
+
+    modal.addEventListener('show.bs.modal', function (event) {
+        const trigger = event.relatedTarget;
+        if (!trigger) {
+            return;
+        }
+
+        pendingForm = document.getElementById(trigger.getAttribute('data-remove-form'));
+        titleEl.textContent = trigger.getAttribute('data-product-title') || '';
+    });
+
+    modal.addEventListener('hidden.bs.modal', function () {
+        pendingForm = null;
+    });
+
+    confirmBtn.addEventListener('click', function () {
+        if (pendingForm) {
+            pendingForm.submit();
+        }
+    });
+});
+</script>
+{% endif %}
 {% endblock %}

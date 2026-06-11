@@ -20,16 +20,16 @@ class PageController extends AbstractController
     private function getProductCatalog(): array
     {
         return [
-            1 => ['title' => 'Acte de naissance', 'description' => 'Traduction officielle pour démarches administratives, études ou visas.', 'image' => 'img/logos/logo-1.png'],
-            2 => ['title' => 'Certificat de mariage', 'description' => 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image' => 'img/logos/logo-2.png'],
-            3 => ['title' => 'Acte de décès', 'description' => 'Traduction conforme pour succession, héritage et formalités officielles.', 'image' => 'img/logos/logo-3.png'],
-            4 => ['title' => 'Diplôme universitaire', 'description' => 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image' => 'img/logos/logo-4.png'],
-            5 => ['title' => 'Relevé de notes', 'description' => 'Document académique traduit avec rigueur et précision.', 'image' => 'img/logos/logo-5.png'],
-            6 => ['title' => 'Contrat de travail', 'description' => 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image' => 'img/logos/logo-6.png'],
-            7 => ['title' => 'Statuts de société', 'description' => 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image' => 'img/projects/project-home-1.jpg'],
-            8 => ['title' => 'Procès-verbal judiciaire', 'description' => 'Traduction officielle pour procédures légales et contentieux.', 'image' => 'img/projects/project-home-2.jpg'],
-            9 => ['title' => 'Attestation de résidence', 'description' => 'Document administratif traduit pour établissement, visa ou résidences.', 'image' => 'img/projects/project-home-3.jpg'],
-            10 => ['title' => 'Fiche de salaire', 'description' => 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image' => 'img/clients/client-1.jpg'],
+            1 => ['title' => 'Acte de naissance', 'description' => 'Traduction officielle pour démarches administratives, études ou visas.', 'image' => 'img/logos/logo-1.png', 'price' => 4500],
+            2 => ['title' => 'Certificat de mariage', 'description' => 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image' => 'img/logos/logo-2.png', 'price' => 4200],
+            3 => ['title' => 'Acte de décès', 'description' => 'Traduction conforme pour succession, héritage et formalités officielles.', 'image' => 'img/logos/logo-3.png', 'price' => 4300],
+            4 => ['title' => 'Diplôme universitaire', 'description' => 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image' => 'img/logos/logo-4.png', 'price' => 4700],
+            5 => ['title' => 'Relevé de notes', 'description' => 'Document académique traduit avec rigueur et précision.', 'image' => 'img/logos/logo-5.png', 'price' => 3900],
+            6 => ['title' => 'Contrat de travail', 'description' => 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image' => 'img/logos/logo-6.png', 'price' => 5200],
+            7 => ['title' => 'Statuts de société', 'description' => 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image' => 'img/projects/project-home-1.jpg', 'price' => 6500],
+            8 => ['title' => 'Procès-verbal judiciaire', 'description' => 'Traduction officielle pour procédures légales et contentieux.', 'image' => 'img/projects/project-home-2.jpg', 'price' => 7000],
+            9 => ['title' => 'Attestation de résidence', 'description' => 'Document administratif traduit pour établissement, visa ou résidences.', 'image' => 'img/projects/project-home-3.jpg', 'price' => 3800],
+            10 => ['title' => 'Fiche de salaire', 'description' => 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image' => 'img/clients/client-1.jpg', 'price' => 3500],
         ];
     }
 
@@ -92,6 +92,49 @@ class PageController extends AbstractController
 
         $session->set('cart', $cart);
         $this->addFlash('success', 'Le document a été ajouté au panier.');
+
+        return $this->redirectToRoute('panier');
+    }
+
+    #[Route('/panier/modifier/{id}', name: 'panier_modifier', methods: ['POST'])]
+    public function modifierQuantitePanier(int $id, Request $request): Response
+    {
+        if (!isset($this->getProductCatalog()[$id])) {
+            throw $this->createNotFoundException('Produit non trouvé.');
+        }
+
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        if (!isset($cart[$id])) {
+            $this->addFlash('error', 'Ce document n’est pas dans votre panier.');
+
+            return $this->redirectToRoute('panier');
+        }
+
+        $quantity = max(1, min(99, (int) $request->request->get('quantity', 1)));
+        $cart[$id]['quantity'] = $quantity;
+        $session->set('cart', $cart);
+        $this->addFlash('success', 'Quantité mise à jour.');
+
+        return $this->redirectToRoute('panier');
+    }
+
+    #[Route('/panier/supprimer/{id}', name: 'panier_supprimer', methods: ['POST'])]
+    public function supprimerDuPanier(int $id, Request $request): Response
+    {
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        if (!isset($cart[$id])) {
+            $this->addFlash('error', 'Ce document n’est pas dans votre panier.');
+
+            return $this->redirectToRoute('panier');
+        }
+
+        unset($cart[$id]);
+        $session->set('cart', $cart);
+        $this->addFlash('success', 'Le document a été retiré du panier.');
 
         return $this->redirectToRoute('panier');
     }
