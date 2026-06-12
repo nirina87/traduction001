@@ -106,7 +106,7 @@ class CheckoutController extends AbstractController
     {
         $user = $this->getUser();
         if (!$user instanceof User) {
-            return $this->redirectToRoute('app_user_login');
+            return $this->redirectToRoute('app_user_login', ['_target_path' => $this->generateUrl('commande')]);
         }
 
         $cart = $request->getSession()->get('cart', []);
