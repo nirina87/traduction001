@@ -10,6 +10,7 @@ use App\Service\StripeCheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,7 +48,7 @@ class CheckoutController extends AbstractController
     }
 
     #[Route('/inscription', name: 'app_register')]
-    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    public function register(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, Security $security): Response
     {
         if ($request->isMethod('POST')) {
             $email = trim((string) $request->request->get('email', ''));
@@ -81,9 +82,16 @@ class CheckoutController extends AbstractController
             $em->persist($user);
             $em->flush();
 
+            $security->login($user, null, 'main');
+
             $this->addFlash('success', 'Votre compte a été créé. Vous pouvez maintenant finaliser votre commande.');
 
-            return $this->redirectToRoute('app_user_login');
+            $targetPath = (string) ($request->request->get('_target_path') ?? $request->query->get('_target_path', ''));
+            if ('' !== $targetPath && str_starts_with($targetPath, '/') && !str_starts_with($targetPath, '//')) {
+                return $this->redirect($targetPath);
+            }
+
+            return $this->redirectToRoute('accueil');
         }
 
         return $this->render('security/register.html.twig');
