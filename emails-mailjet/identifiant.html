@@ -13,15 +13,15 @@
     - Nom de l'expéditeur  : Traductions Légales
     - Objet                : Vos accès à votre espace client — Traductions Légales
     - Texte de prévisualisation : Votre compte est prêt. Retrouvez ci-dessous vos identifiants pour vous connecter et suivre vos commandes.
+    - Important            : version texte = ne pas autogénérer (risque d'erreur "string not closed" sur les href).
+    - Syntaxe variables    : {{var:nom_variable:""}} (comme les autres templates Mailjet du compte)
 
     Variables Mailjet à déclarer dans le modèle :
     - email               : Adresse email du client (identifiant de connexion)
     - mot_de_passe        : Mot de passe provisoire du compte
-    - lien_connexion      : URL absolue vers la page de connexion
-    - lien_accueil        : URL absolue vers le site
-    - lien_contact        : URL absolue vers la page contact
 
-    Syntaxe variables : {{var:nom_variable:""}} (comme les autres templates Mailjet du compte)
+    Liens (URL fixes, pas de variables dans href) :
+    - Contact : https://traduction-legale.fr/contact
 
     Logo (URL fixe) : https://www.traduction-legale.fr/logo-tl.png
 
@@ -191,25 +191,9 @@
                                 </tr>
                             </table>
 
-                            <!-- Boutons CTA -->
-                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 8px;">
-                                <tr>
-                                    <td align="center" style="padding-bottom: 12px;">
-                                        <a href="{{var:lien_connexion:""}}" class="cta-button" style="display: inline-block; background-color: #0b2047; color: #fefefe; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 8px; mso-padding-alt: 0;">
-                                            <!--[if mso]><i style="letter-spacing: 32px; mso-font-width: -100%; mso-text-raise: 24pt;">&nbsp;</i><![endif]-->
-                                            <span style="mso-text-raise: 12pt;">Accéder à mon espace client</span>
-                                            <!--[if mso]><i style="letter-spacing: 32px; mso-font-width: -100%;">&nbsp;</i><![endif]-->
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td align="center">
-                                        <a href="{{var:lien_accueil:""}}" style="display: inline-block; color: #0b2047; font-size: 14px; font-weight: 600; text-decoration: none;">
-                                            Découvrir le site &rarr;
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
+                            <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #3d3d3d; text-align: center;">
+                                Rendez-vous sur <strong style="color: #0b2047;">traduction-legale.fr</strong> pour vous connecter à votre espace client avec les identifiants ci-dessus.
+                            </p>
                         </td>
                     </tr>
 
@@ -242,7 +226,7 @@
                                 Vous n'êtes pas à l'origine de cette demande ? Contactez-nous immédiatement.
                             </p>
                             <p style="margin: 0 0 20px 0; font-size: 14px; text-align: center;">
-                                <a href="{{var:lien_contact:""}}" style="color: #0b2047; font-weight: 600; text-decoration: none;">Contactez-nous</a>
+                                <a href="https://traduction-legale.fr/contact" style="color: #0b2047; font-weight: 600; text-decoration: none;">Contactez-nous</a>
                                 &nbsp;&middot;&nbsp;
                                 <a href="mailto:contact@traduction-legale.fr" style="color: #0b2047; font-weight: 600; text-decoration: none;">contact@traduction-legale.fr</a>
                             </p>

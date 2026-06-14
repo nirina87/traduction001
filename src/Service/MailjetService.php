@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Order;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Entity\User;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MailjetService
@@ -13,7 +13,6 @@ class MailjetService
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly string $apiKey,
         private readonly string $apiSecret,
         private readonly int $confirmationTemplateId,
@@ -41,21 +40,20 @@ class MailjetService
         );
     }
 
-    public function sendAccountCredentialsEmail(Order $order, string $plainPassword): void
+    public function sendAccountCredentialsEmail(User $user, string $plainPassword): void
     {
         if ('' === $this->apiKey || '' === $this->apiSecret || '' === $plainPassword) {
             return;
         }
 
-        $user = $order->getUser();
-        if (!$user?->getEmail()) {
+        if (!$user->getEmail()) {
             return;
         }
 
         $this->sendTemplateEmail(
             (string) $user->getEmail(),
             $this->credentialsTemplateId,
-            $this->sanitizeTemplateVariables($this->buildAccountCredentialsVariables($order, $plainPassword)),
+            $this->sanitizeTemplateVariables($this->buildAccountCredentialsVariables($user, $plainPassword)),
         );
     }
 
@@ -132,14 +130,11 @@ class MailjetService
     /**
      * @return array<string, string>
      */
-    private function buildAccountCredentialsVariables(Order $order, string $plainPassword): array
+    private function buildAccountCredentialsVariables(User $user, string $plainPassword): array
     {
         return [
-            'email' => (string) $order->getUser()?->getEmail(),
+            'email' => (string) $user->getEmail(),
             'mot_de_passe' => $plainPassword,
-            'lien_connexion' => $this->urlGenerator->generate('app_user_login', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            'lien_accueil' => $this->urlGenerator->generate('accueil', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            'lien_contact' => $this->urlGenerator->generate('contact', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ];
     }
 

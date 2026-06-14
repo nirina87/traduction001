@@ -84,7 +84,7 @@ class CheckoutController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            $request->getSession()->set('mailjet_pending_password', $plainPassword);
+            $this->mailjetService->sendAccountCredentialsEmail($user, $plainPassword);
 
             $security->login($user, null, 'main');
 
@@ -246,12 +246,6 @@ class CheckoutController extends AbstractController
 
             if (!$wasAlreadyPaid) {
                 $this->mailjetService->sendOrderConfirmationEmail($order);
-
-                $plainPassword = (string) $request->getSession()->get('mailjet_pending_password', '');
-                if ('' !== $plainPassword) {
-                    $this->mailjetService->sendAccountCredentialsEmail($order, $plainPassword);
-                    $request->getSession()->remove('mailjet_pending_password');
-                }
             }
         }
 
