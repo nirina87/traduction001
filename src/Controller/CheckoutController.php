@@ -6,6 +6,7 @@ use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
 use App\Repository\ProductRepository;
+use App\Service\MailjetService;
 use App\Service\StripeCheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\ApiErrorException;
@@ -23,6 +24,7 @@ class CheckoutController extends AbstractController
     public function __construct(
         private readonly StripeCheckoutService $stripeCheckoutService,
         private readonly ProductRepository $productRepository,
+        private readonly MailjetService $mailjetService,
     ) {
     }
 
@@ -81,6 +83,8 @@ class CheckoutController extends AbstractController
 
             $em->persist($user);
             $em->flush();
+
+            $request->getSession()->set('mailjet_pending_password', $plainPassword);
 
             $security->login($user, null, 'main');
 
@@ -235,9 +239,20 @@ class CheckoutController extends AbstractController
         }
 
         if ($order && 'paid' === $stripeSession->payment_status) {
+            $wasAlreadyPaid = 'paid' === $order->getStatus();
             $order->setStatus('paid');
             $em->flush();
             $request->getSession()->remove('cart');
+
+            if (!$wasAlreadyPaid) {
+                $this->mailjetService->sendOrderConfirmationEmail($order);
+
+                $plainPassword = (string) $request->getSession()->get('mailjet_pending_password', '');
+                if ('' !== $plainPassword) {
+                    $this->mailjetService->sendAccountCredentialsEmail($order, $plainPassword);
+                    $request->getSession()->remove('mailjet_pending_password');
+                }
+            }
         }
 
         return $this->render('page/commande_succes.html.twig', [
