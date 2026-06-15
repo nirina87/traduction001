@@ -30,6 +30,9 @@
                                     <input type="password" class="form-control" id="inputPassword" name="_password" required />
                                 </div>
                                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                                {% if app.request.query.get('_target_path') %}
+                                    <input type="hidden" name="_target_path" value="{{ app.request.query.get('_target_path') }}">
+                                {% endif %}
                                 <div class="col-12 d-flex flex-wrap gap-2">
                                     <button type="submit" class="btn btn-primary">Se connecter</button>
                                     <a href="{{ path('app_register') }}" class="btn btn-outline-primary">Créer un compte</a>

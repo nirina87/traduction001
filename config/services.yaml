@@ -5,6 +5,15 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
 
+    env(STRIPE_SECRET_KEY): ''
+    env(STRIPE_PUBLIC_KEY): ''
+    env(MAILJET_API_KEY): ''
+    env(MAILJET_API_SECRET): ''
+    env(MAILJET_TEMPLATE_CONFIRMATION_ID): '8108111'
+    env(MAILJET_TEMPLATE_CREDENTIALS_ID): '8108287'
+    env(MAILJET_SENDER_EMAIL): 'contact@traduction-legale.fr'
+    env(MAILJET_SUPPORT_EMAIL): 'support@traduction-legale.fr'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -19,6 +28,19 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\StripeCheckoutService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+
+    App\Service\MailjetService:
+        arguments:
+            $apiKey: '%env(MAILJET_API_KEY)%'
+            $apiSecret: '%env(MAILJET_API_SECRET)%'
+            $confirmationTemplateId: '%env(int:MAILJET_TEMPLATE_CONFIRMATION_ID)%'
+            $credentialsTemplateId: '%env(int:MAILJET_TEMPLATE_CREDENTIALS_ID)%'
+            $senderEmail: '%env(MAILJET_SENDER_EMAIL)%'
+            $supportEmail: '%env(MAILJET_SUPPORT_EMAIL)%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -15,4 +15,12 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+
+    /**
+     * @return Product[]
+     */
+    public function findCatalogProducts(): array
+    {
+        return $this->findBy(['status' => 'Actif'], ['id' => 'ASC']);
+    }
 }

@@ -62,8 +62,8 @@
                         {% else %}
                             <h2 class="text-5 font-weight-semibold mb-2">Connexion ou inscription</h2>
                             <p class="text-muted mb-4">Pour commander et payer, vous devez d’abord vous connecter ou créer un compte client.</p>
-                            <a href="{{ path('app_user_login') }}" class="btn btn-primary btn-lg w-100 mb-3">Connexion client</a>
-                            <a href="{{ path('app_register') }}" class="btn btn-outline-primary btn-lg w-100">Créer un compte</a>
+                            <a href="{{ path('app_user_login', {_target_path: path('commande')}) }}" class="btn btn-primary btn-lg w-100 mb-3">Connexion client</a>
+                            <a href="{{ path('app_register', {_target_path: path('commande')}) }}" class="btn btn-outline-primary btn-lg w-100">Créer un compte</a>
                         {% endif %}
                     </div>
                 </div>

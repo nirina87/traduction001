@@ -20,7 +20,12 @@
                             <div class="alert alert-success">{{ message }}</div>
                         {% endfor %}
 
+                        {% set target_path = app.request.request.get('_target_path') ?? app.request.query.get('_target_path') %}
+
                         <form method="post" class="row g-3">
+                            {% if target_path %}
+                                <input type="hidden" name="_target_path" value="{{ target_path }}">
+                            {% endif %}
                             <div class="col-md-6">
                                 <label class="form-label">Prénom</label>
                                 <input type="text" name="firstName" class="form-control" required />
@@ -47,7 +52,7 @@
                             </div>
                             <div class="col-12 d-flex flex-wrap gap-2">
                                 <button type="submit" class="btn btn-primary">Créer mon compte</button>
-                                <a href="{{ path('app_user_login') }}" class="btn btn-outline-primary">Déjà inscrit ? Se connecter</a>
+                                <a href="{{ path('app_user_login', target_path ? {_target_path: target_path} : {}) }}" class="btn btn-outline-primary">Déjà inscrit ? Se connecter</a>
                             </div>
                         </form>
                     </div>

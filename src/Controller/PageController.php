@@ -9,6 +9,7 @@ use App\Entity\Contact;
 use App\Entity\Document;
 use App\Entity\TranslationRate;
 use App\Repository\DocumentRepository;
+use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +22,32 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PageController extends AbstractController
 {
+    public function __construct(
+        private readonly ProductRepository $productRepository,
+    ) {
+    }
+
+    private function getProductCatalog(): array
+    {
+        $catalog = [];
+
+        foreach ($this->productRepository->findCatalogProducts() as $product) {
+            $id = $product->getId();
+            if (null === $id) {
+                continue;
+            }
+
+            $catalog[$id] = [
+                'title' => $product->getTitle(),
+                'description' => $product->getDescription(),
+                'image' => $product->getImage(),
+                'price' => $product->getPrice(),
+            ];
+        }
+
+        return $catalog;
+    }
+
     #[Route('/', name: 'accueil')]
     public function accueil(EntityManagerInterface $em): Response
     {
@@ -141,6 +168,49 @@ class PageController extends AbstractController
 
         $session->set('cart', $cart);
         $this->addFlash('success', 'Le document a été ajouté au panier.');
+
+        return $this->redirectToRoute('panier');
+    }
+
+    #[Route('/panier/modifier/{id}', name: 'panier_modifier', methods: ['POST'])]
+    public function modifierQuantitePanier(int $id, Request $request): Response
+    {
+        if (!isset($this->getProductCatalog()[$id])) {
+            throw $this->createNotFoundException('Produit non trouvé.');
+        }
+
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        if (!isset($cart[$id])) {
+            $this->addFlash('error', 'Ce document n’est pas dans votre panier.');
+
+            return $this->redirectToRoute('panier');
+        }
+
+        $quantity = max(1, min(99, (int) $request->request->get('quantity', 1)));
+        $cart[$id]['quantity'] = $quantity;
+        $session->set('cart', $cart);
+        $this->addFlash('success', 'Quantité mise à jour.');
+
+        return $this->redirectToRoute('panier');
+    }
+
+    #[Route('/panier/supprimer/{id}', name: 'panier_supprimer', methods: ['POST'])]
+    public function supprimerDuPanier(int $id, Request $request): Response
+    {
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        if (!isset($cart[$id])) {
+            $this->addFlash('error', 'Ce document n’est pas dans votre panier.');
+
+            return $this->redirectToRoute('panier');
+        }
+
+        unset($cart[$id]);
+        $session->set('cart', $cart);
+        $this->addFlash('success', 'Le document a été retiré du panier.');
 
         return $this->redirectToRoute('panier');
     }

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Vos accès — Traductions Légales</title>
+    <!--
+
+    ID Template : 8108287
+
+    Paramètres Mailjet du modèle :
+    - Nom de l'expéditeur  : Traductions Légales
+    - Objet                : Vos accès à votre espace client — Traductions Légales
+    - Texte de prévisualisation : Votre compte est prêt. Retrouvez ci-dessous vos identifiants pour vous connecter et suivre vos commandes.
+    - Important            : version texte = ne pas autogénérer (risque d'erreur "string not closed" sur les href).
+    - Syntaxe variables    : {{var:nom_variable:""}} (comme les autres templates Mailjet du compte)
+
+    Variables Mailjet à déclarer dans le modèle :
+    - email               : Adresse email du client (identifiant de connexion)
+    - mot_de_passe        : Mot de passe provisoire du compte
+
+    Liens (URL fixes, pas de variables dans href) :
+    - Contact : https://traduction-legale.fr/contact
+
+    Logo (URL fixe) : https://www.traduction-legale.fr/logo-tl.png
+
+    Palette de couleurs :
+    - #0b2047 : primaire (bandeaux, accents, titres, CTA)
+    - #3d3d3d : texte et contenu secondaire
+    - #fefefe : fonds et texte sur fond sombre
+    -->
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style type="text/css">
+        body, table, td, p, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
+        @media only screen and (max-width: 620px) {
+            .wrapper { width: 100% !important; }
+            .mobile-padding { padding-left: 24px !important; padding-right: 24px !important; }
+            .mobile-stack { display: block !important; width: 100% !important; }
+            .mobile-center { text-align: center !important; }
+            .cta-button { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #fefefe; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    <!-- Préheader -->
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #fefefe;">
+        Votre compte est prêt. Retrouvez ci-dessous vos identifiants pour vous connecter et suivre vos commandes.
+    </div>
+
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe;">
+        <tr>
+            <td align="center" style="padding: 32px 16px;">
+
+                <table role="presentation" class="wrapper" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; width: 100%;">
+
+                    <!-- En-tête -->
+                    <tr>
+                        <td style="background-color: #fefefe; border-radius: 16px 16px 0 0; padding: 32px 40px 24px 40px;" class="mobile-padding">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" class="mobile-center">
+                                        <img src="https://www.traduction-legale.fr/logo-tl.png" alt="Traductions Légales" width="160" style="display: block; max-width: 160px; height: auto; margin: 0 auto;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Bandeau -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #0b2047 0%, #081a38 100%); background-color: #0b2047; padding: 36px 40px;" class="mobile-padding">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center">
+                                        <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(254,254,254,0.85);">
+                                            Espace client
+                                        </p>
+                                        <h1 style="margin: 0 0 12px 0; font-size: 28px; line-height: 1.3; font-weight: 700; color: #fefefe;">
+                                            Votre compte est prêt !
+                                        </h1>
+                                        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: rgba(254,254,254,0.92);">
+                                            Bienvenue chez Traductions Légales. Vous pouvez dès à présent accéder à votre espace personnel pour suivre vos commandes.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Corps du message -->
+                    <tr>
+                        <td style="background-color: #fefefe; padding: 40px;" class="mobile-padding">
+                            <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #3d3d3d;">
+                                Bonjour,
+                            </p>
+                            <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #3d3d3d;">
+                                Nous sommes ravis de vous accueillir sur <strong style="color: #0b2047;">Traductions Légales</strong>. Votre espace client a été créé avec succès : vous y retrouverez l'historique de vos commandes, vos factures et le suivi de vos traductions.
+                            </p>
+                            <p style="margin: 0 0 28px 0; font-size: 16px; line-height: 1.7; color: #3d3d3d;">
+                                Voici vos identifiants de connexion. Nous vous recommandons de les conserver en lieu sûr et de modifier votre mot de passe dès votre première connexion.
+                            </p>
+
+                            <!-- Encadré identifiants -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe; border: 1px solid rgba(11,32,71,0.12); border-radius: 12px; margin-bottom: 24px;">
+                                <tr>
+                                    <td style="padding: 24px;">
+                                        <p style="margin: 0 0 16px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
+                                            Vos identifiants de connexion
+                                        </p>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; width: 40%;">Adresse email</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; word-break: break-all;">{{var:email:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Mot de passe</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; font-family: 'Courier New', Courier, monospace; letter-spacing: 0.5px; border-top: 1px solid rgba(61,61,61,0.15);">{{var:mot_de_passe:""}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Avertissement sécurité -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: rgba(11,32,71,0.04); border-left: 4px solid #0b2047; border-radius: 0 8px 8px 0; margin-bottom: 32px;">
+                                <tr>
+                                    <td style="padding: 16px 20px;">
+                                        <p style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #0b2047;">&#128274; Conseil de sécurité</p>
+                                        <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #3d3d3d;">
+                                            Ne communiquez jamais vos identifiants à un tiers. Pour votre sécurité, pensez à personnaliser votre mot de passe après votre première connexion.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Que faire avec votre compte -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 32px;">
+                                <tr>
+                                    <td style="padding: 0 0 16px 0;">
+                                        <p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
+                                            Que faire avec votre compte ?
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 12px 0; vertical-align: top; width: 36px;">
+                                                    <span style="display: inline-block; width: 28px; height: 28px; background-color: #0b2047; color: #fefefe; font-size: 14px; font-weight: 700; line-height: 28px; text-align: center; border-radius: 50%;">1</span>
+                                                </td>
+                                                <td style="padding: 12px 0 12px 8px; vertical-align: top;">
+                                                    <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">Connectez-vous à votre espace</p>
+                                                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">Utilisez l'adresse email et le mot de passe ci-dessus pour accéder à votre compte en toute sécurité.</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 12px 0; vertical-align: top; width: 36px;">
+                                                    <span style="display: inline-block; width: 28px; height: 28px; background-color: #0b2047; color: #fefefe; font-size: 14px; font-weight: 700; line-height: 28px; text-align: center; border-radius: 50%;">2</span>
+                                                </td>
+                                                <td style="padding: 12px 0 12px 8px; vertical-align: top;">
+                                                    <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">Suivez vos commandes</p>
+                                                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">Consultez l'état d'avancement de vos traductions et retrouvez l'historique de vos demandes.</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 12px 0; vertical-align: top; width: 36px;">
+                                                    <span style="display: inline-block; width: 28px; height: 28px; background-color: #0b2047; color: #fefefe; font-size: 14px; font-weight: 700; line-height: 28px; text-align: center; border-radius: 50%;">3</span>
+                                                </td>
+                                                <td style="padding: 12px 0 12px 8px; vertical-align: top;">
+                                                    <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">Téléchargez vos factures</p>
+                                                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">Accédez à vos documents et factures à tout moment, depuis votre espace personnel.</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #3d3d3d; text-align: center;">
+                                Rendez-vous sur <strong style="color: #0b2047;">traduction-legale.fr</strong> pour vous connecter à votre espace client avec les identifiants ci-dessus.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Bandeau confiance -->
+                    <tr>
+                        <td style="background-color: #0b2047; padding: 28px 40px;" class="mobile-padding">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" class="mobile-stack mobile-center" style="padding: 8px; width: 33%; vertical-align: top;">
+                                        <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #fefefe;">15+</p>
+                                        <p style="margin: 0; font-size: 12px; color: rgba(254,254,254,0.75);">années d'expérience</p>
+                                    </td>
+                                    <td align="center" class="mobile-stack mobile-center" style="padding: 8px; width: 33%; vertical-align: top;">
+                                        <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #fefefe;">100%</p>
+                                        <p style="margin: 0; font-size: 12px; color: rgba(254,254,254,0.75);">traducteurs assermentés</p>
+                                    </td>
+                                    <td align="center" class="mobile-stack mobile-center" style="padding: 8px; width: 33%; vertical-align: top;">
+                                        <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #fefefe;">&#128274;</p>
+                                        <p style="margin: 0; font-size: 12px; color: rgba(254,254,254,0.75);">confidentialité garantie</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Pied de page -->
+                    <tr>
+                        <td style="background-color: #fefefe; border-radius: 0 0 16px 16px; padding: 32px 40px;" class="mobile-padding">
+                            <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.6; color: #3d3d3d; text-align: center;">
+                                Vous n'êtes pas à l'origine de cette demande ? Contactez-nous immédiatement.
+                            </p>
+                            <p style="margin: 0 0 20px 0; font-size: 14px; text-align: center;">
+                                <a href="https://traduction-legale.fr/contact" style="color: #0b2047; font-weight: 600; text-decoration: none;">Contactez-nous</a>
+                                &nbsp;&middot;&nbsp;
+                                <a href="mailto:contact@traduction-legale.fr" style="color: #0b2047; font-weight: 600; text-decoration: none;">contact@traduction-legale.fr</a>
+                            </p>
+                            <p style="margin: 0; font-size: 12px; line-height: 1.6; color: rgba(61,61,61,0.65); text-align: center;">
+                                Traductions Légales &mdash; Traduction assermentée en France<br>
+                                Paris, France<br>
+                                &copy; 2026 Traductions Légales. Tous droits réservés.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

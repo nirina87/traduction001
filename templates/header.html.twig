@@ -23,7 +23,10 @@
 										</div>
 									</div>
 									<div class="d-flex">
-										<div class="d-none d-xxl-flex custom-header-1-extra-links">
+										<div class="d-none d-xxl-flex custom-header-1-extra-links gap-2">
+											<a class="btn btn-outline-light font-weight-semibold text-3 py-3 border-radius p-relative bottom-1" href="{{ path('panier') }}">
+												<span class="px-3 d-block ws-nowrap"><i class="fas fa-shopping-cart me-2" aria-hidden="true"></i>Mon panier{% set cartCount = app.session.get('cart', [])|length %}{% if cartCount > 0 %} <span class="badge bg-light text-dark ms-1">{{ cartCount }}</span>{% endif %}</span>
+											</a>
 											<a class="btn btn-primary font-weight-semibold text-3 py-3 border-radius p-relative bottom-1 custom-header-1-btn-1 btn-gradient" href="/produits">
                                             <span class="px-4 d-block ws-nowrap"> Traiter les documents</span></a>
 										</div>
