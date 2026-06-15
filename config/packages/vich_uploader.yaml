@@ -11,3 +11,8 @@ vich_uploader:
             uri_prefix: /uploads/documents
             upload_destination: '%kernel.project_dir%/public/uploads/documents'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+        client_documents:
+            uri_prefix: /uploads/client-documents
+            upload_destination: '%kernel.project_dir%/public/uploads/client-documents'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

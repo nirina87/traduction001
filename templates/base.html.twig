@@ -10,7 +10,7 @@
         <meta name="keywords" content="extermination, nuisibles, Paris, Île-de-France, punaises, rats, souris, blattes, cafards, frelons, guêpes">
         <meta name="author" content="Hygiène Services">
         <link rel="shortcut icon" type="image/x-icon" href="{{ asset('logo-eh-3d.png') }}">
-        
+        <meta name="robots" content="noindex, nofollow" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
@@ -50,13 +50,13 @@
 
             {% include 'footer.html.twig' %}
 
-            <script src="{{ asset('js/function.js') }}"></script>
-            <!-- Vendor -->
-            <script src="{{ asset('vendor/plugins/js/plugins.min.js') }}"></script>
-            <script src="{{ asset('js/theme.js') }}"></script>
-            <script src="{{ asset('js/views/view.landing.js') }}"></script>
-            <script src="{{ asset('js/custom.js') }}"></script>
-            <script src="{{ asset('js/theme.init.js') }}"></script>
         </div>
+         <!-- Vendor -->
+        <script src="{{ asset('vendor/plugins/js/plugins.min.js') }}"></script>
+        <script src="{{ asset('js/theme.js') }}"></script>
+        <script src="{{ asset('vendor/circle-flip-slideshow/js/jquery.flipshow.min.js') }}"></script>
+        <script src="{{ asset('js/views/view.home.js') }}"></script>
+        <script src="{{ asset('js/custom.js') }}"></script>
+        <script src="{{ asset('js/theme.init.js') }}"></script>
     </body>
 </html>

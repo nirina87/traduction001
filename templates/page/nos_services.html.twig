@@ -13,7 +13,7 @@
 							<div class="col-md-4 order-1 order-md-2 align-self-center">
 								<ul class="breadcrumb d-block text-md-end">
 									<li><a href="#">Home</a></li>
-									<li class="active">Pages</li>
+									<li class="active">Services</li>
 								</ul>
 							</div>
 						</div>
@@ -34,80 +34,40 @@
 
 					<div class="row">
 						<div class="col-lg-10">
-							<div class="overflow-hidden">
+							<div class="overflow-hidden mb-5">
 								<p class="lead mb-0 appear-animation" data-appear-animation="maskUp" data-appear-animation-delay="200">
 									Nous traduisons vos actes, diplômes, contrats et pièces administratives avec précision, confidentialité et respect des exigences officielles.
 								</p>
 							</div>
 						</div>
-						<div class="col-lg-2 appear-animation" data-appear-animation="fadeIn" data-appear-animation-delay="500">
-							<a href="{{ path('contact') }}" class="btn btn-modern btn-dark mt-1">Demander un devis</a>
-						</div>
 					</div>
 
-					<div class="row">
-						<div class="col py-3">
-							<hr class="solid mt-5 mb-2">
-						</div>
-					</div>
+					
 
 					<div class="row">
 						<div class="featured-boxes featured-boxes-style-2">
-							<div class="row">
-								<div class="col-md-6 col-lg-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="700">
-									<div class="featured-box featured-box-effect-4">
-										<div class="box-content">
-											<i class="icon-featured icon-screen-tablet icons text-color-primary bg-color-grey"></i>
-										<h4 class="font-weight-bold">Traduction assermentée</h4>
-										<p class="px-3">Documents officiels, actes d’état civil, diplômes et certificats traduits avec conformité et rigueur.</p>
-										</div>
+							<div class="row g-4">
+								{% for product in products %}
+									<div class="col-md-6 col-xl-4">
+										<article class="border rounded-4 p-3 h-100 bg-light-5 shadow-sm">
+											<img src="{{ asset('uploads/' ~ product.image) }}"
+													class="img-fluid rounded-3 mb-3"
+													alt="{{ product.name }}"
+													style="height: 110px; object-fit: cover; width: 100%;" />
+
+											<h4 class="text-4 mb-2">{{ product.name }}</h4>
+
+											<p class="mb-3 text-muted">{{ product.basePrice }} €</p>
+
+											<div class="">
+												<a href="{{ path('produit_detail', {'id': product.id}) }}"
+												class="btn btn-outline-primary full-width">
+													Voir le détail
+												</a>
+											</div>
+										</article>
 									</div>
-								</div>
-								<div class="col-md-6 col-lg-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="900">
-									<div class="featured-box featured-box-effect-4">
-										<div class="box-content">
-											<i class="icon-featured icon-layers icons text-color-light bg-color-primary"></i>
-										<h4 class="font-weight-bold">Traductions juridiques</h4>
-										<p class="px-3">Contrats, statuts, accords et dossiers juridiques traduits avec un vocabulaire adapté au contexte légal.</p>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6 col-lg-4 appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="1100">
-									<div class="featured-box featured-box-effect-4">
-										<div class="box-content">
-											<i class="icon-featured icon-magnifier icons text-color-primary bg-color-grey"></i>
-										<h4 class="font-weight-bold">Traductions administratives</h4>
-										<p class="px-3">Pièces administratives, formulaires, attestations et courriers destinés aux administrations et organismes.</p>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6 col-lg-4 appear-animation" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="1500">
-									<div class="featured-box featured-box-effect-4">
-										<div class="box-content">
-											<i class="icon-featured icon-screen-desktop icons text-color-light bg-color-primary"></i>
-										<h4 class="font-weight-bold">Traductions techniques</h4>
-										<p class="px-3">Documents techniques, notices, fiches de données et supports professionnels adaptés à votre secteur.</p>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6 col-lg-4 appear-animation" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="1300">
-									<div class="featured-box featured-box-effect-4">
-										<div class="box-content">
-											<i class="icon-featured icon-doc icons text-color-primary bg-color-grey"></i>
-										<h4 class="font-weight-bold">Correction et relecture</h4>
-										<p class="px-3">Relecture, vérification de terminologie et mise en forme pour garantir la qualité finale de vos traductions.</p>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-6 col-lg-4 appear-animation" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="1100">
-									<div class="featured-box featured-box-effect-4">
-										<div class="box-content">
-											<i class="icon-featured icon-menu icons text-color-light bg-color-primary"></i>
-										<h4 class="font-weight-bold">Livraison rapide</h4>
-										<p class="px-3">Un service réactif pour vos urgences de traduction, avec un suivi clair et des délais maîtrisés.</p>
-										</div>
-									</div>
-								</div>
+								{% endfor %}
 							</div>
 						</div>
 					</div>

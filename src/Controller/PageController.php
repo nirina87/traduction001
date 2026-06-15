@@ -4,70 +4,119 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\ClientDocument;
 use App\Entity\Contact;
+use App\Entity\Document;
+use App\Entity\TranslationRate;
+use App\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Mime\Address;
 
 class PageController extends AbstractController
 {
-    private function getProductCatalog(): array
-    {
-        return [
-            1 => ['title' => 'Acte de naissance', 'description' => 'Traduction officielle pour démarches administratives, études ou visas.', 'image' => 'img/logos/logo-1.png'],
-            2 => ['title' => 'Certificat de mariage', 'description' => 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image' => 'img/logos/logo-2.png'],
-            3 => ['title' => 'Acte de décès', 'description' => 'Traduction conforme pour succession, héritage et formalités officielles.', 'image' => 'img/logos/logo-3.png'],
-            4 => ['title' => 'Diplôme universitaire', 'description' => 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image' => 'img/logos/logo-4.png'],
-            5 => ['title' => 'Relevé de notes', 'description' => 'Document académique traduit avec rigueur et précision.', 'image' => 'img/logos/logo-5.png'],
-            6 => ['title' => 'Contrat de travail', 'description' => 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image' => 'img/logos/logo-6.png'],
-            7 => ['title' => 'Statuts de société', 'description' => 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image' => 'img/projects/project-home-1.jpg'],
-            8 => ['title' => 'Procès-verbal judiciaire', 'description' => 'Traduction officielle pour procédures légales et contentieux.', 'image' => 'img/projects/project-home-2.jpg'],
-            9 => ['title' => 'Attestation de résidence', 'description' => 'Document administratif traduit pour établissement, visa ou résidences.', 'image' => 'img/projects/project-home-3.jpg'],
-            10 => ['title' => 'Fiche de salaire', 'description' => 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image' => 'img/clients/client-1.jpg'],
-        ];
-    }
-
     #[Route('/', name: 'accueil')]
     public function accueil(EntityManagerInterface $em): Response
     {
-        $articles = $em->getRepository(Article::class)->findBy(
+        $documents = $em->getRepository(Document::class)->findBy(
             [],
-            ['creation' => 'DESC']
+            ['id' => 'DESC']
         );    
-        return $this->render('page/accueil.html.twig', ['articles' => $articles]);
+        return $this->render('page/accueil.html.twig', ['products' => $documents]);
     }
 
-    #[Route('/produit/{id}', name: 'produit_detail')]
-    public function produitDetail(int $id): Response
+   #[Route('/produit/{id}', name: 'produit_detail')]
+    public function produitDetail(
+        int $id,
+        DocumentRepository $productRepository
+    ): Response
     {
-        $products = $this->getProductCatalog();
+        $product = $productRepository->find($id);
 
-        if (!isset($products[$id])) {
+        if (!$product) {
             throw $this->createNotFoundException('Produit non trouvé.');
         }
 
         return $this->render('page/produit_detail.html.twig', [
-            'product' => $products[$id],
-            'productId' => $id,
-            'products' => $products,
+            'product' => $product,
         ]);
     }
 
     #[Route('/panier', name: 'panier')]
-    public function panier(Request $request): Response
+    public function panier(Request $request, EntityManagerInterface $em): Response
     {
         $cart = $request->getSession()->get('cart', []);
+        $documents = $em->getRepository(Document::class)->findBy(['active' => true]);
+        $translationRates = $em->getRepository(TranslationRate::class)->findBy(['active' => true]);
 
         return $this->render('page/panier.html.twig', [
             'cart' => $cart,
-            'products' => $this->getProductCatalog(),
+            'documents' => $documents,
+            'translationRates' => $translationRates,
         ]);
+    }
+
+    #[Route('/panier/ajouter-document', name: 'panier_ajouter_document', methods: ['POST'])]
+    public function ajouterDocumentClient(Request $request, EntityManagerInterface $em): Response
+    {
+        $uploadedFile = $request->files->get('documentFile');
+        if (!$uploadedFile || !$uploadedFile->isValid()) {
+            $this->addFlash('error', 'Veuillez joindre un document à traduire.');
+
+            return $this->redirectToRoute('panier');
+        }
+
+        $documentId = (int) $request->request->get('documentId', 0);
+        $language = (string) $request->request->get('language', '');
+
+        $document = $documentId ? $em->getRepository(Document::class)->find($documentId) : null;
+        $rate = null;
+
+        if ($document) {
+            $rate = $em->getRepository(TranslationRate::class)->findOneBy([
+                'document' => $document,
+                'language' => $language,
+                'active' => true,
+            ]);
+        }
+
+        $price = $rate ? $rate->getPrice() : ($document ? $document->getBasePrice() : 0);
+
+        $clientDocument = new ClientDocument();
+        $clientDocument->setTitle($uploadedFile->getClientOriginalName());
+        $clientDocument->setDocument($document);
+        $clientDocument->setLanguage($language ?: null);
+        $clientDocument->setPrice($price);
+        $clientDocument->setFile($uploadedFile);
+        $clientDocument->setUser($this->getUser());
+
+        $em->persist($clientDocument);
+        $em->flush();
+
+        $session = $request->getSession();
+        $cart = $session->get('cart', []);
+
+        $cart[] = [
+            'type' => 'client_upload',
+            'id' => $clientDocument->getId(),
+            'title' => $clientDocument->getTitle(),
+            'description' => $document ? $document->getName() . ' — traduction ' . ($language ?: 'langue libre') : 'Document envoyé par le client',
+            'price' => $price,
+            'language' => $language,
+            'quantity' => 1,
+            'uploaded' => true,
+        ];
+
+        $session->set('cart', $cart);
+        $this->addFlash('success', 'Votre document a bien été ajouté au panier pour traduction.');
+
+        return $this->redirectToRoute('panier');
     }
 
     #[Route('/panier/ajouter/{id}', name: 'panier_ajouter', methods: ['POST'])]
@@ -99,11 +148,11 @@ class PageController extends AbstractController
     #[Route('/services', name: 'services')]
     public function Services(EntityManagerInterface $em): Response
     {
-        $articles = $em->getRepository(Article::class)->findBy(
+        $documents = $em->getRepository(Document::class)->findBy(
             [],
-            ['creation' => 'DESC']
-        ); 
-        return $this->render('page/nos_services.html.twig', ['articles' => $articles]);
+            ['id' => 'DESC']
+        );    
+        return $this->render('page/nos_services.html.twig', ['products' => $documents]);
     }
 
     #[Route('/qui-sommes-nous', name: 'qui_sommes_nous')]

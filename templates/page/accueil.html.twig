@@ -9,7 +9,7 @@
             <div class="owl-stage">
 
                 <!-- Carousel Slide 1 -->
-                <div class="owl-item position-relative" style="background-image: url(img/slides/slide-bg-performance.jpg); background-color: #2E3136; background-size: cover; background-position: center;">
+                <div class="owl-item position-relative" style="background-image: url(slider.jpg); background-color: #2E3136; background-size: cover; background-position: center;">
                     <div class="container position-relative z-index-1 h-100">
                         <div class="d-flex flex-column align-items-center justify-content-center h-100">
                             <h3 class="position-relative text-color-light text-5 line-height-5 font-weight-medium px-4 mb-2 appear-animation" data-appear-animation="fadeInDownShorter" data-plugin-options="{'minWindowWidth': 0}">
@@ -28,7 +28,7 @@
                 </div>
 
                 <!-- Carousel Slide 2 -->
-                <div class="owl-item position-relative overlay overlay-show overlay-op-8 lazyload" data-bg-src="img/slides/slide-bg-2.jpg" style="background-size: cover; background-position: center;">
+                <div class="owl-item position-relative" style="background-image: url(slider.jpg); background-color: #2E3136; background-size: cover; background-position: center;">
                     <div class="container position-relative z-index-3 h-100">
                         <div class="row justify-content-center align-items-center h-100">
                             <div class="col-lg-6">
@@ -59,7 +59,6 @@
         <div class="owl-dots mb-5">
             <button role="button" class="owl-dot active"><span></span></button>
             <button role="button" class="owl-dot"><span></span></button>
-            <button role="button" class="owl-dot"><span></span></button>
         </div>
     </div>
 
@@ -69,14 +68,13 @@
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <p>
-                        Accélèrez vos projets juridiques avec le leader en <span class="highlighted-word">Traductions Assermentées</span>
+                        Accélèrez vos projets juridiques en <span class="highlighted-word">Traductions Assermentées</span>
                         <span>Découvrez nos services professionnels et nos avantages.</span>
                     </p>
                 </div>
                 <div class="col-lg-4">
                     <div class="get-started text-start text-lg-end">
                         <a href="/#products" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3">Commencez Maintenant</a>
-                        <div class="learn-more">ou <a href="{{ path('services') }}">En savoir plus.</a></div>
                     </div>
                 </div>
             </div>
@@ -94,8 +92,9 @@
                         <b class="is-visible">fiable</b>
                         <b>professionnelle</b>
                         <b>certifiée</b>
+                        <b>reconnue internationalement</b>
                     </span>
-                    <span> et reconnue internationalement.</span>
+                    
                 </h1>
                 <p class="lead appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="300">
                     Nos traducteurs assermentés offrent des services de qualité exceptionnelle pour tous vos documents juridiques, officiels et commerciaux. Avec une expérience de plus de 15 ans, nous garantissons l'exactitude et la conformité de chaque traduction.
@@ -132,11 +131,9 @@
                     </div>
                     <div class="col-lg-4 ms-lg-auto">
                         <div class="project-image">
-                            <div id="fcSlideshow" class="fc-slideshow">
+                            <div>
                                 <ul class="fc-slides">
-                                    <li><a href="/services" aria-label=""><img class="img-fluid" src="img/projects/project-home-1.jpg" alt="" /></a></li>
-                                    <li><a href="/services" aria-label=""><img class="img-fluid" src="img/projects/project-home-2.jpg" alt="" /></a></li>
-                                    <li><a href="/services" aria-label=""><img class="img-fluid" src="img/projects/project-home-3.jpg" alt="" /></a></li>
+                                    <a href="/services" aria-label=""><img class="img-fluid" src="{{ asset('traductions-legales.jpg') }}" alt="" /></a>
                                 </ul>
                             </div>
                             <strong class="our-work">Nos Traductions</strong>
@@ -155,7 +152,46 @@
                 <hr class="my-5">
             </div>
         </div>
+        
+        <div class="row mb-5" id="products">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4 px-4">
+                    <div class="row align-items-end justify-content-between mb-4">
+                        <div class="col-lg-12 mb-5">
+                            <p class="text-uppercase text-color-primary font-weight-semibold mb-2 text-center"> Vos documents à traduire </p>
+                            <h2 class="font-weight-normal text-7 mb-2 text-center">Liste des <strong class="font-weight-extra-bold">Les documents </strong> à traduire</h2>
+                        </div>
+                    </div>
+                    <div class="row g-4">
+                       {% for product in products|slice(0, 6) %}
+                        <div class="col-md-6 col-xl-4">
+                            <article class="border rounded-4 p-3 h-100 bg-light-5 shadow-sm">
+                                <img src="{{ asset('uploads/' ~ product.image) }}"
+                                        class="img-fluid rounded-3 mb-3"
+                                        alt="{{ product.name }}"
+                                        style="height: 110px; object-fit: cover; width: 100%;" />
 
+                                <h4 class="text-4 mb-2">{{ product.name }}</h4>
+
+                                <p class="mb-3 text-muted">{{ product.basePrice }} €</p>
+
+                                <div class="">
+                                    <a href="{{ path('produit_detail', {'id': product.id}) }}"
+                                    class="btn btn-outline-primary full-width">
+                                        Voir le détail
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <a href="/services" style="max-width:350px; margin:auto" class="my-5 btn font-weight-semibold text-3 py-3 border-radius p-relative bottom-1 custom-header-1-btn-1 btn-gradient"> 
+                        Voir tous les documents 
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!--services -->
         <div class="row pb-3">
             <div class="col-lg-8">
                 <h2 class="font-weight-normal text-7">Nos <strong class="font-weight-extra-bold">Services</strong></h2>
@@ -291,54 +327,7 @@
                 </div>
             </div>
         </div>
-
-        <hr class="solid my-5">
-
-        <div class="row mb-5" id="products">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
-                    <div class="row align-items-end justify-content-between mb-4">
-                        <div class="col-lg-8">
-                            <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Traduction assermentée</p>
-                            <h2 class="font-weight-normal text-7 mb-2">Liste des <strong class="font-weight-extra-bold">10 documents</strong> à traduire</h2>
-                            <p class="text-3 mb-0">Nous traduisons des documents officiels, juridiques et administratifs avec certification conforme aux exigences françaises et internationales.</p>
-                        </div>
-                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                            <span class="badge bg-primary text-light px-3 py-2 rounded-pill">Rapide · Fiable · Certifié</span>
-                        </div>
-                    </div>
-                    <div class="row g-4">
-                        {% set products = [
-                            {'id': 1, 'title': 'Acte de naissance', 'description': 'Traduction officielle pour démarches administratives, études ou visas.', 'image': 'img/logos/logo-1.png'},
-                            {'id': 2, 'title': 'Certificat de mariage', 'description': 'Version traduite certifiée pour les procédures civiles et migratoires.', 'image': 'img/logos/logo-2.png'},
-                            {'id': 3, 'title': 'Acte de décès', 'description': 'Traduction conforme pour succession, héritage et formalités officielles.', 'image': 'img/logos/logo-3.png'},
-                            {'id': 4, 'title': 'Diplôme universitaire', 'description': 'Traduction assermentée pour admission, recrutement ou équivalence.', 'image': 'img/logos/logo-4.png'},
-                            {'id': 5, 'title': 'Relevé de notes', 'description': 'Document académique traduit avec rigueur et précision.', 'image': 'img/logos/logo-5.png'},
-                            {'id': 6, 'title': 'Contrat de travail', 'description': 'Traduction juridique pour expatriation, embauche ou démarches consulaires.', 'image': 'img/logos/logo-6.png'},
-                            {'id': 7, 'title': 'Statuts de société', 'description': 'Version traduite pour création d’entreprise, immatriculation ou audit.', 'image': 'img/projects/project-home-1.jpg'},
-                            {'id': 8, 'title': 'Procès-verbal judiciaire', 'description': 'Traduction officielle pour procédures légales et contentieux.', 'image': 'img/projects/project-home-2.jpg'},
-                            {'id': 9, 'title': 'Attestation de résidence', 'description': 'Document administratif traduit pour établissement, visa ou résidences.', 'image': 'img/projects/project-home-3.jpg'},
-                            {'id': 10, 'title': 'Fiche de salaire', 'description': 'Traduction utile pour banque, immigration, emploi ou démarches fiscales.', 'image': 'img/clients/client-1.jpg'}
-                        ] %}
-                        {% for product in products %}
-                        <div class="col-md-6 col-xl-4">
-                            <article class="border rounded-4 p-3 h-100 bg-light-5 shadow-sm">
-                                <img src="{{ asset(product.image) }}" class="img-fluid rounded-3 mb-3" alt="{{ product.title }}" style="height: 110px; object-fit: cover; width: 100%;" />
-                                <h4 class="text-4 mb-2">{{ product.id }}. {{ product.title }}</h4>
-                                <p class="mb-3 text-muted">{{ product.description }}</p>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <a href="{{ path('produit_detail', {'id': product.id}) }}" class="btn btn-outline-primary btn-sm">Voir le détail</a>
-                                    <form method="post" action="{{ path('panier_ajouter', {'id': product.id}) }}" class="d-inline-block">
-                                        <button type="submit" class="btn btn-primary btn-sm">Ajouter au panier</button>
-                                    </form>
-                                </div>
-                            </article>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!--fin services-->
 
         <div class="row text-center pt-4">
             <div class="col">
