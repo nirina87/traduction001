@@ -20,3 +20,6 @@
 /phpunit.xml
 /public/php/newsletter-subscribe.php
 ###< symfony/phpunit-bridge ###
+
+
+/public/uploads/client-documents/
