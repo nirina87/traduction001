@@ -117,10 +117,14 @@ class MailjetService
      */
     private function buildOrderConfirmationVariables(Order $order): array
     {
+        $totalEuros = (float) $order->getTotal();
+
         return [
             'email' => (string) $order->getUser()?->getEmail(),
             'numero_commande' => (string) ($order->getInvoiceNumber() ?? ''),
-            'montant_total' => (string) $order->getTotal(),
+            // Le template Mailjet divise ce montant par 100 : on envoie donc des centimes.
+            'montant_total' => (string) (int) round($totalEuros * 100),
+            'montant_total_affiche' => $this->formatMoney($totalEuros),
             'devise' => (string) $order->getCurrency(),
             'date_commande' => $this->formatOrderDate($order),
             'details_commande' => $this->buildOrderItemsHtml($order),
@@ -161,19 +165,24 @@ class MailjetService
         $rows = [];
 
         foreach ($order->getItems() as $item) {
+            $lineTotal = $this->formatMoney((float) $item->getTotal());
             $rows[] = sprintf(
                 '<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%%"><tr>'
                 . '<td style="padding: 12px 0; border-bottom: 1px solid rgba(61,61,61,0.15);">'
                 . '<p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">%s</p>'
-                . '<p style="margin: 0; font-size: 13px; color: #3d3d3d;">Quantité : %d &middot; %s %s</p>'
+                . '<p style="margin: 0; font-size: 13px; color: #3d3d3d;">Quantité : %d &middot; %s</p>'
                 . '</td></tr></table>',
                 htmlspecialchars((string) $item->getTitle(), ENT_QUOTES, 'UTF-8'),
                 $item->getQuantity(),
-                htmlspecialchars($item->getTotal(), ENT_QUOTES, 'UTF-8'),
-                htmlspecialchars($order->getCurrency(), ENT_QUOTES, 'UTF-8'),
+                htmlspecialchars($lineTotal, ENT_QUOTES, 'UTF-8'),
             );
         }
 
         return implode('', $rows);
+    }
+
+    private function formatMoney(float $amount): string
+    {
+        return number_format($amount, 2, ',', ' ') . ' €';
     }
 }
