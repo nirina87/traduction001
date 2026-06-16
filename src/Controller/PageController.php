@@ -9,6 +9,7 @@ use App\Entity\Contact;
 use App\Entity\Document;
 use App\Entity\TranslationRate;
 use App\Repository\DocumentRepository;
+use App\Support\TargetLanguages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,65 +42,69 @@ class PageController extends AbstractController
         return $this->render('page/accueil.html.twig', ['products' => $documents]);
     }
 
-   #[Route('/produit/{id}', name: 'produit_detail')]
+    #[Route('/produit/{id}', name: 'produit_detail')]
     public function produitDetail(
         int $id,
-        DocumentRepository $productRepository
-    ): Response
-    {
+        DocumentRepository $productRepository,
+        EntityManagerInterface $em,
+    ): Response {
         $product = $productRepository->find($id);
 
-        if (!$product) {
+        if (!$product || !$product->isActive()) {
             throw $this->createNotFoundException('Produit non trouvé.');
+        }
+
+        $translationRates = [];
+        foreach ($em->getRepository(TranslationRate::class)->findBy([
+            'document' => $product,
+            'active' => true,
+        ]) as $rate) {
+            $translationRates[$rate->getLanguage()] = $rate->getPrice();
         }
 
         return $this->render('page/produit_detail.html.twig', [
             'product' => $product,
+            'languages' => TargetLanguages::all(),
+            'translationRates' => $translationRates,
+            'basePriceCents' => ((int) ($product->getBasePrice() ?? 0)) * 100,
         ]);
     }
 
     #[Route('/panier', name: 'panier')]
-    public function panier(Request $request, EntityManagerInterface $em): Response
+    public function panier(Request $request): Response
     {
         $cart = $request->getSession()->get('cart', []);
-        $documents = $em->getRepository(Document::class)->findBy(['active' => true]);
-        $translationRates = $em->getRepository(TranslationRate::class)->findBy(['active' => true]);
 
         return $this->render('page/panier.html.twig', [
             'cart' => $cart,
-            'documents' => $documents,
-            'translationRates' => $translationRates,
             'products' => $this->getDocumentCatalog(),
         ]);
     }
 
-    #[Route('/panier/ajouter-document', name: 'panier_ajouter_document', methods: ['POST'])]
-    public function ajouterDocumentClient(
+    #[Route('/panier/ajouter/{id}', name: 'panier_ajouter', methods: ['POST'])]
+    public function ajouterAuPanier(
+        int $id,
         Request $request,
         EntityManagerInterface $em,
         DocumentRepository $documentRepository,
     ): Response {
+        $document = $documentRepository->find($id);
+        if (!$document || !$document->isActive()) {
+            throw $this->createNotFoundException('Document non trouvé.');
+        }
+
         $uploadedFile = $request->files->get('documentFile');
         if (!$uploadedFile || !$uploadedFile->isValid()) {
             $this->addFlash('error', 'Veuillez joindre un document à traduire.');
 
-            return $this->redirectToRoute('panier');
+            return $this->redirectToRoute('produit_detail', ['id' => $id]);
         }
 
-        $documentId = (int) $request->request->get('documentId', 0);
         $language = trim((string) $request->request->get('language', ''));
+        if ('' === $language) {
+            $this->addFlash('error', 'Veuillez sélectionner une langue cible.');
 
-        if ($documentId <= 0 || '' === $language) {
-            $this->addFlash('error', 'Veuillez sélectionner un type de document et une langue cible.');
-
-            return $this->redirectToRoute('panier');
-        }
-
-        $document = $documentRepository->find($documentId);
-        if (!$document || !$document->isActive()) {
-            $this->addFlash('error', 'Le document sélectionné est introuvable ou indisponible.');
-
-            return $this->redirectToRoute('panier');
+            return $this->redirectToRoute('produit_detail', ['id' => $id]);
         }
 
         $rate = $em->getRepository(TranslationRate::class)->findOneBy([
@@ -142,33 +147,6 @@ class PageController extends AbstractController
         return $this->redirectToRoute('panier');
     }
 
-    #[Route('/panier/ajouter/{id}', name: 'panier_ajouter', methods: ['POST'])]
-    public function ajouterAuPanier(int $id, Request $request): Response
-    {
-        $catalog = $this->getDocumentCatalog();
-
-        if (!isset($catalog[$id])) {
-            throw $this->createNotFoundException('Document non trouvé.');
-        }
-
-        $session = $request->getSession();
-        $cart = $session->get('cart', []);
-
-        $cart[$id] = [
-            'id' => $id,
-            'title' => $catalog[$id]['title'],
-            'description' => $catalog[$id]['description'],
-            'image' => $catalog[$id]['image'],
-            'price' => $catalog[$id]['price'],
-            'quantity' => ($cart[$id]['quantity'] ?? 0) + 1,
-        ];
-
-        $session->set('cart', $cart);
-        $this->addFlash('success', 'Le document a été ajouté au panier.');
-
-        return $this->redirectToRoute('panier');
-    }
-
     #[Route('/panier/modifier/{id}', name: 'panier_modifier', methods: ['POST'])]
     public function modifierQuantitePanier(int $id, Request $request): Response
     {
@@ -196,16 +174,24 @@ class PageController extends AbstractController
     #[Route('/panier/supprimer/{id}', name: 'panier_supprimer', methods: ['POST'])]
     public function supprimerDuPanier(int $id, Request $request): Response
     {
+        return $this->retirerLignePanier((string) $id, $request);
+    }
+
+    #[Route('/panier/retirer/{cartKey}', name: 'panier_retirer', methods: ['POST'])]
+    public function retirerLignePanier(string $cartKey, Request $request): Response
+    {
         $session = $request->getSession();
         $cart = $session->get('cart', []);
 
-        if (!isset($cart[$id])) {
+        $key = ctype_digit($cartKey) ? (int) $cartKey : $cartKey;
+
+        if (!\array_key_exists($key, $cart)) {
             $this->addFlash('error', 'Ce document n’est pas dans votre panier.');
 
             return $this->redirectToRoute('panier');
         }
 
-        unset($cart[$id]);
+        unset($cart[$key]);
         $session->set('cart', $cart);
         $this->addFlash('success', 'Le document a été retiré du panier.');
 
