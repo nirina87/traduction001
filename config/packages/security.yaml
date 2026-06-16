@@ -1,20 +1,17 @@
 security:
-    # Hash des mots de passe
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-            algorithm: plaintext
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
 
-    # Fournisseur utilisateurs
     providers:
         users_in_memory:
             memory:
                 users:
                     tradmin:
-                        password: 'H0166GTZ25'
+                        password: '$2y$13$/oHheupBeGtTERArKaEmreaL0B.1BhlSRJNugK39UV/u8Bgv8Hkg2'
                         roles: [ROLE_ADMIN]
 
                     ravimin:
-                        password: '78eede1Best1'
+                        password: '$2y$13$IsuV3tdrk32JnOwP23DR0.WVdyC5jL9wN3uETjFdbKisLHwtwe6t6'
                         roles: [ROLE_USER]
         app_user_provider:
             entity:
@@ -25,21 +22,32 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        main:
+        admin:
+            pattern: ^/(admin|login)
             lazy: true
             provider: users_in_memory
-
             form_login:
                 login_path: app_login
                 check_path: app_login
                 default_target_path: /admin
-
             logout:
                 path: app_logout
                 target: app_login
 
-    # Contrôle accès
+        main:
+            pattern: ^/
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: app_user_login
+                check_path: app_user_login
+                default_target_path: /
+            logout:
+                path: app_logout
+                target: /
+
     access_control:
+        - { path: ^/connexion, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
 
@@ -47,4 +55,7 @@ when@test:
     security:
         password_hashers:
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: plaintext
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10
