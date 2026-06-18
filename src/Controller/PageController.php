@@ -8,7 +8,9 @@ use App\Entity\ClientDocument;
 use App\Entity\Contact;
 use App\Entity\Document;
 use App\Entity\TranslationRate;
+use App\Entity\User;
 use App\Repository\DocumentRepository;
+use App\Service\ClientDocumentOwnerService;
 use App\Support\TargetLanguages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +26,7 @@ class PageController extends AbstractController
 {
     public function __construct(
         private readonly DocumentRepository $documentRepository,
+        private readonly ClientDocumentOwnerService $clientDocumentOwnerService,
     ) {
     }
 
@@ -121,10 +124,16 @@ class PageController extends AbstractController
         $clientDocument->setLanguage($language);
         $clientDocument->setPrice($priceCents);
         $clientDocument->setFile($uploadedFile);
-        $clientDocument->setUser($this->getUser());
+
+        $user = $this->getUser();
+        if ($user instanceof User) {
+            $clientDocument->setUser($user);
+        }
 
         $em->persist($clientDocument);
         $em->flush();
+
+        $this->clientDocumentOwnerService->registerPendingDocumentId((int) $clientDocument->getId());
 
         $session = $request->getSession();
         $cart = $session->get('cart', []);

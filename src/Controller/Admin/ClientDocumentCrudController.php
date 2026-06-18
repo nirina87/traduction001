@@ -42,7 +42,9 @@ class ClientDocumentCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
-            AssociationField::new('user')->setLabel('Client'),
+            AssociationField::new('user')
+                ->setLabel('Client')
+                ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—'),
             AssociationField::new('document')->setLabel('Document à traduire'),
             TextField::new('title')->setLabel('Nom du fichier envoyé'),
             TextField::new('language')->setLabel('Langue demandée'),

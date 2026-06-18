@@ -6,6 +6,7 @@ use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
 use App\Repository\DocumentRepository;
+use App\Service\ClientDocumentOwnerService;
 use App\Service\MailjetService;
 use App\Service\StripeCheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,6 +26,7 @@ class CheckoutController extends AbstractController
         private readonly StripeCheckoutService $stripeCheckoutService,
         private readonly DocumentRepository $documentRepository,
         private readonly MailjetService $mailjetService,
+        private readonly ClientDocumentOwnerService $clientDocumentOwnerService,
     ) {
     }
 
@@ -104,6 +106,8 @@ class CheckoutController extends AbstractController
         if (!$user instanceof User) {
             return $this->redirectToRoute('app_user_login', ['_target_path' => $this->generateUrl('commande')]);
         }
+
+        $this->clientDocumentOwnerService->attachPendingDocumentsToUser($user);
 
         $cart = $request->getSession()->get('cart', []);
         if (!$cart) {
