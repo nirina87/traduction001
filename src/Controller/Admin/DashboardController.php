@@ -11,7 +11,11 @@ use App\Entity\Product;
 use App\Entity\TranslationRate;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
-use Doctrine\DBAL\Connection;
+use App\Repository\ClientDocumentRepository;
+use App\Repository\ContactRepository;
+use App\Repository\DocumentRepository;
+use App\Repository\ProductRepository;
+use App\Repository\TranslationRateRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -25,31 +29,35 @@ class DashboardController extends AbstractDashboardController
     public function __construct(
         private CategoryRepository $categoryRepository,
         private ArticleRepository $articleRepository,
-        private Connection $conn,
+        private ContactRepository $contactRepository,
+        private ClientDocumentRepository $clientDocumentRepository,
+        private DocumentRepository $documentRepository,
+        private TranslationRateRepository $translationRateRepository,
+        private ProductRepository $productRepository,
     ) {}
 
     public function index(): Response
     {
-        // Récupérer les statistiques
-        $totalCategories = count($this->categoryRepository->findAll());
-        $totalArticles = count($this->articleRepository->findAll());
-        $recentArticles = $this->articleRepository->findBy([], ['creation' => 'DESC'], 5);
-        // Récupérer contacts
-        $contacts = $this->conn->fetchAllAssociative(
-            'SELECT * FROM contact ORDER BY created_at DESC LIMIT 5'
-        );
         return $this->render('admin/dashboard.html.twig', [
-            'totalCategories' => $totalCategories,
-            'totalArticles' => $totalArticles,
-            'recentArticles' => $recentArticles,
-            'contacts' => $contacts,
+            'stats' => [
+                'categories' => $this->categoryRepository->count([]),
+                'articles' => $this->articleRepository->count([]),
+                'contacts' => $this->contactRepository->count([]),
+                'clientDocuments' => $this->clientDocumentRepository->count([]),
+                'documents' => $this->documentRepository->count([]),
+                'translationRates' => $this->translationRateRepository->count([]),
+                'products' => $this->productRepository->count([]),
+            ],
+            'recentContacts' => $this->contactRepository->findBy([], ['createdAt' => 'DESC'], 5),
+            'recentClientDocuments' => $this->clientDocumentRepository->findBy([], ['uploadedAt' => 'DESC'], 5),
+            'recentArticles' => $this->articleRepository->findBy([], ['creation' => 'DESC'], 5),
         ]);
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('ADMIN - Admin');
+            ->setTitle('<span class="ea-brand-title">Traduction</span><span class="ea-brand-subtitle">Administration</span>');
     }
 
     public function configureAssets(): Assets
@@ -60,15 +68,37 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('🏠 Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('📁 Catégories', 'fas fa-folder', Category::class);
-        yield MenuItem::linkToCrud('📄 Articles', 'fas fa-file', Article::class);
-        yield MenuItem::linkToCrud('📚 Documents à traduire', 'fas fa-file-alt', Document::class);
-        yield MenuItem::linkToCrud('🌍 Tarifs par langue', 'fas fa-language', TranslationRate::class);
-        yield MenuItem::linkToCrud('📎 Documents clients', 'fas fa-cloud-upload-alt', ClientDocument::class);
-        yield MenuItem::linkToCrud('📄 Documents administratifs', 'fas fa-file-alt', Product::class);
-        yield MenuItem::linkToCrud('📩 Contacts', 'fas fa-envelope', Contact::class);
+        yield MenuItem::linkToDashboard('Tableau de bord', 'fas fa-gauge-high');
+
+        yield MenuItem::section('Contenu du site');
+        yield MenuItem::linkToCrud('Catégories', 'fas fa-folder', Category::class);
+        yield MenuItem::linkToCrud('Articles', 'fas fa-newspaper', Article::class);
+
+        yield MenuItem::section('Traduction');
+        yield MenuItem::linkToCrud('Documents à traduire', 'fas fa-file-lines', Document::class);
+        yield MenuItem::linkToCrud('Tarifs par langue', 'fas fa-language', TranslationRate::class);
+
+        $clientDocsItem = MenuItem::linkToCrud('Documents clients', 'fas fa-cloud-arrow-up', ClientDocument::class);
+        $clientDocsCount = $this->clientDocumentRepository->count([]);
+        if ($clientDocsCount > 0) {
+            $clientDocsItem->setBadge($clientDocsCount, 'primary');
+        }
+        yield $clientDocsItem;
+
+        yield MenuItem::section('Relations clients');
+        $contactsItem = MenuItem::linkToCrud('Messages reçus', 'fas fa-inbox', Contact::class);
+        $contactsCount = $this->contactRepository->count([]);
+        if ($contactsCount > 0) {
+            $contactsItem->setBadge($contactsCount, 'danger');
+        }
+        yield $contactsItem;
+
+        yield MenuItem::section('Administration');
+        yield MenuItem::linkToCrud('Documents administratifs', 'fas fa-file-contract', Product::class);
+
+        yield MenuItem::section();
+        yield MenuItem::linkToRoute('Voir le site public', 'fas fa-arrow-up-right-from-square', 'accueil')
+            ->setLinkTarget('_blank')
+            ->setCssClass('ea-menu-external-link');
     }
-
-
 }
