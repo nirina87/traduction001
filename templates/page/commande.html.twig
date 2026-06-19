@@ -29,23 +29,31 @@
                             <p class="mb-0 text-muted">Votre panier est vide.</p>
                         {% else %}
                             {% set total = 0 %}
-                            {% for item in cart %}
-                                {% set product = products[item.id] %}
-                                {% set total = total + (product.price * item.quantity) %}
+                            {% for cartKey, item in cart %}
+                                {% if item.type is defined and item.type == 'client_upload' %}
+                                    {% set linePrice = item.price %}
+                                    {% set lineQty = item.quantity|default(1) %}
+                                {% else %}
+                                    {% set product = products[item.id] %}
+                                    {% set linePrice = product.price %}
+                                    {% set lineQty = item.quantity %}
+                                {% endif %}
+                                {% set lineTotal = linePrice * lineQty %}
+                                {% set total = total + lineTotal %}
                                 <div class="border rounded-4 p-3 mb-3">
                                     <div class="d-flex justify-content-between align-items-start gap-3">
                                         <div>
                                             <h3 class="text-4 mb-1">{{ item.title }}</h3>
-                                            <p class="mb-1 text-muted">{{ item.description }}</p>
-                                            <span class="badge bg-primary text-light">Qté : {{ item.quantity }}</span>
+                                            <div class="mb-1 text-muted">{{ item.description|raw }}</div>
+                                            <span class="badge bg-primary text-light">Qté : {{ lineQty }}</span>
                                         </div>
-                                        <strong>{{ (product.price * item.quantity) / 100 }} €</strong>
+                                        <strong>{{ (lineTotal / 100)|number_format(2, ',', ' ') }} €</strong>
                                     </div>
                                 </div>
                             {% endfor %}
                             <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
                                 <span class="text-4 font-weight-semibold">Total TTC</span>
-                                <strong class="text-5">{{ total / 100 }} €</strong>
+                                <strong class="text-5">{{ (total / 100)|number_format(2, ',', ' ') }} €</strong>
                             </div>
                         {% endif %}
                     </div>

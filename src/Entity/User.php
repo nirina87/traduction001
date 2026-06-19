@@ -95,6 +95,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
     }
 
+    public function __toString(): string
+    {
+        return (string) ($this->email ?? '');
+    }
+
     /**
      * @return Collection<int, Order>
      */

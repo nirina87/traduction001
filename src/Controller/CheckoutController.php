@@ -5,7 +5,8 @@ namespace App\Controller;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
-use App\Repository\ProductRepository;
+use App\Repository\DocumentRepository;
+use App\Service\ClientDocumentOwnerService;
 use App\Service\MailjetService;
 use App\Service\StripeCheckoutService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,30 +24,15 @@ class CheckoutController extends AbstractController
 {
     public function __construct(
         private readonly StripeCheckoutService $stripeCheckoutService,
-        private readonly ProductRepository $productRepository,
+        private readonly DocumentRepository $documentRepository,
         private readonly MailjetService $mailjetService,
+        private readonly ClientDocumentOwnerService $clientDocumentOwnerService,
     ) {
     }
 
-    private function getCatalog(): array
+    private function getDocumentCatalog(): array
     {
-        $catalog = [];
-
-        foreach ($this->productRepository->findCatalogProducts() as $product) {
-            $id = $product->getId();
-            if (null === $id) {
-                continue;
-            }
-
-            $catalog[$id] = [
-                'title' => $product->getTitle(),
-                'description' => $product->getDescription(),
-                'image' => $product->getImage(),
-                'price' => $product->getPrice(),
-            ];
-        }
-
-        return $catalog;
+        return $this->documentRepository->buildCatalog();
     }
 
     #[Route('/inscription', name: 'app_register')]
@@ -108,7 +94,7 @@ class CheckoutController extends AbstractController
 
         return $this->render('page/commande.html.twig', [
             'cart' => $cart,
-            'products' => $this->getCatalog(),
+            'products' => $this->getDocumentCatalog(),
             'user' => $this->getUser(),
         ]);
     }
@@ -121,6 +107,8 @@ class CheckoutController extends AbstractController
             return $this->redirectToRoute('app_user_login', ['_target_path' => $this->generateUrl('commande')]);
         }
 
+        $this->clientDocumentOwnerService->attachPendingDocumentsToUser($user);
+
         $cart = $request->getSession()->get('cart', []);
         if (!$cart) {
             $this->addFlash('error', 'Votre panier est vide.');
@@ -128,33 +116,54 @@ class CheckoutController extends AbstractController
             return $this->redirectToRoute('panier');
         }
 
-        $products = $this->getCatalog();
+        $catalog = $this->getDocumentCatalog();
         $lineItems = [];
         $total = 0;
 
         foreach ($cart as $item) {
-            $product = $products[$item['id']] ?? null;
-            if (!$product) {
+            if (($item['type'] ?? null) === 'client_upload') {
+                $unitPriceCents = (int) ($item['price'] ?? 0);
+                $quantity = (int) ($item['quantity'] ?? 1);
+                $total += $unitPriceCents * $quantity;
+
+                $lineItems[] = [
+                    'price_data' => [
+                        'currency' => 'eur',
+                        'product_data' => [
+                            'name' => $item['title'],
+                            'description' => substr(strip_tags((string) ($item['description'] ?? '')), 0, 200),
+                        ],
+                        'unit_amount' => $unitPriceCents,
+                    ],
+                    'quantity' => $quantity,
+                ];
+
+                continue;
+            }
+
+            $document = $catalog[$item['id']] ?? null;
+            if (!$document) {
                 continue;
             }
             $quantity = (int) ($item['quantity'] ?? 1);
-            $total += $product['price'] * $quantity;
+            $unitPriceCents = (int) $document['price'];
+            $total += $unitPriceCents * $quantity;
 
             $lineItems[] = [
                 'price_data' => [
                     'currency' => 'eur',
                     'product_data' => [
-                        'name' => $product['title'],
-                        'description' => substr($product['description'], 0, 200),
+                        'name' => $document['title'],
+                        'description' => substr(strip_tags((string) $document['description']), 0, 200),
                     ],
-                    'unit_amount' => $product['price'],
+                    'unit_amount' => $unitPriceCents,
                 ],
                 'quantity' => $quantity,
             ];
         }
 
         if (!$lineItems) {
-            $this->addFlash('error', 'Aucun produit valide n’est disponible pour le paiement.');
+            $this->addFlash('error', 'Aucun document valide n’est disponible pour le paiement.');
 
             return $this->redirectToRoute('panier');
         }
@@ -198,18 +207,37 @@ class CheckoutController extends AbstractController
         $order->setInvoiceNumber('FACT-' . date('Ymd') . '-' . random_int(1000, 9999));
 
         foreach ($cart as $item) {
-            $product = $products[$item['id']] ?? null;
-            if (!$product) {
+            if (($item['type'] ?? null) === 'client_upload') {
+                $quantity = (int) ($item['quantity'] ?? 1);
+                $unitPriceCents = (int) ($item['price'] ?? 0);
+                $unitPrice = (string) number_format($unitPriceCents / 100, 2, '.', '');
+                $lineTotal = (string) number_format(($unitPriceCents * $quantity) / 100, 2, '.', '');
+
+                $orderItem = new OrderItem();
+                $orderItem->setProductId((int) $item['id']);
+                $orderItem->setTitle((string) $item['title']);
+                $orderItem->setDescription(strip_tags((string) ($item['description'] ?? '')));
+                $orderItem->setQuantity($quantity);
+                $orderItem->setUnitPrice($unitPrice);
+                $orderItem->setTotal($lineTotal);
+                $order->addItem($orderItem);
+
+                continue;
+            }
+
+            $document = $catalog[$item['id']] ?? null;
+            if (!$document) {
                 continue;
             }
             $quantity = (int) ($item['quantity'] ?? 1);
-            $unitPrice = (string) number_format($product['price'] / 100, 2, '.', '');
-            $lineTotal = (string) number_format(($product['price'] * $quantity) / 100, 2, '.', '');
+            $unitPriceCents = (int) $document['price'];
+            $unitPrice = (string) number_format($unitPriceCents / 100, 2, '.', '');
+            $lineTotal = (string) number_format(($unitPriceCents * $quantity) / 100, 2, '.', '');
 
             $orderItem = new OrderItem();
             $orderItem->setProductId($item['id']);
-            $orderItem->setTitle($product['title']);
-            $orderItem->setDescription($product['description']);
+            $orderItem->setTitle($document['title']);
+            $orderItem->setDescription(strip_tags((string) $document['description']));
             $orderItem->setQuantity($quantity);
             $orderItem->setUnitPrice($unitPrice);
             $orderItem->setTotal($lineTotal);
@@ -240,6 +268,11 @@ class CheckoutController extends AbstractController
 
         if ($order && 'paid' === $stripeSession->payment_status) {
             $wasAlreadyPaid = 'paid' === $order->getStatus();
+
+            if (null !== $stripeSession->amount_total) {
+                $order->setTotal(number_format($stripeSession->amount_total / 100, 2, '.', ''));
+            }
+
             $order->setStatus('paid');
             $em->flush();
             $request->getSession()->remove('cart');

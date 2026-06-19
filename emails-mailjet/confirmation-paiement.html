@@ -21,7 +21,8 @@
     Variables Mailjet à déclarer dans le modèle :
     - email               : Adresse email du client
     - numero_commande     : Numéro de facture / commande (ex. FACT-20260612-1234)
-    - montant_total       : Montant payé (ex. 149.00)
+    - montant_total       : Montant payé en centimes (ex. 5600 pour 56,00 €) — le template Mailjet divise par 100
+    - montant_total_affiche : Montant déjà formaté (ex. 56,00 €), si le template n'applique pas de division
     - devise              : Devise (ex. EUR)
     - date_commande       : Date de la commande (ex. 12 juin 2026)
     - details_commande    : Bloc HTML des lignes de commande (généré côté serveur)
@@ -143,7 +144,7 @@
                                             </tr>
                                             <tr>
                                                 <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Montant payé</td>
-                                                <td style="padding: 8px 0; font-size: 18px; font-weight: 700; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:montant_total:""}} {{var:devise:""}}</td>
+                                                <td style="padding: 8px 0; font-size: 18px; font-weight: 700; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:montant_total_affiche:""}}</td>
                                             </tr>
                                         </table>
                                     </td>

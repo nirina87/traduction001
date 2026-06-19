@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class ClientDocumentCrudController extends AbstractCrudController
@@ -41,13 +42,21 @@ class ClientDocumentCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->onlyOnDetail(),
-            AssociationField::new('user')->setLabel('Client'),
+            AssociationField::new('user')
+                ->setLabel('Client')
+                ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—'),
             AssociationField::new('document')->setLabel('Document à traduire'),
             TextField::new('title')->setLabel('Nom du fichier envoyé'),
             TextField::new('language')->setLabel('Langue demandée'),
             IntegerField::new('price')->setLabel('Prix estimé (centimes)'),
             DateTimeField::new('uploadedAt')->setLabel('Date d’envoi')->hideOnForm(),
-            TextField::new('fileName')->setLabel('Nom de fichier')->onlyOnIndex(),
+            UrlField::new('fileUrl')
+                ->setLabel('Document')
+                ->onlyOnIndex()
+                ->formatValue(fn (?string $value, ClientDocument $entity) => $entity->getFileName() ?? '—'),
+            UrlField::new('fileUrl')
+                ->setLabel('Fichier envoyé')
+                ->onlyOnDetail(),
             TextField::new('file')->setFormType(VichFileType::class)->setLabel('Fichier envoyé')->hideOnIndex(),
         ];
     }

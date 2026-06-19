@@ -67,6 +67,15 @@ class ClientDocument
     public function getFile(): ?File { return $this->file; }
     public function setFile(?File $file = null): void { $this->file = $file; if (null !== $file) { $this->uploadedAt = new \DateTimeImmutable(); } }
 
+    public function getFileUrl(): ?string
+    {
+        if (null === $this->fileName || '' === $this->fileName) {
+            return null;
+        }
+
+        return '/uploads/client-documents/' . $this->fileName;
+    }
+
     public function __toString(): string
     {
         return $this->title ?? 'Document client';
