@@ -246,6 +246,12 @@ class PageController extends AbstractController
         return $this->render('page/contact.html.twig');
     }
 
+    #[Route('/modele', name: 'modele')]
+    public function modele(): Response
+    {
+        return $this->render('page/modele.html.twig');
+    }
+
     #[Route('/contact/ajax', name: 'contact_ajax', methods: ['POST'])]
     public function ajax(Request $request, EntityManagerInterface $em, MailerInterface $mailer): JsonResponse
     {
