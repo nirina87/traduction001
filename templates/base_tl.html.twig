@@ -5,7 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}Traduction Légale — Traducteur Assermenté{% endblock %}</title>
 <meta name="description" content="{% block meta_description %}Traducteur assermenté inscrit près de la Cour d'Appel. Traduction certifiée de vos actes officiels, diplômes, jugements et documents juridiques.{% endblock %}">
+{% block meta_keywords %}{% endblock %}
+<meta name="robots" content="{% block meta_robots %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endblock %}">
+<meta name="author" content="{% block meta_author %}Traduction Légale{% endblock %}">
+<meta name="theme-color" content="#0a2047">
+<link rel="canonical" href="{% block canonical %}{{ absolute_url(path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params', {}))) }}{% endblock %}">
 <link rel="shortcut icon" href="{{ asset('img/favicon.ico') }}" type="image/x-icon">
+
+{% block social_meta %}{% endblock %}
+{% block structured_data %}{% endblock %}
 {% block meta_extra %}{% endblock %}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">

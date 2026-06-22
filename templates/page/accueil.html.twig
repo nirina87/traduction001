@@ -1,41 +1,157 @@
 {% extends 'base_tl.html.twig' %}
 
-{% block title %}Traducteur Assermenté — Traduction Légale Certifiée dès 28€ | Inscrit près de la Cour d'Appel{% endblock %}
+{% set seo_title = "Traducteur Assermenté — Traduction Légale Certifiée dès 28€ | Cour d'Appel" %}
+{% set seo_description = "Traducteur assermenté inscrit près de la Cour d'Appel. Traduction certifiée d'actes officiels, diplômes, jugements et documents juridiques dès 28€/page. Devis sous 2h, envoi postal et numérique." %}
+{% set seo_keywords = "traducteur assermenté, traduction certifiée, traduction juridique, traduction officielle, cour d'appel, acte de naissance traduction, diplôme traduction, jugement traduction, traduction assermentée prix, devis traduction assermentée" %}
+{% set page_url = absolute_url(path('accueil')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
 
-{% block meta_description %}Traducteur assermenté inscrit près de la Cour d'Appel. Traduction certifiée de vos actes officiels, diplômes, jugements et documents juridiques dès 28€ la page. Devis sous 2h, envoi postal et numérique.{% endblock %}
+{% block title %}{{ seo_title }}{% endblock %}
 
-{% block meta_extra %}
-<meta name="keywords" content="traducteur assermenté, traduction certifiée, traduction juridique, cour d'appel, traduction officielle, acte de naissance traduction">
-<meta property="og:title" content="Traducteur Assermenté — Traduction Légale Certifiée">
-<meta property="og:description" content="Traduction assermentée de vos documents officiels, reconnue par toutes les administrations françaises et étrangères. Dès 28€ la page.">
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
 <meta property="og:type" content="website">
-<link rel="canonical" href="{{ url('accueil') }}">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Traducteur assermenté certifié">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Traducteur assermenté certifié">
+{% endblock %}
+
+{% block structured_data %}
+{% set document_items = [] %}
+{% for product in products|filter(product => product.active) %}
+  {% set document_items = document_items|merge([{
+    '@type': 'ListItem',
+    'position': loop.index,
+    'name': product.name,
+    'url': absolute_url(path('produit_detail', {id: product.id}))
+  }]) %}
+{% endfor %}
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LegalService",
-  "name": "Traduction Légale — Traducteur Assermenté",
-  "description": "Service de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
-  "priceRange": "À partir de 28€",
-  "areaServed": "FR"
-}
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': page_url ~ '#website',
+      'url': page_url,
+      'name': 'Traduction Légale',
+      'description': seo_description,
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': page_url ~ '#organization'}
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': page_url ~ '#website'},
+      'about': {'@id': page_url ~ '#organization'},
+      'inLanguage': 'fr-FR'
+    },
+    {
+      '@type': 'LegalService',
+      '@id': page_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': page_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Service de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'hasOfferCatalog': {
+        '@type': 'OfferCatalog',
+        'name': 'Documents pris en charge',
+        'itemListElement': document_items
+      }
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': page_url ~ '#faq',
+      'mainEntity': [
+        {
+          '@type': 'Question',
+          'name': "Qu'est-ce qu'une traduction assermentée exactement ?",
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': "C'est une traduction réalisée par un traducteur inscrit près d'une Cour d'Appel, qui certifie sur le document que la traduction est conforme à l'original. Elle porte un cachet, une signature et un numéro de répertoire, ce qui lui donne une valeur officielle devant les administrations et tribunaux."
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': "Le tarif de 28€ s'applique-t-il à tous les documents ?",
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': "Ce tarif de base concerne les documents courts et standards (un acte d'une page, dans une langue courante). Les documents longs, les langues rares ou les mentions manuscrites peuvent légèrement augmenter le prix — vous recevez toujours un devis précis avant tout engagement."
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': 'Combien de temps pour recevoir ma traduction ?',
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': "Le délai moyen est de 24 à 48 heures pour un document standard. La version numérique certifiée vous est envoyée dès la fin de la traduction ; l'original papier avec cachet est expédié par courrier suivi le jour même."
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': "Ma traduction sera-t-elle acceptée à l'étranger ?",
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': "Dans la grande majorité des cas, oui. Certains pays exigent en plus une apostille ou une légalisation, démarche que nous pouvons vous indiquer selon votre destination."
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': 'Dois-je envoyer le document original par courrier ?',
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': "Non, un scan ou une photo nette et lisible suffit pour démarrer la traduction. L'original ne vous sera demandé que si l'administration destinataire l'exige spécifiquement."
+          }
+        }
+      ]
+    }
+  ]
+}|json_encode(320)|raw }}
 </script>
 {% endblock %}
 
 {% block body %}
 
-<section class="hero">
+<section class="hero" aria-labelledby="hero-title">
   <div class="wrap">
     <div>
       <span class="eyebrow">Traducteur assermenté · inscrit près d'une Cour d'Appel</span>
-      <h1>Votre document a force légale.<br>Sa traduction <em>aussi</em>.</h1>
+      <h1 id="hero-title">Votre document a force légale.<br>Sa traduction <em>aussi</em>.</h1>
       <p class="hero-lede">
         Traduction certifiée de vos actes officiels — état civil, diplômes, jugements, contrats — reconnue par les administrations, ambassades et tribunaux français et étrangers.
       </p>
       <div class="hero-actions">
         <a href="{{ path('contact') }}" class="btn-primary">
           Demander un devis gratuit
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
         <a href="#tarifs" class="btn-secondary">Voir les tarifs</a>
       </div>
@@ -46,9 +162,9 @@
       </div>
     </div>
 
-    <div class="seal-wrap">
+    <div class="seal-wrap" role="img" aria-label="Sceau officiel de traducteur assermenté certifié conforme à l'original">
       <div class="seal">
-        <svg viewBox="0 0 300 300" fill="none">
+        <svg viewBox="0 0 300 300" fill="none" aria-hidden="true" focusable="false">
           <defs>
             <path id="circlePath" d="M 150, 150 m -118, 0 a 118,118 0 1,1 236,0 a 118,118 0 1,1 -236,0" />
           </defs>
@@ -72,47 +188,49 @@
   </div>
 </section>
 
-<div class="trustbar">
+<aside class="trustbar" aria-label="Garanties et engagements du service">
   <div class="wrap">
     <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
       Accepté par préfectures, mairies &amp; ambassades
     </div>
     <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7l9-4 9 4-9 4-9-4zm0 0v10l9 4 9-4V7"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4-9-4zm0 0v10l9 4 9-4V7"/></svg>
       Cachet, signature et numéro de répertoire
     </div>
     <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       Devis sous 2h ouvrées
     </div>
     <div class="trust-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 8l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 8l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
       Envoi numérique + original par courrier
     </div>
   </div>
-</div>
+</aside>
 
-<section id="documents">
+<section id="documents" aria-labelledby="documents-title">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Documents pris en charge</span>
-      <h2>Chaque pièce traduite avec la rigueur qu'elle exige</h2>
+      <h2 id="documents-title">Chaque pièce traduite avec la rigueur qu'elle exige</h2>
       <p>Du simple extrait d'acte au jugement complexe, chaque traduction est relue terme à terme avant d'être certifiée conforme.</p>
     </div>
 
-    <div class="docs-grid" id="docs-grid">
+    <div class="docs-grid" id="docs-grid" role="list">
       {% set activeProducts = products|filter(product => product.active) %}
       {% for product in activeProducts %}
-        <article class="doc-card{% if loop.index > 6 %} doc-card-extra{% endif %}">
-          <a href="{{ path('produit_detail', {'id': product.id}) }}">
+        <article class="doc-card{% if loop.index > 6 %} doc-card-extra{% endif %}" role="listitem">
+          <a href="{{ path('produit_detail', {'id': product.id}) }}" aria-label="Voir le détail : {{ product.name }}">
             {% if product.image %}
               <img src="{{ asset('uploads/' ~ product.image) }}"
                    class="doc-thumb"
-                   alt="{{ product.name }}"
-                   loading="lazy">
+                   alt="Traduction assermentée — {{ product.name }}"
+                   loading="lazy"
+                   width="320"
+                   height="100">
             {% else %}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6"/></svg>
             {% endif %}
             <h3>{{ product.name }}</h3>
             {% if product.description %}
@@ -144,11 +262,11 @@
   </div>
 </section>
 
-<section class="dossier" id="parcours">
+<section class="dossier" id="parcours" aria-labelledby="parcours-title">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Le parcours de votre dossier</span>
-      <h2>De l'envoi du document au sceau officiel</h2>
+      <h2 id="parcours-title">De l'envoi du document au sceau officiel</h2>
       <p>Quatre étapes, aucune surprise. Vous savez à chaque instant où en est votre dossier.</p>
     </div>
 
@@ -189,49 +307,49 @@
   </div>
 </section>
 
-<section class="pricing" id="tarifs">
+<section class="pricing" id="tarifs" aria-labelledby="tarifs-title">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Tarifs</span>
-      <h2>Un prix clair, annoncé avant traduction</h2>
+      <h2 id="tarifs-title">Un prix clair, annoncé avant traduction</h2>
       <p>Le tarif définitif dépend de la langue, de la longueur et de la complexité du document. Il vous est toujours confirmé avant le lancement de la traduction.</p>
     </div>
 
-    <div class="price-table">
-      <div class="price-row head">
-        <div class="cell">Type de document</div>
-        <div class="cell">Tarif indicatif</div>
+    <div class="price-table" role="table" aria-label="Grille tarifaire indicative des traductions assermentées">
+      <div class="price-row head" role="row">
+        <div class="cell" role="columnheader">Type de document</div>
+        <div class="cell" role="columnheader">Tarif indicatif</div>
       </div>
-      <div class="price-row featured">
-        <div class="cell">Acte d'état civil (naissance, mariage…)</div>
-        <div class="cell">À partir de 28€ / page</div>
+      <div class="price-row featured" role="row">
+        <div class="cell" role="cell">Acte d'état civil (naissance, mariage…)</div>
+        <div class="cell" role="cell">À partir de 28€ / page</div>
       </div>
-      <div class="price-row">
-        <div class="cell">Diplôme ou relevé de notes</div>
-        <div class="cell">À partir de 35€ / page</div>
+      <div class="price-row" role="row">
+        <div class="cell" role="cell">Diplôme ou relevé de notes</div>
+        <div class="cell" role="cell">À partir de 35€ / page</div>
       </div>
-      <div class="price-row">
-        <div class="cell">Jugement, contrat, acte notarié</div>
-        <div class="cell">Sur devis selon volume</div>
+      <div class="price-row" role="row">
+        <div class="cell" role="cell">Jugement, contrat, acte notarié</div>
+        <div class="cell" role="cell">Sur devis selon volume</div>
       </div>
-      <div class="price-row">
-        <div class="cell">Casier judiciaire / attestation courte</div>
-        <div class="cell">À partir de 28€ / page</div>
+      <div class="price-row" role="row">
+        <div class="cell" role="cell">Casier judiciaire / attestation courte</div>
+        <div class="cell" role="cell">À partir de 28€ / page</div>
       </div>
     </div>
 
     <p class="price-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
       Le tarif de 28€ s'applique aux documents standards d'une page en anglais, espagnol, italien ou allemand. Les langues rares, les documents longs ou les mentions manuscrites peuvent faire varier le prix — toujours communiqué avant validation.
     </p>
   </div>
 </section>
 
-<section>
+<section aria-labelledby="pourquoi-title">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Pourquoi cette traduction est reconnue</span>
-      <h2>Une traduction assermentée n'est pas une traduction comme les autres</h2>
+      <h2 id="pourquoi-title">Une traduction assermentée n'est pas une traduction comme les autres</h2>
     </div>
 
     <div class="why-grid">
@@ -267,46 +385,46 @@
   </div>
 </section>
 
-<section id="faq">
+<section id="faq" aria-labelledby="faq-title">
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Questions fréquentes</span>
-      <h2>Avant de nous confier votre document</h2>
+      <h2 id="faq-title">Avant de nous confier votre document</h2>
     </div>
 
     <div class="faq-list">
       <details class="faq-item">
-        <summary class="faq-q">Qu'est-ce qu'une traduction assermentée exactement ?<span class="plus">+</span></summary>
+        <summary class="faq-q">Qu'est-ce qu'une traduction assermentée exactement ?<span class="plus" aria-hidden="true">+</span></summary>
         <div class="faq-a">C'est une traduction réalisée par un traducteur inscrit près d'une Cour d'Appel, qui certifie sur le document que la traduction est conforme à l'original. Elle porte un cachet, une signature et un numéro de répertoire, ce qui lui donne une valeur officielle devant les administrations et tribunaux.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Le tarif de 28€ s'applique-t-il à tous les documents ?<span class="plus">+</span></summary>
+        <summary class="faq-q">Le tarif de 28€ s'applique-t-il à tous les documents ?<span class="plus" aria-hidden="true">+</span></summary>
         <div class="faq-a">Ce tarif de base concerne les documents courts et standards (un acte d'une page, dans une langue courante). Les documents longs, les langues rares ou les mentions manuscrites peuvent légèrement augmenter le prix — vous recevez toujours un devis précis avant tout engagement.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Combien de temps pour recevoir ma traduction ?<span class="plus">+</span></summary>
+        <summary class="faq-q">Combien de temps pour recevoir ma traduction ?<span class="plus" aria-hidden="true">+</span></summary>
         <div class="faq-a">Le délai moyen est de 24 à 48 heures pour un document standard. La version numérique certifiée vous est envoyée dès la fin de la traduction ; l'original papier avec cachet est expédié par courrier suivi le jour même.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Ma traduction sera-t-elle acceptée à l'étranger ?<span class="plus">+</span></summary>
+        <summary class="faq-q">Ma traduction sera-t-elle acceptée à l'étranger ?<span class="plus" aria-hidden="true">+</span></summary>
         <div class="faq-a">Dans la grande majorité des cas, oui. Certains pays exigent en plus une apostille ou une légalisation, démarche que nous pouvons vous indiquer selon votre destination.</div>
       </details>
       <details class="faq-item">
-        <summary class="faq-q">Dois-je envoyer le document original par courrier ?<span class="plus">+</span></summary>
+        <summary class="faq-q">Dois-je envoyer le document original par courrier ?<span class="plus" aria-hidden="true">+</span></summary>
         <div class="faq-a">Non, un scan ou une photo nette et lisible suffit pour démarrer la traduction. L'original ne vous sera demandé que si l'administration destinataire l'exige spécifiquement.</div>
       </details>
     </div>
   </div>
 </section>
 
-<section class="cta-final" id="contact">
+<section class="cta-final" id="contact" aria-labelledby="cta-title">
   <div class="wrap">
     <span class="eyebrow" style="color:#fdfdfd;justify-content:center;">Démarrer votre dossier</span>
-    <h2>Envoyez votre document, recevez votre devis sous 2h</h2>
+    <h2 id="cta-title">Envoyez votre document, recevez votre devis sous 2h</h2>
     <p>Contactez-nous pour obtenir le tarif exact et le délai pour votre document.</p>
     <a href="{{ path('contact') }}" class="btn-primary">
       Recevoir mon devis
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </div>
 </section>
