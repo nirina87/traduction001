@@ -1,199 +1,272 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %} Nos services de traduction légale - Services de traduction assermentée {% endblock %}
+{% set seo_title = "Services & Tarifs — Traduction Assermentée par Document | Traduction Légale" %}
+{% set seo_description = "Catalogue de traductions assermentées : état civil, diplômes, jugements, contrats et pièces d'identité. Tarif transparent dès 28€/page, devis sous 2h, traducteur inscrit près de la Cour d'Appel." %}
+{% set seo_keywords = "traduction assermentée, services traduction, tarifs traduction juridique, traducteur cour d'appel, catalogue traduction officielle, traduction acte naissance, traduction diplôme, traduction jugement, prix traduction assermentée, commande traduction en ligne, traduction document officiel" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set page_url = absolute_url(path('services')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Catalogue des services de traduction assermentée">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Catalogue des services de traduction assermentée">
+{% endblock %}
+
+{% block structured_data %}
+{% set document_items = [] %}
+{% set catalog_offers = [] %}
+{% for product in products|filter(product => product.active) %}
+  {% set detail_url = absolute_url(path('produit_detail', {id: product.id})) %}
+  {% set document_items = document_items|merge([{
+    '@type': 'ListItem',
+    'position': loop.index,
+    'name': product.name,
+    'url': detail_url
+  }]) %}
+  {% set catalog_offers = catalog_offers|merge([{
+    '@type': 'Offer',
+    'name': 'Traduction assermentée — ' ~ product.name,
+    'url': detail_url,
+    'priceCurrency': 'EUR',
+    'price': product.basePrice ?? 28,
+    'availability': 'https://schema.org/InStock',
+    'itemOffered': {
+      '@type': 'Service',
+      'name': product.name,
+      'serviceType': product.category|default('Traduction assermentée'),
+      'url': detail_url,
+      'provider': {'@id': accueil_url ~ '#organization'}
+    }
+  }]) %}
+{% endfor %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Service de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it']
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image
+      }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Services',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'CollectionPage',
+      '@id': page_url ~ '#catalog',
+      'name': 'Catalogue des traductions assermentées',
+      'description': seo_description,
+      'url': page_url,
+      'isPartOf': {'@id': page_url ~ '#webpage'},
+      'mainEntity': {
+        '@type': 'ItemList',
+        'name': 'Documents à traduire',
+        'numberOfItems': document_items|length,
+        'itemListElement': document_items
+      }
+    },
+    {
+      '@type': 'OfferCatalog',
+      'name': 'Tarifs des traductions assermentées',
+      'url': page_url,
+      'itemListElement': catalog_offers
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div role="main" class="main">
-				<section class="page-header page-header-classic page-header-md">
-					<div class="container">
-						<div class="row">
-							<div class="col-md-8 order-2 order-md-1 align-self-center p-static">
-								<h1 data-title-border>Services</h1>
-							</div>
-							<div class="col-md-4 order-1 order-md-2 align-self-center">
-								<ul class="breadcrumb d-block text-md-end">
-									<li><a href="#">Home</a></li>
-									<li class="active">Services</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</section>
 
-				<div class="container pb-1">
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Catalogue des prestations</span>
+      <h1 id="page-title">Services &amp; tarifs</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Services</span>
+    </nav>
+  </div>
+</div>
 
-					<div class="row pt-4">
-						<div class="col">
-							<div class="overflow-hidden mb-3">
-								<h2 class="font-weight-bold text-8 mb-0 appear-animation" data-appear-animation="maskUp">
-									Traduction Légales vous accompagne pour vos documents officiels
-								</h2>
-							</div>
-						</div>
-					</div>
+<section class="page-intro" aria-labelledby="services-intro-title">
+  <div class="wrap">
+    <h2 id="services-intro-title">Une traduction certifiée pour chaque type de document officiel</h2>
+    <p>Sélectionnez votre document, consultez le détail de la prestation et lancez votre commande. Chaque traduction est réalisée par un traducteur assermenté inscrit près d'une Cour d'Appel et porte cachet, signature et numéro de répertoire.</p>
+  </div>
+</section>
 
-					<div class="row">
-						<div class="col-lg-10">
-							<div class="overflow-hidden mb-5">
-								<p class="lead mb-0 appear-animation" data-appear-animation="maskUp" data-appear-animation-delay="200">
-									Nous traduisons vos actes, diplômes, contrats et pièces administratives avec précision, confidentialité et respect des exigences officielles.
-								</p>
-							</div>
-						</div>
-					</div>
+<section class="catalog" id="catalogue" aria-labelledby="catalog-title">
+  <div class="wrap">
+    <h2 id="catalog-title" class="visually-hidden">Catalogue des documents à traduire</h2>
+    <div class="catalog-grid" role="list">
+      {% set activeProducts = products|filter(product => product.active) %}
+      {% for product in activeProducts %}
+        <article class="product-card" role="listitem">
+          <div class="product-thumb">
+            {% if product.image %}
+              <img src="{{ asset('uploads/' ~ product.image) }}"
+                   alt="Traduction assermentée — {{ product.name }}"
+                   loading="lazy"
+                   width="360"
+                   height="128">
+            {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6"/></svg>
+            {% endif %}
+          </div>
+          <div class="product-body">
+            {% if product.category %}
+              <span class="product-eyebrow">{{ product.category }}</span>
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            {% if product.basePrice %}
+              <div class="product-price">À partir de {{ product.basePrice }}€ / page</div>
+            {% endif %}
+            <div class="product-actions">
+              <a href="{{ path('produit_detail', {'id': product.id}) }}"
+                 class="btn-outline"
+                 aria-label="Voir le détail de la traduction assermentée : {{ product.name }}">Voir le détail</a>
+              <a href="{{ path('produit_detail', {'id': product.id}) }}"
+                 class="btn-outline btn-add"
+                 aria-label="Commander la traduction assermentée : {{ product.name }}">Commander</a>
+            </div>
+          </div>
+        </article>
+      {% else %}
+        <p>Aucun document n'est disponible pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-					
+<section class="dossier" aria-labelledby="services-highlights-title">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Ce qui accompagne chaque commande</span>
+      <h2 id="services-highlights-title">Un service pensé pour la rigueur des démarches officielles</h2>
+    </div>
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <span class="tl-tag">Accompagnement</span>
+        <h3>Conseil personnalisé</h3>
+        <p>Nous vous indiquons le format de traduction le plus adapté à votre démarche, avant toute commande.</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        </div>
+        <span class="tl-tag">Réactivité</span>
+        <h3>Devis sous 2h ouvrées</h3>
+        <p>Chaque demande est prise en charge rapidement, avec un délai annoncé avant tout engagement.</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        </div>
+        <span class="tl-tag">Conformité</span>
+        <h3>Reconnu par les administrations</h3>
+        <p>Cachet, signature et numéro de répertoire conformes aux exigences des juridictions et préfectures.</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <span class="tl-tag">Confidentialité</span>
+        <h3>Données protégées</h3>
+        <p>Vos documents sont traités avec discrétion, dans le respect de vos démarches personnelles ou professionnelles.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-					<div class="row">
-						<div class="featured-boxes featured-boxes-style-2">
-							<div class="row g-4">
-								{% for product in products %}
-									<div class="col-md-6 col-xl-4">
-										<article class="border rounded-4 p-3 h-100 bg-light-5 shadow-sm">
-											<img src="{{ asset('uploads/' ~ product.image) }}"
-													class="img-fluid rounded-3 mb-3"
-													alt="{{ product.name }}"
-													style="height: 110px; object-fit: cover; width: 100%;" />
+<section class="pricing" id="tarifs" aria-labelledby="services-pricing-note-title">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Bon à savoir</span>
+      <h2 id="services-pricing-note-title">Le tarif affiché est une base, votre devis est toujours confirmé</h2>
+    </div>
+    <p class="price-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+      Le tarif de 28€ par page s'applique aux documents standards en anglais, espagnol, italien ou allemand. Les langues rares, les documents longs ou les mentions manuscrites peuvent faire varier le prix final — toujours communiqué avant validation de votre commande.
+    </p>
+  </div>
+</section>
 
-											<h4 class="text-4 mb-2">{{ product.name }}</h4>
-
-											<p class="mb-3 text-muted">{{ product.basePrice }} €</p>
-
-											<div class="">
-												<a href="{{ path('produit_detail', {'id': product.id}) }}"
-												class="btn btn-outline-primary full-width">
-													Voir le détail
-												</a>
-											</div>
-										</article>
-									</div>
-								{% endfor %}
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<section class="section bg-color-grey section-height-3 border-0 mt-5 mb-0">
-					<div class="container">
-
-						<div class="row">
-							<div class="col">
-
-								<div class="row align-items-center pt-4 appear-animation" data-appear-animation="fadeInLeftShorter">
-									<div class="col-md-4 mb-4 mb-md-0">
-										<img class="img-fluid scale-2 pe-5 pe-md-0 my-4" src="img/layout-styles.png" alt="layout styles" />
-									</div>
-									<div class="col-md-8 ps-md-5">
-											<h2 class="font-weight-normal text-6 mb-3"><strong class="font-weight-extra-bold">Traductions</strong> juridiques &amp; administratives</h2>
-											<p class="text-4">Nous vous accompagnons pour des documents officiels, des dossiers juridiques et des pièces administratives traduites avec précision et conformité.</p>
-											<p>Chaque traduction est réalisée avec un vocabulaire adapté au contexte légal ou administratif afin de sécuriser la compréhension et l’usage de vos documents.</p>
-									</div>
-								</div>
-
-								<hr class="solid my-5">
-
-								<div class="row align-items-center pt-5 pb-3 appear-animation" data-appear-animation="fadeInRightShorter">
-									<div class="col-md-8 pe-md-5 mb-5 mb-md-0">
-											<h2 class="font-weight-normal text-6 mb-3"><strong class="font-weight-extra-bold">Une</strong> expertise de confiance</h2>
-											<p class="text-4">Notre équipe travaille sur des traductions assermentées, des supports juridiques et des documents officiels, avec un souci constant de qualité et de confidentialité.</p>
-											<p>Nous vous proposons un accompagnement clair, rapide et rigoureux pour toutes vos démarches de traduction et de certification.</p>
-									</div>
-									<div class="col-md-4 px-5 px-md-3">
-										<img class="img-fluid scale-2 my-4" src="img/style-switcher.png" alt="style switcher" />
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>				
-
-				<div class="container-fluid">
-					<div class="row featured-boxes-full">
-						<div class="col-lg-3 featured-box-full bg-primary">
-							<i class="far fa-life-ring"></i>
-									<h4>Accompagnement personnalisé</h4>
-									<p class="font-weight-light">Nous vous conseillons sur la nature de votre document et sur le format de traduction le plus adapté à votre besoin.</p>
-						</div>
-						<div class="col-lg-3 featured-box-full bg-primary-100">
-							<i class="fas fa-film"></i>
-									<h4>Réactivité</h4>
-									<p class="font-weight-light">Une prise en charge rapide de vos demandes, avec un suivi clair et des délais maîtrisés pour vos urgences de traduction.</p>
-						</div>
-						<div class="col-lg-3 featured-box-full bg-primary-200">
-							<i class="far fa-star"></i>
-									<h4>Conformité</h4>
-									<p class="font-weight-light">Nos traductions respectent les exigences de forme et de précision attendues pour les documents officiels et juridiques.</p>
-						</div>
-						<div class="col-lg-3 featured-box-full bg-primary-300">
-							<i class="far fa-edit"></i>
-									<h4>Confidentialité</h4>
-									<p class="font-weight-light">Vos documents sont traités avec discrétion et rigueur, dans le respect de vos démarches professionnelles ou personnelles.</p>
-						</div>
-					</div>
-				</div>
-
-				<div class="container pt-4">
-					<div class="row text-center pt-4 mt-5">
-						<div class="col">
-							<h2 class="word-rotator slide font-weight-bold text-8 mb-2">
-									<span>Les professionnels et particuliers </span>
-									<span class="word-rotator-words bg-primary">
-										<b class="is-visible">font confiance</b>
-										<b>nous choisissent</b>
-									</span>
-									<span> pour leurs traductions officielles.</span>
-								</h2>
-								<h4 class="text-primary lead tall text-4">TRADUCTION LÉGALES S’ENGAGE POUR DES DOCUMENTS PRÉCIS, CONFIDENTIELS ET CONFORMES.</h4>
-						</div>
-					</div>
-
-					<div class="row text-center mt-5 pb-5 mb-5">
-						<div class="owl-carousel owl-theme carousel-center-active-item mb-0" data-plugin-options="{'responsive': {'0': {'items': 1}, '476': {'items': 1}, '768': {'items': 5}, '992': {'items': 7}, '1200': {'items': 7}}, 'autoplay': true, 'autoplayTimeout': 3000, 'dots': false}">
-							<div>
-								<img class="img-fluid" src="img/logos/logo-1.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-2.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-3.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-4.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-5.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-6.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-4.png" alt="">
-							</div>
-							<div>
-								<img class="img-fluid" src="img/logos/logo-2.png" alt="">
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<section class="call-to-action call-to-action-strong-grey content-align-center call-to-action-in-footer">
-					<div class="container py-5">
-						<div class="row py-3">
-							<div class="col-md-9 col-lg-9">
-								<div class="call-to-action-content">
-											<h2 class="font-weight-normal text-7 mb-0">Traduction Légales, votre partenaire pour des <strong>documents fiables</strong> et conformes.</h2>
-											<p class="mb-0">Des traductions assermentées, juridiques et administratives, livrées avec rigueur et confidentialité.</p>
-								</div>
-							</div>
-							<div class="col-md-3 col-lg-3">
-								<div class="call-to-action-btn">
-									<a href="{{ path('contact') }}" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3 mt-5">Demander un devis</a><span class="arrow hlb d-none d-md-block" data-appear-animation="rotateInUpLeft" style="top: -90px; left: 70%;"></span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-
-			</div>
 {% endblock %}

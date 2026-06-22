@@ -1,247 +1,469 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Panier{% endblock %}
+{% set seo_title = "Mon Panier — Commande de Traduction Assermentée | Traduction Légale" %}
+{% set seo_description = "Finalisez votre commande de traduction assermentée : consultez les documents sélectionnés, vérifiez le total TTC et payez en ligne via Stripe. Traducteur inscrit près de la Cour d'Appel, traduction certifiée conforme à l'original." %}
+{% set seo_keywords = "panier traduction assermentée, commande traduction certifiée, paiement traduction officielle, traducteur cour d'appel commande, checkout traduction juridique, traduction assermentée en ligne, paiement stripe traduction" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set services_url = absolute_url(path('services')) %}
+{% set commande_url = absolute_url(path('commande')) %}
+{% set page_url = absolute_url(path('panier')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Panier et commande de traductions assermentées">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Panier et commande de traductions assermentées">
+{% endblock %}
+
+{% block structured_data %}
+{% set cart_items_ld = [] %}
+{% set totalCentsLd = 0 %}
+{% set totalQtyLd = 0 %}
+{% for cartKey, item in cart %}
+  {% if item.type is defined and item.type == 'client_upload' %}
+    {% set linePriceLd = item.price %}
+    {% set lineQtyLd = item.quantity|default(1) %}
+    {% set itemTitleLd = item.title %}
+    {% set itemUrlLd = products[item.documentId] is defined ? absolute_url(path('produit_detail', {id: item.documentId})) : page_url %}
+  {% else %}
+    {% set linePriceLd = products[item.id].price %}
+    {% set lineQtyLd = item.quantity %}
+    {% set itemTitleLd = item.title %}
+    {% set itemUrlLd = absolute_url(path('produit_detail', {id: item.id})) %}
+  {% endif %}
+  {% set totalQtyLd = totalQtyLd + lineQtyLd %}
+  {% set totalCentsLd = totalCentsLd + (linePriceLd * lineQtyLd) %}
+  {% set cart_items_ld = cart_items_ld|merge([{
+    '@type': 'ListItem',
+    'position': loop.index,
+    'item': {
+      '@type': 'Service',
+      'name': itemTitleLd,
+      'url': itemUrlLd,
+      'description': item.description|default('Traduction assermentée')|striptags,
+      'offers': {
+        '@type': 'Offer',
+        'priceCurrency': 'EUR',
+        'price': (linePriceLd / 100)|number_format(2, '.', ''),
+        'eligibleQuantity': {
+          '@type': 'QuantitativeValue',
+          'value': lineQtyLd
+        }
+      }
+    }
+  }]) %}
+{% endfor %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Traduction assermentée',
+        'Commande en ligne',
+        'Documents officiels',
+        'Traduction juridique',
+        'Cour d\'Appel'
+      ]
+    },
+    {
+      '@type': 'CheckoutPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': 'Traduction Légale — panier de commande'
+      },
+      'mainEntity': cart is empty ? {'@id': accueil_url ~ '#organization'} : {'@id': page_url ~ '#cart'},
+      'potentialAction': {
+        '@type': 'OrderAction',
+        'target': commande_url,
+        'name': 'Passer la commande'
+      }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Services',
+          'item': services_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Panier',
+          'item': page_url
+        }
+      ]
+    }
+  ]|merge(cart is empty ? [] : [{
+    '@type': 'ItemList',
+    '@id': page_url ~ '#cart',
+    'name': 'Panier — Traduction Légale',
+    'description': 'Documents sélectionnés pour traduction assermentée.',
+    'numberOfItems': cart|length,
+    'itemListElement': cart_items_ld
+  }, {
+    '@type': 'Offer',
+    '@id': page_url ~ '#cart-total',
+    'name': 'Total panier TTC',
+    'url': page_url,
+    'priceCurrency': 'EUR',
+    'price': (totalCentsLd / 100)|number_format(2, '.', ''),
+    'eligibleQuantity': {
+      '@type': 'QuantitativeValue',
+      'value': totalQtyLd
+    },
+    'seller': {'@id': accueil_url ~ '#organization'}
+  }])
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-4 py-lg-5">
-            <div class="row align-items-end justify-content-between mb-4 mb-lg-5">
-                <div class="col-lg-8">
-                    <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Panier</p>
-                    <h1 class="font-weight-bold text-7 text-lg-8 mb-2">Votre sélection de documents</h1>
-                    <p class="text-3 mb-0 text-muted">Modifiez les quantités ou retirez un document avant de passer commande.</p>
-                </div>
-                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <a href="{{ path('accueil') }}" class="btn btn-outline-primary w-100 w-lg-auto">
-                        <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>Continuer mes achats
-                    </a>
-                </div>
-            </div>
 
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4" role="alert">{{ message }}</div>
-            {% endfor %}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" role="alert">{{ message }}</div>
-            {% endfor %}
-
-            {% if cart is empty %}
-                <div class="cart-empty card border-0 shadow-sm rounded-4 p-4 p-lg-5 text-center">
-                    <div class="cart-empty__icon mx-auto mb-4">
-                        <i class="fas fa-shopping-basket" aria-hidden="true"></i>
-                    </div>
-                    <h2 class="text-5 font-weight-semibold mb-2">Votre panier est vide</h2>
-                    <p class="text-muted mb-4 mx-auto" style="max-width: 32rem;">Ajoutez des documents à traduire depuis notre catalogue pour démarrer votre commande.</p>
-                    <a href="{{ path('accueil') }}" class="btn btn-primary btn-lg">Découvrir nos documents</a>
-                </div>
-            {% else %}
-                {% set totalQty = 0 %}
-                {% set totalCents = 0 %}
-                {% for cartKey, item in cart %}
-                    {% if item.type is defined and item.type == 'client_upload' %}
-                        {% set linePrice = item.price %}
-                        {% set lineQty = item.quantity|default(1) %}
-                    {% else %}
-                        {% set product = products[item.id] %}
-                        {% set linePrice = product.price %}
-                        {% set lineQty = item.quantity %}
-                    {% endif %}
-                    {% set totalQty = totalQty + lineQty %}
-                    {% set totalCents = totalCents + (linePrice * lineQty) %}
-                {% endfor %}
-
-                <div class="row g-4 g-lg-5">
-                    <div class="col-lg-8">
-                        <div class="cart-items card border-0 shadow-sm rounded-4 overflow-hidden">
-                            <div class="cart-items__header d-none d-md-flex">
-                                <span>Document</span>
-                                <span class="text-center">Quantité</span>
-                                <span class="text-end">Total</span>
-                                <span class="text-end"><span class="visually-hidden">Actions</span></span>
-                            </div>
-
-                            {% for cartKey, item in cart %}
-                                {% if item.type is defined and item.type == 'client_upload' %}
-                                    {% set product = products[item.documentId]|default(null) %}
-                                    {% set linePrice = item.price %}
-                                    {% set lineQty = item.quantity|default(1) %}
-                                    {% set lineTotal = linePrice * lineQty %}
-                                    {% set itemTitle = item.title %}
-                                    {% set itemLink = product ? path('produit_detail', {'id': item.documentId}) : null %}
-                                    {% set itemImage = product ? asset(product.image) : asset('img/logos/logo-1.png') %}
-                                {% else %}
-                                    {% set product = products[item.id] %}
-                                    {% set linePrice = product.price %}
-                                    {% set lineQty = item.quantity %}
-                                    {% set lineTotal = linePrice * lineQty %}
-                                    {% set itemTitle = item.title %}
-                                    {% set itemLink = path('produit_detail', {'id': item.id}) %}
-                                    {% set itemImage = asset(product.image) %}
-                                {% endif %}
-                                <article class="cart-item" aria-label="{{ itemTitle }}">
-                                    <div class="cart-item__product">
-                                        {% if itemLink %}
-                                            <a href="{{ itemLink }}" class="cart-item__thumb-link">
-                                                <img src="{{ itemImage }}" class="cart-item__thumb" alt="{{ itemTitle }}" loading="lazy" />
-                                            </a>
-                                        {% else %}
-                                            <span class="cart-item__thumb-link">
-                                                <img src="{{ itemImage }}" class="cart-item__thumb" alt="{{ itemTitle }}" loading="lazy" />
-                                            </span>
-                                        {% endif %}
-                                        <div class="cart-item__info">
-                                            <h2 class="cart-item__title">
-                                                {% if itemLink %}
-                                                    <a href="{{ itemLink }}">{{ itemTitle }}</a>
-                                                {% else %}
-                                                    {{ itemTitle }}
-                                                {% endif %}
-                                            </h2>
-                                            <div class="cart-item__desc">{{ item.description|raw }}</div>
-                                            <p class="cart-item__unit-price mb-0">
-                                                <span class="text-muted">Prix unitaire :</span>
-                                                <strong>{{ (linePrice / 100)|number_format(2, ',', ' ') }} €</strong>
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div class="cart-item__quantity" aria-label="Quantité">
-                                        <span class="cart-item__mobile-label d-md-none">Quantité</span>
-                                        {% if item.type is defined and item.type == 'client_upload' %}
-                                            <span class="cart-qty__value px-3">{{ lineQty }}</span>
-                                        {% else %}
-                                            <div class="cart-qty" role="group" aria-label="Modifier la quantité">
-                                                <form method="post" action="{{ path('panier_modifier', {'id': item.id}) }}" class="cart-qty__form">
-                                                    <input type="hidden" name="quantity" value="{{ item.quantity > 1 ? item.quantity - 1 : 1 }}">
-                                                    <button type="submit" class="cart-qty__btn" {% if item.quantity <= 1 %}disabled aria-disabled="true"{% endif %} aria-label="Diminuer la quantité">
-                                                        <i class="fas fa-minus" aria-hidden="true"></i>
-                                                    </button>
-                                                </form>
-                                                <span class="cart-qty__value" aria-live="polite">{{ item.quantity }}</span>
-                                                <form method="post" action="{{ path('panier_modifier', {'id': item.id}) }}" class="cart-qty__form">
-                                                    <input type="hidden" name="quantity" value="{{ item.quantity < 99 ? item.quantity + 1 : 99 }}">
-                                                    <button type="submit" class="cart-qty__btn" {% if item.quantity >= 99 %}disabled aria-disabled="true"{% endif %} aria-label="Augmenter la quantité">
-                                                        <i class="fas fa-plus" aria-hidden="true"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="cart-item__line-total">
-                                        <span class="cart-item__mobile-label d-md-none">Total ligne</span>
-                                        <strong class="cart-item__price">{{ (lineTotal / 100)|number_format(2, ',', ' ') }} €</strong>
-                                    </div>
-
-                                    <div class="cart-item__actions">
-                                        <form method="post" action="{{ path('panier_retirer', {'cartKey': cartKey}) }}" class="cart-item__remove-form" id="cart-remove-form-{{ cartKey }}">
-                                            <button
-                                                type="button"
-                                                class="cart-item__remove"
-                                                aria-label="Retirer {{ itemTitle }} du panier"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#cartRemoveModal"
-                                                data-product-title="{{ itemTitle }}"
-                                                data-remove-form="cart-remove-form-{{ cartKey }}"
-                                            >
-                                                <i class="far fa-trash-alt" aria-hidden="true"></i>
-                                                <span class="d-none d-md-inline">Retirer</span>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </article>
-                            {% endfor %}
-                        </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                        <aside class="cart-summary card border-0 shadow-sm rounded-4 p-4">
-                            <h2 class="text-5 font-weight-semibold mb-4">Récapitulatif</h2>
-
-                            <dl class="cart-summary__lines mb-4">
-                                <div class="cart-summary__line">
-                                    <dt>Documents distincts</dt>
-                                    <dd>{{ cart|length }}</dd>
-                                </div>
-                                <div class="cart-summary__line">
-                                    <dt>Exemplaires au total</dt>
-                                    <dd>{{ totalQty }}</dd>
-                                </div>
-                                <div class="cart-summary__line cart-summary__line--total">
-                                    <dt>Total TTC</dt>
-                                    <dd>{{ (totalCents / 100)|number_format(2, ',', ' ') }} €</dd>
-                                </div>
-                            </dl>
-
-                            <a href="{{ path('commande') }}" class="btn btn-primary btn-lg w-100 mb-3">
-                                Passer la commande
-                            </a>
-                            <p class="small text-muted text-center mb-0">
-                                <i class="fas fa-lock me-1" aria-hidden="true"></i>
-                                Paiement sécurisé via Stripe
-                            </p>
-                        </aside>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </section>
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Commande</span>
+      <h1 id="page-title">Mon panier</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('services') }}">Services</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Panier</span>
+    </nav>
+  </div>
 </div>
+
+<section class="cart-page" aria-labelledby="cart-page-title">
+  <div class="wrap">
+    <div class="cart-page-intro">
+      <div>
+        <h2 id="cart-page-title">Votre sélection de documents</h2>
+        <p>Modifiez les quantités ou retirez un document avant de passer commande.</p>
+      </div>
+      <a href="{{ path('services') }}" class="btn-outline cart-page-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+        Continuer mes achats
+      </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+      <div class="tl-flash tl-flash--success" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+      <div class="tl-flash tl-flash--error" role="alert">{{ message }}</div>
+    {% endfor %}
+
+    {% if cart is empty %}
+      <div class="cart-empty">
+        <div class="cart-empty__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        </div>
+        <h3>Votre panier est vide</h3>
+        <p>Ajoutez des documents à traduire depuis notre catalogue pour démarrer votre commande.</p>
+        <a href="{{ path('services') }}" class="btn-primary">Découvrir nos documents</a>
+      </div>
+    {% else %}
+      {% set totalQty = 0 %}
+      {% set totalCents = 0 %}
+      {% for cartKey, item in cart %}
+        {% if item.type is defined and item.type == 'client_upload' %}
+          {% set linePrice = item.price %}
+          {% set lineQty = item.quantity|default(1) %}
+        {% else %}
+          {% set product = products[item.id] %}
+          {% set linePrice = product.price %}
+          {% set lineQty = item.quantity %}
+        {% endif %}
+        {% set totalQty = totalQty + lineQty %}
+        {% set totalCents = totalCents + (linePrice * lineQty) %}
+      {% endfor %}
+
+      <div class="cart-page-grid">
+        <div class="cart-items">
+          <div class="cart-items__header" aria-hidden="true">
+            <span>Document</span>
+            <span>Quantité</span>
+            <span>Total</span>
+            <span></span>
+          </div>
+
+          {% for cartKey, item in cart %}
+            {% if item.type is defined and item.type == 'client_upload' %}
+              {% set product = products[item.documentId]|default(null) %}
+              {% set linePrice = item.price %}
+              {% set lineQty = item.quantity|default(1) %}
+              {% set lineTotal = linePrice * lineQty %}
+              {% set itemTitle = item.title %}
+              {% set itemLink = product ? path('produit_detail', {id: item.documentId}) : null %}
+              {% set itemImage = product ? asset(product.image) : asset('logo-tl.png') %}
+            {% else %}
+              {% set product = products[item.id] %}
+              {% set linePrice = product.price %}
+              {% set lineQty = item.quantity %}
+              {% set lineTotal = linePrice * lineQty %}
+              {% set itemTitle = item.title %}
+              {% set itemLink = path('produit_detail', {id: item.id}) %}
+              {% set itemImage = asset(product.image) %}
+            {% endif %}
+
+            <article class="cart-item" aria-label="{{ itemTitle }}">
+              <div class="cart-item__product">
+                {% if itemLink %}
+                  <a href="{{ itemLink }}" class="cart-item__thumb-link">
+                    <img src="{{ itemImage }}" class="cart-item__thumb" alt="{{ itemTitle }}" loading="lazy" width="88" height="88">
+                  </a>
+                {% else %}
+                  <span class="cart-item__thumb-link">
+                    <img src="{{ itemImage }}" class="cart-item__thumb" alt="{{ itemTitle }}" loading="lazy" width="88" height="88">
+                  </span>
+                {% endif %}
+                <div class="cart-item__info">
+                  <h3 class="cart-item__title">
+                    {% if itemLink %}
+                      <a href="{{ itemLink }}">{{ itemTitle }}</a>
+                    {% else %}
+                      {{ itemTitle }}
+                    {% endif %}
+                  </h3>
+                  <div class="cart-item__desc">{{ item.description|raw }}</div>
+                  <p class="cart-item__unit-price">
+                    <span>Prix unitaire :</span>
+                    <strong>{{ (linePrice / 100)|number_format(2, ',', ' ') }} €</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div class="cart-item__quantity" aria-label="Quantité">
+                <span class="cart-item__mobile-label">Quantité</span>
+                {% if item.type is defined and item.type == 'client_upload' %}
+                  <span class="cart-qty__value">{{ lineQty }}</span>
+                {% else %}
+                  <div class="cart-qty" role="group" aria-label="Modifier la quantité">
+                    <form method="post" action="{{ path('panier_modifier', {id: item.id}) }}" class="cart-qty__form">
+                      <input type="hidden" name="quantity" value="{{ item.quantity > 1 ? item.quantity - 1 : 1 }}">
+                      <button type="submit" class="cart-qty__btn" {% if item.quantity <= 1 %}disabled aria-disabled="true"{% endif %} aria-label="Diminuer la quantité">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14"/></svg>
+                      </button>
+                    </form>
+                    <span class="cart-qty__value" aria-live="polite">{{ item.quantity }}</span>
+                    <form method="post" action="{{ path('panier_modifier', {id: item.id}) }}" class="cart-qty__form">
+                      <input type="hidden" name="quantity" value="{{ item.quantity < 99 ? item.quantity + 1 : 99 }}">
+                      <button type="submit" class="cart-qty__btn" {% if item.quantity >= 99 %}disabled aria-disabled="true"{% endif %} aria-label="Augmenter la quantité">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                      </button>
+                    </form>
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="cart-item__line-total">
+                <span class="cart-item__mobile-label">Total ligne</span>
+                <strong class="cart-item__price">{{ (lineTotal / 100)|number_format(2, ',', ' ') }} €</strong>
+              </div>
+
+              <div class="cart-item__actions">
+                <form method="post" action="{{ path('panier_retirer', {cartKey: cartKey}) }}" class="cart-item__remove-form" id="cart-remove-form-{{ cartKey }}">
+                  <button
+                    type="button"
+                    class="cart-item__remove"
+                    aria-label="Retirer {{ itemTitle }} du panier"
+                    data-cart-remove-trigger
+                    data-product-title="{{ itemTitle }}"
+                    data-remove-form="cart-remove-form-{{ cartKey }}"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+                    <span class="cart-item__remove-label">Retirer</span>
+                  </button>
+                </form>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+
+        <aside class="cart-summary" aria-labelledby="cart-summary-title">
+          <h3 id="cart-summary-title" class="cart-summary__title">Récapitulatif</h3>
+
+          <dl class="cart-summary__lines">
+            <div class="cart-summary__line">
+              <dt>Documents distincts</dt>
+              <dd>{{ cart|length }}</dd>
+            </div>
+            <div class="cart-summary__line">
+              <dt>Exemplaires au total</dt>
+              <dd>{{ totalQty }}</dd>
+            </div>
+            <div class="cart-summary__line cart-summary__line--total">
+              <dt>Total TTC</dt>
+              <dd>{{ (totalCents / 100)|number_format(2, ',', ' ') }} €</dd>
+            </div>
+          </dl>
+
+          <a href="{{ path('commande') }}" class="btn-primary btn-block">
+            Passer la commande
+          </a>
+          <p class="cart-summary__trust">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 118 0v4"/></svg>
+            Paiement sécurisé via Stripe
+          </p>
+        </aside>
+      </div>
+    {% endif %}
+  </div>
+</section>
 
 {% if cart is not empty %}
-<div class="modal fade cart-remove-modal" id="cartRemoveModal" tabindex="-1" aria-labelledby="cartRemoveModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-body p-4 p-md-5 text-center">
-                <div class="cart-remove-modal__icon mx-auto mb-4" aria-hidden="true">
-                    <i class="far fa-trash-alt"></i>
-                </div>
-                <h2 class="modal-title h4 font-weight-semibold mb-2" id="cartRemoveModalLabel">Retirer ce document ?</h2>
-                <p class="text-muted mb-1">Vous êtes sur le point de retirer</p>
-                <p class="cart-remove-modal__product mb-4" id="cartRemoveProductTitle"></p>
-                <p class="small text-muted mb-0">Cette action est réversible : vous pourrez l’ajouter à nouveau depuis le catalogue.</p>
-            </div>
-            <div class="modal-footer border-0 px-4 px-md-5 pb-4 pb-md-5 pt-0 justify-content-center gap-2 flex-column flex-sm-row">
-                <button type="button" class="btn btn-light btn-lg w-100 w-sm-auto px-4" data-bs-dismiss="modal">Annuler</button>
-                <button type="button" class="btn btn-danger btn-lg w-100 w-sm-auto px-4" id="cartRemoveConfirm">
-                    <i class="far fa-trash-alt me-2" aria-hidden="true"></i>Retirer du panier
-                </button>
-            </div>
-        </div>
+<div class="tl-modal" id="cartRemoveModal" hidden aria-hidden="true">
+  <div class="tl-modal__overlay" data-modal-close tabindex="-1"></div>
+  <div class="tl-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="cartRemoveModalLabel">
+    <div class="tl-modal__body">
+      <div class="tl-modal__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+      </div>
+      <h2 class="tl-modal__title" id="cartRemoveModalLabel">Retirer ce document ?</h2>
+      <p class="tl-modal__text">Vous êtes sur le point de retirer</p>
+      <p class="tl-modal__product" id="cartRemoveProductTitle"></p>
+      <p class="tl-modal__hint">Cette action est réversible : vous pourrez l'ajouter à nouveau depuis le catalogue.</p>
     </div>
+    <div class="tl-modal__footer">
+      <button type="button" class="btn-outline" data-modal-close>Annuler</button>
+      <button type="button" class="btn-danger" id="cartRemoveConfirm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+        Retirer du panier
+      </button>
+    </div>
+  </div>
 </div>
+{% endif %}
 
+{% endblock %}
+
+{% block javascripts %}
+{% if cart is not empty %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('cartRemoveModal');
-    if (!modal) {
-        return;
+  const modal = document.getElementById('cartRemoveModal');
+  if (!modal) {
+    return;
+  }
+
+  const titleEl = document.getElementById('cartRemoveProductTitle');
+  const confirmBtn = document.getElementById('cartRemoveConfirm');
+  let pendingForm = null;
+  let lastFocused = null;
+
+  function openModal(trigger) {
+    pendingForm = document.getElementById(trigger.getAttribute('data-remove-form'));
+    if (titleEl) {
+      titleEl.textContent = trigger.getAttribute('data-product-title') || '';
     }
+    lastFocused = document.activeElement;
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    confirmBtn.focus();
+  }
 
-    const titleEl = document.getElementById('cartRemoveProductTitle');
-    const confirmBtn = document.getElementById('cartRemoveConfirm');
-    let pendingForm = null;
+  function closeModal() {
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    pendingForm = null;
+    if (lastFocused) {
+      lastFocused.focus();
+    }
+  }
 
-    modal.addEventListener('show.bs.modal', function (event) {
-        const trigger = event.relatedTarget;
-        if (!trigger) {
-            return;
-        }
-
-        pendingForm = document.getElementById(trigger.getAttribute('data-remove-form'));
-        titleEl.textContent = trigger.getAttribute('data-product-title') || '';
+  document.querySelectorAll('[data-cart-remove-trigger]').forEach(function (trigger) {
+    trigger.addEventListener('click', function () {
+      openModal(trigger);
     });
+  });
 
-    modal.addEventListener('hidden.bs.modal', function () {
-        pendingForm = null;
-    });
+  modal.querySelectorAll('[data-modal-close]').forEach(function (el) {
+    el.addEventListener('click', closeModal);
+  });
 
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !modal.hidden) {
+      closeModal();
+    }
+  });
+
+  if (confirmBtn) {
     confirmBtn.addEventListener('click', function () {
-        if (pendingForm) {
-            pendingForm.submit();
-        }
+      if (pendingForm) {
+        pendingForm.submit();
+      }
     });
+  }
 });
 </script>
 {% endif %}

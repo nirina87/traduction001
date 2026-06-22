@@ -1,41 +1,396 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Facture{% endblock %}
+{% set payment_ok = order.status == 'paid' %}
+{% set order_status_label = payment_ok ? 'Payée' : (order.status == 'pending' ? 'En attente' : order.status) %}
+{% set order_date_label = order.createdAt ? order.createdAt|date('d/m/Y') : null %}
+{% set order_total_label = order.total|number_format(2, ',', ' ') ~ ' €' %}
+{% set order_items_count = order.items|length %}
+{% set seo_title = payment_ok ? "Facture " ~ order.invoiceNumber ~ " — Paiement Validé | Traduction Légale" : "Facture " ~ order.invoiceNumber ~ " — En Attente de Paiement | Traduction Légale" %}
+{% set seo_description = payment_ok ? "Facture " ~ order.invoiceNumber ~ " du " ~ order_date_label ~ " pour votre commande de traduction assermentée (" ~ order_items_count ~ " ligne" ~ (order_items_count > 1 ? 's' : '') ~ "). Total TTC : " ~ order_total_label ~ ". Paiement Stripe validé — Traducteur inscrit près de la Cour d'Appel." : "Facture " ~ order.invoiceNumber ~ " du " ~ order_date_label ~ " — paiement en attente pour votre traduction assermentée. Total TTC : " ~ order_total_label ~ ". Contactez Traduction Légale si besoin." %}
+{% set seo_keywords = payment_ok ? "facture traduction assermentée, facture traduction légale payée, reçu traduction certifiée, paiement stripe validé, facture traducteur assermenté" : "facture traduction en attente, paiement facture traduction légale, commande traduction assermentée, facture traducteur cour d'appel" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set panier_url = absolute_url(path('panier')) %}
+{% set commande_url = absolute_url(path('commande')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set page_url = absolute_url(path('commande_facture', {id: order.id})) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+{% set og_image_alt = payment_ok ? 'Traduction Légale — Facture de traduction assermentée payée' : 'Traduction Légale — Facture de traduction assermentée en attente' %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="{{ og_image_alt }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="{{ og_image_alt }}">
+{% endblock %}
+
+{% block structured_data %}
+{% set invoice_items_ld = [] %}
+{% for item in order.items %}
+  {% set invoice_items_ld = invoice_items_ld|merge([{
+    '@type': 'OrderItem',
+    'position': loop.index,
+    'orderQuantity': item.quantity,
+    'orderedItem': {
+      '@type': 'Service',
+      'name': item.title,
+      'description': item.description|default('Traduction assermentée')|striptags,
+      'offers': {
+        '@type': 'Offer',
+        'priceCurrency': order.currency|default('EUR'),
+        'price': item.unitPrice,
+        'eligibleQuantity': {
+          '@type': 'QuantitativeValue',
+          'value': item.quantity
+        }
+      }
+    }
+  }]) %}
+{% endfor %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Facturation',
+        'Traduction assermentée',
+        'Paiement Stripe',
+        'Documents officiels',
+        'Cour d\'Appel'
+      ]
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': payment_ok ? 'Traduction Légale — facture payée' : 'Traduction Légale — facture en attente'
+      },
+      'mainEntity': {'@id': page_url ~ '#invoice'},
+      'potentialAction': payment_ok ? {
+        '@type': 'PrintAction',
+        'target': page_url,
+        'name': 'Imprimer la facture'
+      } : {
+        '@type': 'CommunicateAction',
+        'target': contact_url,
+        'name': 'Nous contacter'
+      }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Panier',
+          'item': panier_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Commande',
+          'item': commande_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Facture ' ~ order.invoiceNumber,
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#invoice-summary',
+      'name': 'Récapitulatif de facture',
+      'description': payment_ok ? 'Détails de la facture de traduction assermentée réglée.' : 'Détails de la facture en attente de règlement.',
+      'numberOfItems': 4,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Numéro de facture',
+          'description': order.invoiceNumber
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Date d\'émission',
+          'description': order_date_label
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Total TTC',
+          'description': order_total_label
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Statut',
+          'description': order_status_label
+        }
+      ]
+    },
+    {
+      '@type': 'Order',
+      '@id': page_url ~ '#order',
+      'orderStatus': payment_ok ? 'https://schema.org/OrderProcessing' : 'https://schema.org/OrderPaymentDue',
+      'orderNumber': order.invoiceNumber,
+      'orderDate': order.createdAt ? order.createdAt|date('c') : null,
+      'priceCurrency': order.currency|default('EUR'),
+      'price': order.total,
+      'paymentMethod': 'https://schema.org/CreditCard',
+      'seller': {'@id': accueil_url ~ '#organization'},
+      'customer': {
+        '@type': 'Person',
+        'name': order.user.firstName ~ ' ' ~ order.user.lastName,
+        'email': order.user.email
+      },
+      'url': page_url,
+      'orderedItem': invoice_items_ld
+    },
+    {
+      '@type': 'Invoice',
+      '@id': page_url ~ '#invoice',
+      'url': page_url,
+      'identifier': order.invoiceNumber,
+      'invoiceNumber': order.invoiceNumber,
+      'confirmationNumber': order.invoiceNumber,
+      'dateCreated': order.createdAt ? order.createdAt|date('c') : null,
+      'category': 'Traduction assermentée',
+      'paymentStatus': payment_ok ? 'https://schema.org/PaymentComplete' : 'https://schema.org/PaymentDue',
+      'totalPaymentDue': payment_ok ? null : {
+        '@type': 'PriceSpecification',
+        'price': order.total,
+        'priceCurrency': order.currency|default('EUR')
+      },
+      'totalPrice': payment_ok ? {
+        '@type': 'PriceSpecification',
+        'price': order.total,
+        'priceCurrency': order.currency|default('EUR')
+      } : null,
+      'provider': {'@id': accueil_url ~ '#organization'},
+      'customer': order.user.company ? {
+        '@type': 'Organization',
+        'name': order.user.company,
+        'email': order.user.email
+      } : {
+        '@type': 'Person',
+        'name': order.user.firstName ~ ' ' ~ order.user.lastName,
+        'email': order.user.email
+      },
+      'referencesOrder': {'@id': page_url ~ '#order'},
+      'potentialAction': {
+        '@type': 'PrintAction',
+        'target': page_url,
+        'name': 'Imprimer la facture'
+      }
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
-                <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Facture</p>
-                <h1 class="font-weight-bold text-7 mb-3">Facture {{ order.invoiceNumber }}</h1>
-                <p class="text-muted mb-4">Commande passée par {{ order.user.firstName }} {{ order.user.lastName }} — {{ order.user.email }}</p>
-                <table class="table table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>Produit</th>
-                            <th>Qté</th>
-                            <th>PU</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in order.items %}
-                            <tr>
-                                <td>{{ item.title }}</td>
-                                <td>{{ item.quantity }}</td>
-                                <td>{{ item.unitPrice }} €</td>
-                                <td>{{ item.total }} €</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
-                    <strong>Total TTC</strong>
-                    <strong>{{ order.total }} €</strong>
-                </div>
-            </div>
-        </div>
-    </section>
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Facturation</span>
+      <h1 id="page-title">Facture {{ order.invoiceNumber }}</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('panier') }}">Panier</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('commande') }}">Commande</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Facture</span>
+    </nav>
+  </div>
 </div>
+
+<section class="invoice-page" id="invoice" aria-labelledby="invoice-title">
+  <div class="wrap">
+    <div class="invoice-page-intro">
+      <div>
+        <h2 id="invoice-title">Détail de votre facture</h2>
+        <p>Commande passée le {{ order.createdAt|date('d/m/Y') }} — statut <strong>{{ order_status_label }}</strong>.</p>
+      </div>
+      <div class="invoice-page-actions">
+        <button type="button" class="btn-outline invoice-print-btn" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+          Imprimer
+        </button>
+        <a href="{{ path('accueil') }}" class="btn-outline invoice-page-back">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+          Retour à l'accueil
+        </a>
+      </div>
+    </div>
+
+    <article class="invoice-card">
+      <header class="invoice-card__header">
+        <div class="invoice-card__brand">
+          <img src="{{ asset('logo-tl.png') }}" alt="Traduction Légale" width="160" height="48" class="invoice-card__logo">
+          <p class="invoice-card__brand-text">Traducteur assermenté inscrit près d'une Cour d'Appel</p>
+        </div>
+        <div class="invoice-card__meta">
+          <dl class="invoice-meta-list">
+            <div class="invoice-meta-list__line">
+              <dt>N° facture</dt>
+              <dd>{{ order.invoiceNumber }}</dd>
+            </div>
+            <div class="invoice-meta-list__line">
+              <dt>Date</dt>
+              <dd>{{ order.createdAt|date('d/m/Y') }}</dd>
+            </div>
+            <div class="invoice-meta-list__line">
+              <dt>Statut</dt>
+              <dd>
+                <span class="order-success-badge {{ payment_ok ? 'order-success-badge--paid' : 'order-success-badge--pending' }}">
+                  {{ order_status_label }}
+                </span>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </header>
+
+      <div class="invoice-parties">
+        <div class="invoice-party">
+          <h3 class="invoice-party__title">Émetteur</h3>
+          <p class="invoice-party__name">Traduction Légale</p>
+          <p>Traduction assermentée et certifiée</p>
+          <p><a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a></p>
+          <p><a href="tel:+33187663433">01 87 66 34 33</a></p>
+        </div>
+        <div class="invoice-party">
+          <h3 class="invoice-party__title">Client</h3>
+          <p class="invoice-party__name">{{ order.user.firstName }} {{ order.user.lastName }}</p>
+          {% if order.user.company %}
+            <p>{{ order.user.company }}</p>
+          {% endif %}
+          <p><a href="mailto:{{ order.user.email }}">{{ order.user.email }}</a></p>
+          {% if order.user.phone %}
+            <p>{{ order.user.phone }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="invoice-lines" role="table" aria-label="Lignes de facturation">
+        <div class="invoice-lines__header" role="row">
+          <span role="columnheader">Produit</span>
+          <span role="columnheader">Qté</span>
+          <span role="columnheader">Prix unitaire</span>
+          <span role="columnheader">Total</span>
+        </div>
+        {% for item in order.items %}
+          <article class="invoice-line" role="row" aria-label="{{ item.title }}">
+            <div class="invoice-line__product" role="cell">
+              <h4 class="invoice-line__title">{{ item.title }}</h4>
+              {% if item.description %}
+                <p class="invoice-line__desc">{{ item.description }}</p>
+              {% endif %}
+            </div>
+            <div class="invoice-line__qty" role="cell">
+              <span class="invoice-line__mobile-label">Qté</span>
+              <span>{{ item.quantity }}</span>
+            </div>
+            <div class="invoice-line__unit" role="cell">
+              <span class="invoice-line__mobile-label">Prix unitaire</span>
+              <span>{{ item.unitPrice|number_format(2, ',', ' ') }} €</span>
+            </div>
+            <div class="invoice-line__total" role="cell">
+              <span class="invoice-line__mobile-label">Total</span>
+              <strong>{{ item.total|number_format(2, ',', ' ') }} €</strong>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <footer class="invoice-card__footer">
+        <dl class="invoice-totals">
+          <div class="invoice-totals__line invoice-totals__line--sub">
+            <dt>Devise</dt>
+            <dd>{{ order.currency }}</dd>
+          </div>
+          <div class="invoice-totals__line invoice-totals__line--total">
+            <dt>Total TTC</dt>
+            <dd>{{ order.total|number_format(2, ',', ' ') }} €</dd>
+          </div>
+        </dl>
+        <p class="invoice-card__note">
+          Paiement sécurisé par carte bancaire via Stripe.
+          Pour toute question, contactez-nous à <a href="{{ path('contact') }}">notre formulaire</a> ou par e-mail.
+        </p>
+      </footer>
+    </article>
+  </div>
+</section>
+
 {% endblock %}

@@ -1,113 +1,312 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %} Traductions Légales - Contact {% endblock %}
+{% set seo_title = "Contact — Demander un Devis de Traduction Assermentée | Traduction Légale" %}
+{% set seo_description = "Contactez Traduction Légale, traducteur assermenté inscrit près de la Cour d'Appel. Devis gratuit sous 2h, formulaire sécurisé, e-mail contact@traduction-legale.fr, téléphone 01 87 66 34 33. Paris, France." %}
+{% set seo_keywords = "contact traducteur assermenté, devis traduction assermentée, demande devis traduction, traduction-legale.fr contact, traducteur cour d'appel contact, devis traduction juridique, formulaire traduction certifiée, traduction officielle devis gratuit, traducteur assermenté paris" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set page_url = absolute_url(path('contact')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Contact et demande de devis de traduction assermentée">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Contact et demande de devis de traduction assermentée">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': 'Paris',
+        'addressCountry': 'FR'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Traduction assermentée',
+        'Devis traduction officielle',
+        'Documents officiels',
+        'Traduction juridique',
+        'Cour d\'Appel'
+      ],
+      'contactPoint': {'@id': page_url ~ '#contactpoint'}
+    },
+    {
+      '@type': 'ContactPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'mainEntity': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': 'Traduction Légale — contact et demande de devis'
+      }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Contact',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ContactPoint',
+      '@id': page_url ~ '#contactpoint',
+      'contactType': 'customer service',
+      'name': 'Traduction Légale — Service client',
+      'url': page_url,
+      'telephone': '+33-1-87-66-34-33',
+      'email': 'contact@traduction-legale.fr',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'hoursAvailable': {
+        '@type': 'OpeningHoursSpecification',
+        'dayOfWeek': [
+          'https://schema.org/Monday',
+          'https://schema.org/Tuesday',
+          'https://schema.org/Wednesday',
+          'https://schema.org/Thursday',
+          'https://schema.org/Friday'
+        ],
+        'opens': '09:00',
+        'closes': '18:00'
+      }
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#contact-channels',
+      'name': 'Coordonnées — Traduction Légale',
+      'description': 'Moyens de contact du cabinet de traduction assermentée.',
+      'numberOfItems': 4,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Adresse',
+          'description': 'Paris, France'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Téléphone',
+          'description': '01 87 66 34 33'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'E-mail',
+          'description': 'contact@traduction-legale.fr'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Délai de réponse',
+          'description': 'Devis envoyé sous 2h en journée ouvrée'
+        }
+      ]
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div role="main" class="main">
-    <section class="page-header page-header-classic page-header-md">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="text-8 mb-0">Contact</h1>
-                    <p class="lead mb-0 text-4">Nous sommes à votre écoute pour vos traductions assermentées et juridiques.</p>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <ul class="breadcrumb d-block text-md-end mb-0">
-                        <li><a href="{{ path('accueil') }}">Accueil</a></li>
-                        <li class="active">Contact</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="container">
-        <div class="row py-4">
-            <div class="col-lg-6">
-                <h2 class="font-weight-bold text-8 mt-2 mb-0">Contactez-nous !</h2>
-                <p class="mb-4">Pour une traduction assermentée et un devis rapide.</p>
-
-                <form class="contact-form" action="php/contact-form.php" method="POST">
-                    <div class="contact-form-success alert alert-success d-none mt-4">
-                        <strong>Success!</strong> Your message has been sent to us.
-                    </div>
-
-                    <div class="contact-form-error alert alert-danger d-none mt-4">
-                        <strong>Error!</strong> There was an error sending your message.
-                        <span class="mail-error-message text-1 d-block"></span>
-                    </div>
-
-                    <div class="row">
-                        <div class="form-group col-lg-6">
-                            <label class="form-label mb-1 text-2">Nom et prénom</label>
-                            <input type="text" value="" data-msg-required="Veuillez saisir votre nom." maxlength="100" class="form-control text-3 h-auto py-2" name="name" required>
-                        </div>
-                        <div class="form-group col-lg-6">
-                            <label class="form-label mb-1 text-2">Adresse email</label>
-                            <input type="email" value="" data-msg-required="Veuillez saisir votre adresse email." data-msg-email="Veuillez saisir une adresse email valide." maxlength="100" class="form-control text-3 h-auto py-2" name="email" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col">
-                            <label class="form-label mb-1 text-2">Objet</label>
-                            <input type="text" value="" data-msg-required="Veuillez saisir l’objet de votre demande." maxlength="100" class="form-control text-3 h-auto py-2" name="subject" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col">
-                            <label class="form-label mb-1 text-2">Message</label>
-                            <textarea maxlength="5000" data-msg-required="Veuillez saisir votre message." rows="8" class="form-control text-3 h-auto py-2" name="message" required></textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col">
-                            <input type="submit" value="Envoyer ma demande" class="btn btn-primary btn-modern" data-loading-text="Envoi...">
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="appear-animation" data-appear-animation="fadeIn" data-appear-animation-delay="800">
-                    <h4 class="mt-2 mb-1">Notre <strong>bureau</strong></h4>
-                    <ul class="list list-icons list-icons-style-2 mt-2">
-                        <li><i class="fas fa-map-marker-alt top-6"></i> <strong class="text-dark">Adresse :</strong> Paris, France</li>
-                        <li><i class="fas fa-phone top-6"></i> <strong class="text-dark">Téléphone :</strong> +33 1 00 00 00 00</li>
-                        <li><i class="fas fa-envelope top-6"></i> <strong class="text-dark">Email :</strong> <a href="mailto:contact@traductionlegales.fr">contact@traductionlegales.fr</a></li>
-                    </ul>
-                </div>
-
-                <div class="appear-animation" data-appear-animation="fadeIn" data-appear-animation-delay="950">
-                    <h4 class="pt-5">Services <strong>de traduction</strong></h4>
-                    <ul class="list list-icons list-dark mt-2">
-                        <li><i class="far fa-clock top-6"></i> 24h/24 - 7j/7</li>
-                        <li><i class="far fa-check-circle top-6"></i> Traductions assermentées certifiées</li>
-                        <li><i class="far fa-check-circle top-6"></i> Confidentialité garantie</li>
-                    </ul>
-                </div>
-
-                <h4 class="pt-5">Prenez <strong>contact</strong></h4>
-                <p class="lead mb-0 text-4">Nous vous accompagnons pour vos traductions assermentées, juridiques et administratives avec une réponse rapide et une confidentialité garantie.</p>
-            </div>
-        </div>
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow" style="color:#D8B774;">Nous écrire</span>
+      <h1 id="page-title">Contact</h1>
     </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Contact</span>
+    </nav>
+  </div>
 </div>
 
-<section class="call-to-action call-to-action-default with-button-arrow content-align-center call-to-action-in-footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-9 col-lg-9">
-                <div class="call-to-action-content">
-                    <h2 class="font-weight-normal text-6 mb-0">Besoin d’une traduction rapide et conforme ?</h2>
-                    <p class="mb-0">Nous vous accompagnons pour vos démarches juridiques, administratives et internationales.</p>
-                </div>
+<section class="page-intro" aria-labelledby="contact-intro-title">
+  <div class="wrap">
+    <h2 id="contact-intro-title">Décrivez votre besoin, nous vous répondons sous 2h ouvrées</h2>
+    <p>Indiquez la nature de votre document et la langue souhaitée : un traducteur assermenté étudie votre demande et vous envoie un devis précis, sans engagement de votre part.</p>
+  </div>
+</section>
+
+<section class="contact-section" aria-labelledby="contact-form-title">
+  <div class="wrap">
+    <h2 id="contact-form-title" class="visually-hidden">Formulaire de contact et coordonnées</h2>
+    <div class="contact-grid">
+
+      <div class="contact-form">
+        <form id="contactForm" data-action="{{ path('contact_ajax') }}" novalidate aria-label="Demande de devis de traduction assermentée">
+          <div class="form-row-split">
+            <div class="form-row">
+              <label for="firstName">Prénom</label>
+              <input type="text" id="firstName" name="firstName" required placeholder="Votre prénom" autocomplete="given-name">
             </div>
-            <div class="col-md-3 col-lg-3">
-                <div class="call-to-action-btn">
-                    <a href="{{ path('contact') }}" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3">Demander un devis</a><span class="arrow hlb d-none d-md-block" data-appear-animation="rotateInUpLeft" style="top: -40px; left: 70%;"></span>
-                </div>
+            <div class="form-row">
+              <label for="lastName">Nom</label>
+              <input type="text" id="lastName" name="lastName" required placeholder="Votre nom" autocomplete="family-name">
             </div>
+          </div>
+
+          <div class="form-row">
+            <label for="email">Adresse e-mail</label>
+            <input type="email" id="email" name="email" required placeholder="votre@email.fr" autocomplete="email">
+          </div>
+
+          <div class="form-row">
+            <label for="phone">Téléphone (facultatif)</label>
+            <input type="tel" id="phone" name="phone" placeholder="06 12 34 56 78" autocomplete="tel">
+          </div>
+
+          <div class="form-row-split">
+            <div class="form-row">
+              <label for="docType">Type de document</label>
+              <select id="docType" name="docType">
+                <option value="">Sélectionnez...</option>
+                <option>Acte d'état civil</option>
+                <option>Diplôme / relevé de notes</option>
+                <option>Jugement / décision de justice</option>
+                <option>Contrat / acte notarié</option>
+                <option>Casier judiciaire</option>
+                <option>Pièce d'identité</option>
+                <option>Autre document</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="lang">Langue souhaitée</label>
+              <input type="text" id="lang" name="lang" placeholder="Ex. Anglais → Français">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label for="message">Votre message</label>
+            <textarea id="message" name="message" placeholder="Décrivez votre document et votre délai souhaité..."></textarea>
+          </div>
+
+          <button type="submit" class="form-submit">Envoyer ma demande</button>
+        </form>
+
+        <div class="form-error" id="formError" role="alert">
+          <p>Une erreur est survenue lors de l'envoi. Veuillez réessayer ou nous contacter directement par e-mail.</p>
         </div>
+
+        <div class="form-success" id="formSuccess">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+          <h3>Votre demande a bien été envoyée</h3>
+          <p>Un traducteur assermenté vous répond par e-mail dans les 2 heures ouvrées qui suivent.</p>
+        </div>
+      </div>
+
+      <aside aria-labelledby="contact-info-title">
+        <h2 id="contact-info-title" class="visually-hidden">Coordonnées du cabinet</h2>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <h3>Adresse</h3>
+            <p>Paris, France</p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <h3>Téléphone</h3>
+            <p><a href="tel:+33187663433">01 87 66 34 33</a></p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+          </div>
+          <div>
+            <h3>E-mail</h3>
+            <p><a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a></p>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          </div>
+          <div>
+            <h3>Délai de réponse</h3>
+            <p>Devis envoyé sous 2h en journée ouvrée</p>
+          </div>
+        </div>
+      </aside>
+
     </div>
+  </div>
 </section>
 {% endblock %}

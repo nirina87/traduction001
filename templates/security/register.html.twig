@@ -1,64 +1,343 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% set target_path = app.request.request.get('_target_path') ?? app.request.query.get('_target_path') %}
+{% set redirect_url = target_path ? (target_path starts with 'http' ? target_path : absolute_url(target_path)) : null %}
+{% set seo_title = "Inscription Client — Créer un Compte Traduction Assermentée | Traduction Légale" %}
+{% set seo_description = "Créez votre compte client Traduction Légale pour finaliser votre commande de traduction assermentée, gérer vos documents et payer en toute sécurité via Stripe. Traducteur inscrit près de la Cour d'Appel, inscription rapide et sécurisée." %}
+{% set seo_keywords = "inscription traduction légale, créer compte client traduction, compte traduction assermentée, inscription traducteur assermenté client, espace client traduction juridique, ouverture compte traduction certifiée, inscription paiement stripe traduction" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set login_url = absolute_url(path('app_user_login', target_path ? {_target_path: target_path} : {})) %}
+{% set commande_url = absolute_url(path('commande')) %}
+{% set page_url = absolute_url(path('app_register')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Inscription à l'espace client de traduction assermentée">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Inscription à l'espace client de traduction assermentée">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Inscription client',
+        'Espace client',
+        'Traduction assermentée',
+        'Commande en ligne',
+        'Paiement sécurisé',
+        'Cour d\'Appel'
+      ]
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': 'Traduction Légale — inscription espace client'
+      },
+      'mainEntity': {'@id': page_url ~ '#register-form'},
+      'potentialAction': [
+        {
+          '@type': 'RegisterAction',
+          '@id': page_url ~ '#register',
+          'target': page_url,
+          'name': 'Créer un compte client'
+        },
+        {
+          '@type': 'InteractAction',
+          '@id': page_url ~ '#login',
+          'target': login_url,
+          'name': 'Se connecter'
+        }
+      ]
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Connexion',
+          'item': login_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Inscription',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#register-benefits',
+      'name': 'Avantages de l\'inscription — Traduction Légale',
+      'description': 'Ce que vous obtenez en créant un compte client sur Traduction Légale.',
+      'numberOfItems': 3,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Commande simplifiée',
+          'description': 'Commande et paiement de traduction assermentée en quelques clics.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Facturation enregistrée',
+          'description': 'Données de facturation sauvegardées pour vos prochaines commandes.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Identifiants par e-mail',
+          'description': 'Réception de vos identifiants de connexion par e-mail.'
+        }
+      ]
+    },
+    {
+      '@type': 'WebPageElement',
+      '@id': page_url ~ '#register-form',
+      'name': 'Formulaire d\'inscription client',
+      'description': 'Création de compte sécurisé pour commander une traduction assermentée et payer via Stripe.',
+      'isPartOf': {'@id': page_url ~ '#webpage'}
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#register-fields',
+      'name': 'Champs du formulaire d\'inscription',
+      'description': 'Informations demandées lors de la création du compte client.',
+      'numberOfItems': 5,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Prénom et nom',
+          'description': 'Identité du titulaire du compte.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Email',
+          'description': 'Adresse e-mail utilisée pour la connexion et la facturation.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Téléphone',
+          'description': 'Numéro de contact facultatif.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Société',
+          'description': 'Raison sociale facultative pour la facturation professionnelle.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 5,
+          'name': 'Mot de passe',
+          'description': 'Mot de passe sécurisé d\'au moins 8 caractères.'
+        }
+      ]
+    }
+  ]|merge(redirect_url ? [{
+    '@type': 'EntryPoint',
+    '@id': page_url ~ '#redirect',
+    'urlTemplate': redirect_url,
+    'description': 'Page de destination après inscription réussie.',
+    'actionPlatform': [
+      'https://schema.org/DesktopWebPlatform',
+      'https://schema.org/MobileWebPlatform'
+    ]
+  }] : [{
+    '@type': 'EntryPoint',
+    '@id': page_url ~ '#redirect-default',
+    'urlTemplate': commande_url,
+    'description': 'Parcours client standard après inscription pour finaliser une commande.',
+    'actionPlatform': [
+      'https://schema.org/DesktopWebPlatform',
+      'https://schema.org/MobileWebPlatform'
+    ]
+  }])
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
-                        <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Créer un compte</p>
-                        <h1 class="font-weight-bold text-7 mb-3">Inscription client pour finaliser votre commande</h1>
-                        <p class="text-3 text-muted mb-4">Créez un compte sécurisé pour valider vos informations, confirmer votre commande et payer sur Stripe.</p>
 
-                        {% for message in app.flashes('error') %}
-                            <div class="alert alert-danger">{{ message }}</div>
-                        {% endfor %}
-                        {% for message in app.flashes('success') %}
-                            <div class="alert alert-success">{{ message }}</div>
-                        {% endfor %}
-
-                        {% set target_path = app.request.request.get('_target_path') ?? app.request.query.get('_target_path') %}
-
-                        <form method="post" class="row g-3">
-                            {% if target_path %}
-                                <input type="hidden" name="_target_path" value="{{ target_path }}">
-                            {% endif %}
-                            <div class="col-md-6">
-                                <label class="form-label">Prénom</label>
-                                <input type="text" name="firstName" class="form-control" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Nom</label>
-                                <input type="text" name="lastName" class="form-control" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="email" class="form-control" required />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Téléphone</label>
-                                <input type="text" name="phone" class="form-control" />
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Société</label>
-                                <input type="text" name="company" class="form-control" />
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Mot de passe (8 caractères minimum)</label>
-                                <input type="password" name="password" class="form-control" required minlength="8" />
-                            </div>
-                            <div class="col-12 d-flex flex-wrap gap-2">
-                                <button type="submit" class="btn btn-primary">Créer mon compte</button>
-                                <a href="{{ path('app_user_login', target_path ? {_target_path: target_path} : {}) }}" class="btn btn-outline-primary">Déjà inscrit ? Se connecter</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Espace client</span>
+      <h1 id="page-title">Inscription</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('app_user_login', target_path ? {_target_path: target_path} : {}) }}">Connexion</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Inscription</span>
+    </nav>
+  </div>
 </div>
+
+<section class="auth-page" aria-labelledby="auth-title">
+  <div class="wrap">
+    <div class="auth-layout auth-layout--wide">
+      <div class="auth-intro">
+        <h2 id="auth-title">Créez votre compte client</h2>
+        <p>Créez un compte sécurisé pour valider vos informations, confirmer votre commande et payer sur Stripe.</p>
+        <ul class="auth-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            Commande et paiement en quelques clics
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            Données de facturation enregistrées
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            Identifiants envoyés par e-mail
+          </li>
+        </ul>
+      </div>
+
+      <div class="auth-card">
+        {% for message in app.flashes('error') %}
+          <div class="tl-flash tl-flash--error" role="alert">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('success') %}
+          <div class="tl-flash tl-flash--success" role="alert">{{ message }}</div>
+        {% endfor %}
+
+        {% if app.user %}
+          <div class="tl-flash tl-flash--success" role="status">
+            Vous êtes déjà connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.
+          </div>
+          <div class="auth-actions">
+            <a href="{{ path('commande') }}" class="btn-primary btn-block">Finaliser ma commande</a>
+            <a href="{{ path('accueil') }}" class="btn-outline btn-block">Retour à l'accueil</a>
+          </div>
+        {% else %}
+          <form method="post" class="auth-form" id="register-form" aria-label="Formulaire d'inscription client">
+            {% if target_path %}
+              <input type="hidden" name="_target_path" value="{{ target_path }}">
+            {% endif %}
+
+            <div class="form-row-split">
+              <div class="form-row">
+                <label for="firstName">Prénom</label>
+                <input type="text" id="firstName" name="firstName" required autocomplete="given-name" placeholder="Votre prénom">
+              </div>
+              <div class="form-row">
+                <label for="lastName">Nom</label>
+                <input type="text" id="lastName" name="lastName" required autocomplete="family-name" placeholder="Votre nom">
+              </div>
+            </div>
+
+            <div class="form-row-split">
+              <div class="form-row">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autocomplete="email" placeholder="votre@email.fr">
+              </div>
+              <div class="form-row">
+                <label for="phone">Téléphone</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="06 12 34 56 78">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label for="company">Société <span class="auth-optional">(facultatif)</span></label>
+              <input type="text" id="company" name="company" autocomplete="organization" placeholder="Nom de votre société">
+            </div>
+
+            <div class="form-row">
+              <label for="password">Mot de passe</label>
+              <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" placeholder="8 caractères minimum">
+            </div>
+
+            <div class="auth-actions">
+              <button type="submit" class="form-submit">Créer mon compte</button>
+              <a href="{{ path('app_user_login', target_path ? {_target_path: target_path} : {}) }}" class="btn-outline btn-block">Déjà inscrit ? Se connecter</a>
+            </div>
+          </form>
+        {% endif %}
+
+        <p class="auth-trust">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 118 0v4"/></svg>
+          Inscription sécurisée — vos données sont protégées.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

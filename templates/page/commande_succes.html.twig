@@ -1,31 +1,306 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Paiement validé{% endblock %}
+{% set payment_ok = paymentConfirmed|default(false) %}
+{% set seo_title = payment_ok ? "Commande Confirmée — Paiement Validé | Traduction Légale" : "Paiement en Cours de Vérification | Traduction Légale" %}
+{% set seo_description = payment_ok ? "Votre commande de traduction assermentée est confirmée. Paiement Stripe validé, e-mail de confirmation envoyé, facture disponible. Traducteur inscrit près de la Cour d'Appel — Traduction Légale." : "Votre paiement Stripe est en cours de vérification. Contactez Traduction Légale si besoin pour finaliser votre commande de traduction assermentée certifiée." %}
+{% set seo_keywords = payment_ok ? "commande confirmée traduction assermentée, paiement stripe validé, facture traduction légale, confirmation commande traducteur assermenté" : "paiement en attente traduction, vérification stripe traduction assermentée, commande traduction légale" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set panier_url = absolute_url(path('panier')) %}
+{% set commande_url = absolute_url(path('commande')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set page_url = absolute_url(path('commande_succes')) %}
+{% set facture_url = order ? absolute_url(path('commande_facture', {id: order.id})) : null %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+{% set order_status_label = order ? (order.status == 'paid' ? 'Payée' : (order.status == 'pending' ? 'En attente' : order.status)) : null %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="{{ payment_ok ? 'Traduction Légale — Commande de traduction assermentée confirmée' : 'Traduction Légale — Vérification du paiement en cours' }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="{{ payment_ok ? 'Traduction Légale — Commande de traduction assermentée confirmée' : 'Traduction Légale — Vérification du paiement en cours' }}">
+{% endblock %}
+
+{% block structured_data %}
+{% set order_items_ld = [] %}
+{% if order %}
+  {% for item in order.items %}
+    {% set order_items_ld = order_items_ld|merge([{
+      '@type': 'OrderItem',
+      'position': loop.index,
+      'orderQuantity': item.quantity,
+      'orderedItem': {
+        '@type': 'Service',
+        'name': item.title,
+        'description': item.description|default('Traduction assermentée')|striptags
+      }
+    }]) %}
+  {% endfor %}
+{% endif %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Confirmation de commande',
+        'Traduction assermentée',
+        'Paiement Stripe',
+        'Facturation',
+        'Cour d\'Appel'
+      ]
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': payment_ok ? 'Traduction Légale — commande confirmée' : 'Traduction Légale — vérification paiement'
+      },
+      'mainEntity': order ? {'@id': page_url ~ '#order'} : {'@id': page_url ~ '#confirmation'},
+      'potentialAction': payment_ok and facture_url ? {
+        '@type': 'ViewAction',
+        'target': facture_url,
+        'name': 'Voir la facture'
+      } : {
+        '@type': 'CommunicateAction',
+        'target': contact_url,
+        'name': 'Nous contacter'
+      }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Panier',
+          'item': panier_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Commande',
+          'item': commande_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': payment_ok ? 'Confirmation' : 'Vérification',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#confirmation',
+      'name': payment_ok ? 'Récapitulatif de commande confirmée' : 'État du paiement',
+      'description': payment_ok ? 'Détails de la commande de traduction assermentée validée.' : 'Informations affichées pendant la vérification du paiement.',
+      'numberOfItems': order ? 3 : 1,
+      'itemListElement': order ? [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Numéro de commande',
+          'description': order.invoiceNumber
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Total payé',
+          'description': order.total ~ ' €'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Statut',
+          'description': order_status_label
+        }
+      ] : [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Vérification en cours',
+          'description': 'Le paiement Stripe est en cours de traitement.'
+        }
+      ]
+    }
+  ]|merge(order ? [{
+    '@type': 'Order',
+    '@id': page_url ~ '#order',
+    'orderStatus': payment_ok ? 'https://schema.org/OrderProcessing' : 'https://schema.org/OrderPaymentDue',
+    'orderNumber': order.invoiceNumber,
+    'orderDate': order.createdAt ? order.createdAt|date('c') : null,
+    'priceCurrency': order.currency|default('EUR'),
+    'price': order.total,
+    'paymentMethod': 'https://schema.org/CreditCard',
+    'seller': {'@id': accueil_url ~ '#organization'},
+    'customer': order.user ? {
+      '@type': 'Person',
+      'email': order.user.email
+    } : null,
+    'url': page_url,
+    'orderedItem': order_items_ld
+  }] : [])
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
-                <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Paiement Stripe</p>
-                {% if paymentConfirmed|default(false) %}
-                    <h1 class="font-weight-bold text-7 mb-3">Commande confirmée</h1>
-                    <p class="text-3 text-muted mb-4">Votre paiement a bien été enregistré. Vous pouvez consulter votre facture ci-dessous.</p>
-                {% else %}
-                    <h1 class="font-weight-bold text-7 mb-3">Paiement en cours de vérification</h1>
-                    <p class="text-3 text-muted mb-4">Votre paiement est en cours de traitement. Si le problème persiste, contactez-nous.</p>
-                {% endif %}
-                {% if order %}
-                    <ul class="list-unstyled mb-4">
-                        <li><strong>Numéro de commande :</strong> {{ order.invoiceNumber }}</li>
-                        <li><strong>Total payé :</strong> {{ order.total }} €</li>
-                        <li><strong>Statut :</strong> {{ order.status }}</li>
-                    </ul>
-                    <a href="{{ path('commande_facture', {'id': order.id}) }}" class="btn btn-primary">Voir la facture</a>
-                {% endif %}
-                <a href="{{ path('accueil') }}" class="btn btn-outline-primary ms-2">Retour à l’accueil</a>
-            </div>
-        </div>
-    </section>
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Paiement Stripe</span>
+      <h1 id="page-title">
+        {% if paymentConfirmed|default(false) %}
+          Commande confirmée
+        {% else %}
+          Paiement en vérification
+        {% endif %}
+      </h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('panier') }}">Panier</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('commande') }}">Commande</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Confirmation</span>
+    </nav>
+  </div>
 </div>
+
+<section class="order-success-page" id="order-confirmation" aria-labelledby="order-success-title">
+  <div class="wrap">
+    <div class="order-success-card">
+      <div class="order-success-icon {{ paymentConfirmed|default(false) ? '' : 'order-success-icon--pending' }}" aria-hidden="true">
+        {% if paymentConfirmed|default(false) %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+        {% else %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+        {% endif %}
+      </div>
+
+      <h2 id="order-success-title" class="order-success-title">
+        {% if paymentConfirmed|default(false) %}
+          Merci, votre paiement est confirmé
+        {% else %}
+          Votre paiement est en cours de traitement
+        {% endif %}
+      </h2>
+
+      <p class="order-success-lede">
+        {% if paymentConfirmed|default(false) %}
+          Votre commande de traduction assermentée a bien été enregistrée. Un e-mail de confirmation vous a été envoyé.
+        {% else %}
+          Votre paiement est en cours de vérification. Si le problème persiste, contactez-nous.
+        {% endif %}
+      </p>
+
+      {% if order %}
+        <dl class="order-success-details">
+          <div class="order-success-details__line">
+            <dt>Numéro de commande</dt>
+            <dd>{{ order.invoiceNumber }}</dd>
+          </div>
+          <div class="order-success-details__line">
+            <dt>Total payé</dt>
+            <dd>{{ order.total|number_format(2, ',', ' ') }} €</dd>
+          </div>
+          <div class="order-success-details__line">
+            <dt>Statut</dt>
+            <dd>
+              <span class="order-success-badge {{ paymentConfirmed|default(false) ? 'order-success-badge--paid' : 'order-success-badge--pending' }}">
+                {{ order_status_label }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      {% endif %}
+
+      <div class="order-success-actions">
+        {% if order and paymentConfirmed|default(false) %}
+          <a href="{{ path('commande_facture', {id: order.id}) }}" class="btn-primary btn-block">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6"/></svg>
+            Voir la facture
+          </a>
+        {% endif %}
+        <a href="{{ path('accueil') }}" class="btn-outline btn-block">Retour à l'accueil</a>
+        {% if not paymentConfirmed|default(false) %}
+          <a href="{{ path('contact') }}" class="btn-outline btn-block">Nous contacter</a>
+        {% endif %}
+      </div>
+
+      {% if paymentConfirmed|default(false) %}
+        <p class="order-success-trust">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+          Votre traduction assermentée sera traitée par un traducteur inscrit près de la Cour d'Appel.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
 {% endblock %}

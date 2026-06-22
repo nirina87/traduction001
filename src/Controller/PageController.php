@@ -212,15 +212,19 @@ class PageController extends AbstractController
     {
         $documents = $em->getRepository(Document::class)->findBy(
             [],
-            ['id' => 'DESC']
-        );    
+            ['id' => 'ASC']
+        );
         return $this->render('page/nos_services.html.twig', ['products' => $documents]);
     }
 
     #[Route('/qui-sommes-nous', name: 'qui_sommes_nous')]
-    public function quiSommesNous(): Response
+    public function quiSommesNous(EntityManagerInterface $em): Response
     {
-        return $this->render('page/qui_sommes_nous.html.twig');
+        $documentCount = $em->getRepository(Document::class)->count(['active' => true]);
+
+        return $this->render('page/qui_sommes_nous.html.twig', [
+            'documentCount' => $documentCount,
+        ]);
     }
 
     #[Route('/mentions-legales', name: 'mentions_legales')]
@@ -282,11 +286,10 @@ class PageController extends AbstractController
 
             // ✅ EMAIL
             $mail = (new Email())
-                ->from(new Address('all@ibkz2229.odns.fr', 'ESPACE HYGIENE 3D'))
-                ->to(new Address('contact@espacehygiene3d.com'))
-                ->addTo(new Address('contact@espacehygiene3d.fr'))
+                ->from(new Address('contact@traduction-legale.fr', 'Traduction Légale'))
+                ->to(new Address('contact@traduction-legale.fr'))
                 ->replyTo($email)
-                ->subject('Nouveau message de contact')
+                ->subject('Nouveau message de contact — Traduction Légale')
                 ->html("
                     <h2>Nouveau message</h2>
                     <p><strong>Nom :</strong> {$nom}</p>

@@ -1,82 +1,350 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Commande{% endblock %}
+{% set seo_title = "Finaliser ma Commande — Paiement Traduction Assermentée | Traduction Légale" %}
+{% set seo_description = "Finalisez votre commande de traduction assermentée : récapitulatif TTC, connexion ou création de compte client, paiement sécurisé via Stripe. Traducteur inscrit près de la Cour d'Appel, traduction certifiée conforme à l'original." %}
+{% set seo_keywords = "commande traduction assermentée, paiement stripe traduction, finaliser commande traduction certifiée, compte client traduction légale, checkout traduction juridique, traducteur cour d'appel paiement, traduction officielle en ligne" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set services_url = absolute_url(path('services')) %}
+{% set panier_url = absolute_url(path('panier')) %}
+{% set checkout_url = absolute_url(path('commande_checkout')) %}
+{% set login_url = absolute_url(path('app_user_login', {_target_path: path('commande')})) %}
+{% set register_url = absolute_url(path('app_register', {_target_path: path('commande')})) %}
+{% set page_url = absolute_url(path('commande')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Finalisation et paiement de commande de traduction assermentée">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Finalisation et paiement de commande de traduction assermentée">
+{% endblock %}
+
+{% block structured_data %}
+{% set cart_items_ld = [] %}
+{% set totalCentsLd = 0 %}
+{% set totalQtyLd = 0 %}
+{% for cartKey, item in cart %}
+  {% if item.type is defined and item.type == 'client_upload' %}
+    {% set linePriceLd = item.price %}
+    {% set lineQtyLd = item.quantity|default(1) %}
+    {% set itemTitleLd = item.title %}
+    {% set itemUrlLd = products[item.documentId] is defined ? absolute_url(path('produit_detail', {id: item.documentId})) : page_url %}
+  {% else %}
+    {% set linePriceLd = products[item.id].price %}
+    {% set lineQtyLd = item.quantity %}
+    {% set itemTitleLd = item.title %}
+    {% set itemUrlLd = absolute_url(path('produit_detail', {id: item.id})) %}
+  {% endif %}
+  {% set totalQtyLd = totalQtyLd + lineQtyLd %}
+  {% set totalCentsLd = totalCentsLd + (linePriceLd * lineQtyLd) %}
+  {% set cart_items_ld = cart_items_ld|merge([{
+    '@type': 'ListItem',
+    'position': loop.index,
+    'item': {
+      '@type': 'Service',
+      'name': itemTitleLd,
+      'url': itemUrlLd,
+      'description': item.description|default('Traduction assermentée')|striptags,
+      'offers': {
+        '@type': 'Offer',
+        'priceCurrency': 'EUR',
+        'price': (linePriceLd / 100)|number_format(2, '.', ''),
+        'eligibleQuantity': {
+          '@type': 'QuantitativeValue',
+          'value': lineQtyLd
+        }
+      }
+    }
+  }]) %}
+{% endfor %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Traduction assermentée',
+        'Paiement en ligne sécurisé',
+        'Commande client',
+        'Documents officiels',
+        'Traduction juridique',
+        'Cour d\'Appel'
+      ],
+      'paymentAccepted': 'Carte bancaire via Stripe'
+    },
+    {
+      '@type': 'CheckoutPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': 'Traduction Légale — finalisation de commande'
+      },
+      'mainEntity': cart is empty ? {'@id': accueil_url ~ '#organization'} : {'@id': page_url ~ '#order-summary'},
+      'potentialAction': cart is empty ? {
+        '@type': 'ViewAction',
+        'target': services_url,
+        'name': 'Découvrir le catalogue'
+      } : {
+        '@type': 'PayAction',
+        'target': checkout_url,
+        'name': 'Payer avec Stripe'
+      }
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Services',
+          'item': services_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Panier',
+          'item': panier_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Commande',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#checkout-steps',
+      'name': 'Étapes de commande — Traduction Légale',
+      'description': 'Parcours client pour commander une traduction assermentée en ligne.',
+      'numberOfItems': 3,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Panier',
+          'url': panier_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Finalisation',
+          'url': page_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Paiement Stripe',
+          'url': checkout_url
+        }
+      ]
+    }
+  ]|merge(cart is empty ? [] : [{
+    '@type': 'ItemList',
+    '@id': page_url ~ '#order-summary',
+    'name': 'Résumé de commande — Traduction Légale',
+    'description': 'Documents sélectionnés en attente de paiement.',
+    'numberOfItems': cart|length,
+    'itemListElement': cart_items_ld
+  }, {
+    '@type': 'Offer',
+    '@id': page_url ~ '#order-total',
+    'name': 'Total commande TTC',
+    'url': page_url,
+    'priceCurrency': 'EUR',
+    'price': (totalCentsLd / 100)|number_format(2, '.', ''),
+    'eligibleQuantity': {
+      '@type': 'QuantitativeValue',
+      'value': totalQtyLd
+    },
+    'seller': {'@id': accueil_url ~ '#organization'},
+    'acceptedPaymentMethod': 'https://schema.org/CreditCard'
+  }])|merge(user ? [] : [{
+    '@type': 'RegisterAction',
+    '@id': page_url ~ '#register',
+    'target': register_url,
+    'name': 'Créer un compte client'
+  }, {
+    '@type': 'InteractAction',
+    '@id': page_url ~ '#login',
+    'target': login_url,
+    'name': 'Connexion client'
+  }])
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="row align-items-end justify-content-between mb-4">
-                <div class="col-lg-8">
-                    <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Finalisation</p>
-                    <h1 class="font-weight-bold text-8 mb-2">Commander vos traductions assermentées</h1>
-                    <p class="text-3 mb-0">Connectez-vous ou créez un compte, vérifiez votre panier puis payez en ligne avec Stripe.</p>
-                </div>
-                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                    <a href="{{ path('panier') }}" class="btn btn-outline-primary">Retour au panier</a>
-                </div>
-            </div>
 
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
-
-            <div class="row g-4">
-                <div class="col-lg-7">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                        <h2 class="text-5 font-weight-semibold mb-3">Résumé de commande</h2>
-                        {% if cart is empty %}
-                            <p class="mb-0 text-muted">Votre panier est vide.</p>
-                        {% else %}
-                            {% set total = 0 %}
-                            {% for cartKey, item in cart %}
-                                {% if item.type is defined and item.type == 'client_upload' %}
-                                    {% set linePrice = item.price %}
-                                    {% set lineQty = item.quantity|default(1) %}
-                                {% else %}
-                                    {% set product = products[item.id] %}
-                                    {% set linePrice = product.price %}
-                                    {% set lineQty = item.quantity %}
-                                {% endif %}
-                                {% set lineTotal = linePrice * lineQty %}
-                                {% set total = total + lineTotal %}
-                                <div class="border rounded-4 p-3 mb-3">
-                                    <div class="d-flex justify-content-between align-items-start gap-3">
-                                        <div>
-                                            <h3 class="text-4 mb-1">{{ item.title }}</h3>
-                                            <div class="mb-1 text-muted">{{ item.description|raw }}</div>
-                                            <span class="badge bg-primary text-light">Qté : {{ lineQty }}</span>
-                                        </div>
-                                        <strong>{{ (lineTotal / 100)|number_format(2, ',', ' ') }} €</strong>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                            <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-3">
-                                <span class="text-4 font-weight-semibold">Total TTC</span>
-                                <strong class="text-5">{{ (total / 100)|number_format(2, ',', ' ') }} €</strong>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="col-lg-5">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                        {% if user %}
-                            <h2 class="text-5 font-weight-semibold mb-2">Compte connecté</h2>
-                            <p class="text-muted mb-3">Vous êtes connecté en tant que <strong>{{ user.email }}</strong>.</p>
-                            <p class="text-muted mb-4">Vos données seront utilisées pour la facture et le paiement Stripe.</p>
-                            <a href="{{ path('commande_checkout') }}" class="btn btn-primary btn-lg w-100">Payer avec Stripe</a>
-                            <p class="small text-muted mt-3 mb-0">Paiement 100 % sécurisé. Les données bancaires sont traitées par Stripe.</p>
-                        {% else %}
-                            <h2 class="text-5 font-weight-semibold mb-2">Connexion ou inscription</h2>
-                            <p class="text-muted mb-4">Pour commander et payer, vous devez d’abord vous connecter ou créer un compte client.</p>
-                            <a href="{{ path('app_user_login', {_target_path: path('commande')}) }}" class="btn btn-primary btn-lg w-100 mb-3">Connexion client</a>
-                            <a href="{{ path('app_register', {_target_path: path('commande')}) }}" class="btn btn-outline-primary btn-lg w-100">Créer un compte</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Finalisation</span>
+      <h1 id="page-title">Commander vos traductions</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('services') }}">Services</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('panier') }}">Panier</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Commande</span>
+    </nav>
+  </div>
 </div>
+
+<section class="checkout-page" aria-labelledby="checkout-title">
+  <div class="wrap">
+    <div class="checkout-page-intro">
+      <div>
+        <h2 id="checkout-title">Finalisez votre commande</h2>
+        <p>Connectez-vous ou créez un compte, vérifiez votre panier puis payez en ligne avec Stripe.</p>
+      </div>
+      <a href="{{ path('panier') }}" class="btn-outline checkout-page-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M19 12H5m0 0l7 7m-7-7l7-7"/></svg>
+        Retour au panier
+      </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+      <div class="tl-flash tl-flash--success" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+      <div class="tl-flash tl-flash--error" role="alert">{{ message }}</div>
+    {% endfor %}
+
+    <div class="checkout-grid">
+      <div class="checkout-card checkout-summary" aria-labelledby="checkout-summary-title">
+        <h3 id="checkout-summary-title" class="checkout-card__title">Résumé de commande</h3>
+
+        {% if cart is empty %}
+          <p class="checkout-empty">Votre panier est vide.</p>
+          <a href="{{ path('services') }}" class="btn-primary">Découvrir nos documents</a>
+        {% else %}
+          {% set total = 0 %}
+          <ul class="checkout-lines">
+            {% for cartKey, item in cart %}
+              {% if item.type is defined and item.type == 'client_upload' %}
+                {% set linePrice = item.price %}
+                {% set lineQty = item.quantity|default(1) %}
+              {% else %}
+                {% set product = products[item.id] %}
+                {% set linePrice = product.price %}
+                {% set lineQty = item.quantity %}
+              {% endif %}
+              {% set lineTotal = linePrice * lineQty %}
+              {% set total = total + lineTotal %}
+              <li class="checkout-line">
+                <div class="checkout-line__main">
+                  <h4 class="checkout-line__title">{{ item.title }}</h4>
+                  <div class="checkout-line__desc">{{ item.description|raw }}</div>
+                  <span class="checkout-badge">Qté : {{ lineQty }}</span>
+                </div>
+                <strong class="checkout-line__price">{{ (lineTotal / 100)|number_format(2, ',', ' ') }} €</strong>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="checkout-total">
+            <span>Total TTC</span>
+            <strong>{{ (total / 100)|number_format(2, ',', ' ') }} €</strong>
+          </div>
+        {% endif %}
+      </div>
+
+      <aside class="checkout-card checkout-auth" aria-labelledby="checkout-auth-title">
+        {% if user %}
+          <h3 id="checkout-auth-title" class="checkout-card__title">Compte connecté</h3>
+          <p class="checkout-auth__text">Vous êtes connecté en tant que <strong>{{ user.email }}</strong>.</p>
+          <p class="checkout-auth__hint">Vos données seront utilisées pour la facture et le paiement Stripe.</p>
+
+          {% if cart is not empty %}
+            <a href="{{ path('commande_checkout') }}" class="btn-primary btn-block checkout-pay-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              Payer avec Stripe
+            </a>
+            <p class="checkout-trust">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 118 0v4"/></svg>
+              Paiement 100 % sécurisé. Les données bancaires sont traitées par Stripe.
+            </p>
+          {% else %}
+            <p class="checkout-auth__hint">Ajoutez des documents à votre panier pour procéder au paiement.</p>
+            <a href="{{ path('services') }}" class="btn-outline btn-block">Voir le catalogue</a>
+          {% endif %}
+        {% else %}
+          <h3 id="checkout-auth-title" class="checkout-card__title">Connexion ou inscription</h3>
+          <p class="checkout-auth__text">Pour commander et payer, vous devez d'abord vous connecter ou créer un compte client.</p>
+
+          <div class="checkout-auth__actions">
+            <a href="{{ path('app_user_login', {_target_path: path('commande')}) }}" class="btn-primary btn-block">Connexion client</a>
+            <a href="{{ path('app_register', {_target_path: path('commande')}) }}" class="btn-outline btn-block">Créer un compte</a>
+          </div>
+        {% endif %}
+      </aside>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

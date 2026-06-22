@@ -1,18 +1,316 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Paiement annulé{% endblock %}
+{% set cart = app.session.get('cart', []) %}
+{% set cart_count = cart|length %}
+{% set has_cart = cart_count > 0 %}
+{% set seo_title = has_cart ? "Paiement Annulé — " ~ cart_count ~ " Document" ~ (cart_count > 1 ? 's' : '') ~ " dans votre Panier | Traduction Légale" : "Paiement Annulé — Reprendre votre Commande | Traduction Légale" %}
+{% set seo_description = has_cart ? "Votre paiement Stripe a été annulé. Aucun débit effectué — votre panier contient encore " ~ cart_count ~ " document" ~ (cart_count > 1 ? 's' : '') ~ " de traduction assermentée. Reprenez la commande ou contactez Traduction Légale. Traducteur inscrit près de la Cour d'Appel." : "Votre paiement Stripe n'a pas été finalisé. Aucun montant débité — retournez au panier pour reprendre votre commande de traduction assermentée ou contactez Traduction Légale. Traducteur inscrit près de la Cour d'Appel." %}
+{% set seo_keywords = "paiement annulé traduction assermentée, commande interrompue traduction légale, reprendre panier traduction certifiée, paiement stripe annulé, checkout traduction juridique, traducteur cour d'appel commande" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set panier_url = absolute_url(path('panier')) %}
+{% set commande_url = absolute_url(path('commande')) %}
+{% set checkout_url = absolute_url(path('commande_checkout')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set page_url = absolute_url(path('commande_annulee')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+{% set og_image_alt = has_cart ? 'Traduction Légale — Paiement annulé, panier conservé' : 'Traduction Légale — Paiement de traduction assermentée annulé' %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="{{ og_image_alt }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="{{ og_image_alt }}">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Paiement Stripe',
+        'Paiement annulé',
+        'Traduction assermentée',
+        'Commande en ligne',
+        'Panier en ligne',
+        'Documents officiels',
+        'Cour d\'Appel'
+      ]
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': has_cart ? 'Traduction Légale — paiement annulé, panier conservé' : 'Traduction Légale — paiement annulé'
+      },
+      'mainEntity': {'@id': page_url ~ '#cancellation'},
+      'potentialAction': [
+        {
+          '@type': 'ViewAction',
+          'target': panier_url,
+          'name': 'Retour au panier'
+        },
+        {
+          '@type': 'ViewAction',
+          'target': commande_url,
+          'name': 'Reprendre la commande'
+        },
+        {
+          '@type': 'CommunicateAction',
+          'target': contact_url,
+          'name': 'Nous contacter'
+        }
+      ]
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Panier',
+          'item': panier_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Commande',
+          'item': commande_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Annulation',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#cancellation',
+      'name': 'État du paiement annulé',
+      'description': 'Le paiement Stripe n\'a pas été finalisé. Aucun débit — le panier reste disponible pour reprendre la commande.',
+      'numberOfItems': has_cart ? 3 : 2,
+      'itemListElement': has_cart ? [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Statut du paiement',
+          'description': 'Annulé ou interrompu — aucun montant débité'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Documents dans le panier',
+          'description': cart_count ~ ' document' ~ (cart_count > 1 ? 's' : '') ~ ' conservé' ~ (cart_count > 1 ? 's' : '')
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Prochaine étape',
+          'description': 'Finaliser la commande de traduction assermentée via Stripe'
+        }
+      ] : [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Statut du paiement',
+          'description': 'Annulé ou interrompu — aucun montant débité'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Prochaine étape',
+          'description': 'Retourner au panier ou aux services pour commander une traduction assermentée'
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#recovery-steps',
+      'name': 'Reprendre votre commande',
+      'description': 'Parcours pour finaliser une commande de traduction assermentée après annulation du paiement.',
+      'numberOfItems': 3,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Vérifier le panier',
+          'url': panier_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Finaliser la commande',
+          'url': commande_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Paiement sécurisé Stripe',
+          'url': checkout_url
+        }
+      ]
+    },
+    {
+      '@type': 'HowTo',
+      '@id': page_url ~ '#howto-retry',
+      'name': 'Reprendre une commande après paiement annulé',
+      'description': 'Comment finaliser votre traduction assermentée lorsque le paiement Stripe a été interrompu.',
+      'step': [
+        {
+          '@type': 'HowToStep',
+          'position': 1,
+          'name': 'Consulter votre panier',
+          'text': 'Vérifiez les documents de traduction assermentée sélectionnés.',
+          'url': panier_url
+        },
+        {
+          '@type': 'HowToStep',
+          'position': 2,
+          'name': 'Finaliser la commande',
+          'text': 'Connectez-vous ou créez un compte client, puis validez le récapitulatif TTC.',
+          'url': commande_url
+        },
+        {
+          '@type': 'HowToStep',
+          'position': 3,
+          'name': 'Payer via Stripe',
+          'text': 'Réglez en ligne par carte bancaire sur la page de paiement sécurisée Stripe.',
+          'url': checkout_url
+        }
+      ]
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
-                <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Paiement Stripe</p>
-                <h1 class="font-weight-bold text-7 mb-3">Paiement annulé</h1>
-                <p class="text-3 text-muted mb-4">Le paiement n’a pas été finalisé. Vous pouvez retourner au panier et réessayer.</p>
-                <a href="{{ path('panier') }}" class="btn btn-primary">Retour au panier</a>
-            </div>
-        </div>
-    </section>
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Paiement Stripe</span>
+      <h1 id="page-title">Paiement annulé</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('panier') }}">Panier</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('commande') }}">Commande</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Annulation</span>
+    </nav>
+  </div>
 </div>
+
+<section class="order-success-page" id="order-cancelled" aria-labelledby="order-cancelled-title">
+  <div class="wrap">
+    <div class="order-success-card">
+      <div class="order-success-icon order-success-icon--cancelled" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+      </div>
+
+      <h2 id="order-cancelled-title" class="order-success-title">Votre paiement n'a pas été finalisé</h2>
+
+      <p class="order-success-lede">
+        Vous avez interrompu le paiement ou la session Stripe a expiré. Aucun montant n'a été débité — votre panier est toujours disponible.
+      </p>
+
+      <dl class="order-success-details">
+        <div class="order-success-details__line">
+          <dt>Statut</dt>
+          <dd>
+            <span class="order-success-badge order-success-badge--cancelled">Annulé</span>
+          </dd>
+        </div>
+        <div class="order-success-details__line">
+          <dt>Votre panier</dt>
+          <dd>{% if has_cart %}{{ cart_count }} document{{ cart_count > 1 ? 's' : '' }} conservé{{ cart_count > 1 ? 's' : '' }}{% else %}Conservé{% endif %}</dd>
+        </div>
+      </dl>
+
+      <div class="order-success-actions">
+        <a href="{{ path('panier') }}" class="btn-primary btn-block">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6l-1-3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+          Retour au panier
+        </a>
+        <a href="{{ path('commande') }}" class="btn-outline btn-block">Reprendre la commande</a>
+        <a href="{{ path('accueil') }}" class="btn-outline btn-block">Retour à l'accueil</a>
+        <a href="{{ path('contact') }}" class="btn-outline btn-block">Nous contacter</a>
+      </div>
+
+      <p class="order-success-trust">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+        Paiement sécurisé par Stripe — vos données bancaires ne sont jamais stockées sur nos serveurs.
+      </p>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

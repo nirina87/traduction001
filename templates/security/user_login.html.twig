@@ -1,48 +1,276 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Connexion client{% endblock %}
+{% set target_path = app.request.query.get('_target_path') %}
+{% set redirect_url = target_path ? (target_path starts with 'http' ? target_path : absolute_url(target_path)) : null %}
+{% set seo_title = "Connexion Client — Espace Traduction Assermentée | Traduction Légale" %}
+{% set seo_description = "Connectez-vous à votre espace client Traduction Légale pour retrouver votre panier, finaliser votre commande de traduction assermentée et payer en toute sécurité via Stripe. Traducteur inscrit près de la Cour d'Appel." %}
+{% set seo_keywords = "connexion client traduction légale, espace client traducteur assermenté, login traduction assermentée, compte client traduction, authentification traduction certifiée, accès client traduction juridique" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set page_url = absolute_url(path('app_user_login')) %}
+{% set register_url = absolute_url(path('app_register', target_path ? {_target_path: target_path} : {})) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, follow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Connexion à l'espace client de traduction assermentée">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="Traduction Légale — Connexion à l'espace client de traduction assermentée">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Espace client',
+        'Traduction assermentée',
+        'Commande en ligne',
+        'Paiement sécurisé',
+        'Cour d\'Appel'
+      ]
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': 'Traduction Légale — connexion espace client'
+      },
+      'mainEntity': {'@id': page_url ~ '#login-form'},
+      'potentialAction': [
+        {
+          '@type': 'InteractAction',
+          '@id': page_url ~ '#login',
+          'target': page_url,
+          'name': 'Se connecter'
+        },
+        {
+          '@type': 'RegisterAction',
+          '@id': page_url ~ '#register',
+          'target': register_url,
+          'name': 'Créer un compte client'
+        }
+      ]
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Connexion',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#client-benefits',
+      'name': 'Avantages de l\'espace client — Traduction Légale',
+      'description': 'Fonctionnalités accessibles après connexion à votre compte client.',
+      'numberOfItems': 3,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Suivi des commandes',
+          'description': 'Suivi de vos commandes de traduction assermentée.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Paiement sécurisé',
+          'description': 'Paiement en ligne sécurisé via Stripe.'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Facturation centralisée',
+          'description': 'Facturation et historique de vos traductions.'
+        }
+      ]
+    },
+    {
+      '@type': 'WebPageElement',
+      '@id': page_url ~ '#login-form',
+      'name': 'Formulaire de connexion client',
+      'description': 'Authentification sécurisée pour accéder au panier et finaliser une commande.',
+      'isPartOf': {'@id': page_url ~ '#webpage'}
+    }
+  ]|merge(redirect_url ? [{
+    '@type': 'EntryPoint',
+    '@id': page_url ~ '#redirect',
+    'urlTemplate': redirect_url,
+    'description': 'Page de destination après connexion réussie.',
+    'actionPlatform': [
+      'https://schema.org/DesktopWebPlatform',
+      'https://schema.org/MobileWebPlatform'
+    ]
+  }] : [])
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<div class="main" role="main">
-    <section class="section section-no-border pb-0">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow rounded-4 p-4 p-lg-5">
-                        <p class="text-uppercase text-color-primary font-weight-semibold mb-2">Espace client</p>
-                        <h1 class="font-weight-bold text-7 mb-2">Connexion client</h1>
-                        <p class="text-muted mb-4">Connectez-vous pour retrouver votre panier, finaliser votre commande et payer sur Stripe.</p>
 
-                        {% if error %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                        {% endif %}
-
-                        {% if app.user %}
-                            <div class="alert alert-success">Vous êtes déjà connecté en tant que {{ app.user.userIdentifier }}.</div>
-                        {% else %}
-                            <form method="post" class="row g-3">
-                                <div class="col-12">
-                                    <label class="form-label" for="inputUsername">Email ou identifiant</label>
-                                    <input type="text" class="form-control" id="inputUsername" name="_username" value="{{ last_username }}" required autofocus />
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="inputPassword">Mot de passe</label>
-                                    <input type="password" class="form-control" id="inputPassword" name="_password" required />
-                                </div>
-                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                                {% if app.request.query.get('_target_path') %}
-                                    <input type="hidden" name="_target_path" value="{{ app.request.query.get('_target_path') }}">
-                                {% endif %}
-                                <div class="col-12 d-flex flex-wrap gap-2">
-                                    <button type="submit" class="btn btn-primary">Se connecter</button>
-                                    <a href="{{ path('app_register') }}" class="btn btn-outline-primary">Créer un compte</a>
-                                </div>
-                            </form>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Espace client</span>
+      <h1 id="page-title">Connexion client</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Connexion</span>
+    </nav>
+  </div>
 </div>
+
+<section class="auth-page" aria-labelledby="auth-title">
+  <div class="wrap">
+    <div class="auth-layout">
+      <div class="auth-intro">
+        <h2 id="auth-title">Accédez à votre espace</h2>
+        <p>Connectez-vous pour retrouver votre panier, finaliser votre commande et payer sur Stripe.</p>
+        <ul class="auth-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            Suivi de vos commandes de traduction
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            Paiement sécurisé via Stripe
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+            Facturation et historique centralisés
+          </li>
+        </ul>
+      </div>
+
+      <div class="auth-card">
+        {% if error %}
+          <div class="tl-flash tl-flash--error" role="alert">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+          </div>
+        {% endif %}
+
+        {% if app.user %}
+          <div class="tl-flash tl-flash--success" role="status">
+            Vous êtes déjà connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.
+          </div>
+          <div class="auth-actions">
+            <a href="{{ path('commande') }}" class="btn-primary btn-block">Finaliser ma commande</a>
+            <a href="{{ path('accueil') }}" class="btn-outline btn-block">Retour à l'accueil</a>
+          </div>
+        {% else %}
+          <form method="post" class="auth-form" id="login-form" aria-label="Formulaire de connexion client">
+            <div class="form-row">
+              <label for="inputUsername">Email ou identifiant</label>
+              <input
+                type="text"
+                id="inputUsername"
+                name="_username"
+                value="{{ last_username }}"
+                required
+                autofocus
+                autocomplete="username"
+                placeholder="votre@email.fr"
+              >
+            </div>
+            <div class="form-row">
+              <label for="inputPassword">Mot de passe</label>
+              <input
+                type="password"
+                id="inputPassword"
+                name="_password"
+                required
+                autocomplete="current-password"
+                placeholder="Votre mot de passe"
+              >
+            </div>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            {% if target_path %}
+              <input type="hidden" name="_target_path" value="{{ target_path }}">
+            {% endif %}
+            <div class="auth-actions">
+              <button type="submit" class="form-submit">Se connecter</button>
+              <a href="{{ path('app_register', target_path ? {_target_path: target_path} : {}) }}" class="btn-outline btn-block">Créer un compte</a>
+            </div>
+          </form>
+        {% endif %}
+
+        <p class="auth-trust">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 118 0v4"/></svg>
+          Connexion sécurisée — vos données sont protégées.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
