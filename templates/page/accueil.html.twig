@@ -166,22 +166,30 @@
       <div class="seal">
         <svg viewBox="0 0 300 300" fill="none" aria-hidden="true" focusable="false">
           <defs>
-            <path id="circlePath" d="M 150, 150 m -118, 0 a 118,118 0 1,1 236,0 a 118,118 0 1,1 -236,0" />
+            <path id="circlePath" d="M 150, 150 m -128, 0 a 128,128 0 1,1 256,0 a 128,128 0 1,1 -256,0" />
+            <filter id="stampInk" x="-8%" y="-8%" width="116%" height="116%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
           </defs>
-          <circle cx="150" cy="150" r="135" stroke="#3d3d3d" stroke-width="1.2" opacity="0.5"/>
-          <circle cx="150" cy="150" r="118" stroke="#0a2047" stroke-width="1.5"/>
-          <circle cx="150" cy="150" r="92" stroke="#0a2047" stroke-width="1"/>
-          <text font-family="JetBrains Mono" font-size="11.5" letter-spacing="3" fill="#0a2047">
-            <textPath href="#circlePath" startOffset="2%">
-              TRADUCTEUR · ASSERMENTÉ · COUR D'APPEL ·
-            </textPath>
-          </text>
-          <g font-family="Fraunces" fill="#0a2047" text-anchor="middle">
-            <text x="150" y="138" font-size="20" font-weight="600">CERTIFIÉ</text>
-            <text x="150" y="166" font-size="13" letter-spacing="1" fill="#3d3d3d">CONFORME&nbsp;À&nbsp;L'ORIGINAL</text>
+          <g stroke-linecap="round">
+            <circle cx="150" cy="150" r="142" stroke="#0a2047" stroke-width="4" opacity="0.4"/>
+            <circle cx="150" cy="150" r="114" stroke="#0a2047" stroke-width="3"/>
+            <circle cx="150" cy="150" r="92" stroke="#0a2047" stroke-width="2.2"/>
           </g>
-          <line x1="110" y1="184" x2="190" y2="184" stroke="#3d3d3d" stroke-width="1" opacity="0.7"/>
-          <text x="150" y="200" font-family="JetBrains Mono" font-size="9" fill="#3d3d3d" text-anchor="middle" letter-spacing="1" opacity="0.85">N° DE RÉPERTOIRE — SCEAU OFFICIEL</text>
+          <g filter="url(#stampInk)" stroke-linecap="round">
+            <text font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="700" letter-spacing="3.5" fill="#0a2047">
+              <textPath href="#circlePath" startOffset="2%">
+                TRADUCTEUR · ASSERMENTÉ · COUR D'APPEL ·
+              </textPath>
+            </text>
+            <g font-family="Fraunces, serif" fill="#0a2047" text-anchor="middle">
+              <text x="150" y="136" font-size="26" font-weight="800" letter-spacing="2">CERTIFIÉ</text>
+              <text x="150" y="166" font-size="14.5" font-weight="700" letter-spacing="2">CONFORME&nbsp;À&nbsp;L'ORIGINAL</text>
+            </g>
+            <line x1="105" y1="182" x2="195" y2="182" stroke="#0a2047" stroke-width="2.8" opacity="0.85"/>
+            <text x="150" y="202" font-family="JetBrains Mono, monospace" font-size="10.5" font-weight="700" fill="#0a2047" text-anchor="middle" letter-spacing="1.5" opacity="0.9">N° DE RÉPERTOIRE — SCEAU OFFICIEL</text>
+          </g>
         </svg>
       </div>
     </div>
