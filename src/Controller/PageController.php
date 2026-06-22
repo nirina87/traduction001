@@ -40,8 +40,8 @@ class PageController extends AbstractController
     {
         $documents = $em->getRepository(Document::class)->findBy(
             [],
-            ['id' => 'DESC']
-        );    
+            ['id' => 'ASC']
+        );
         return $this->render('page/accueil.html.twig', ['products' => $documents]);
     }
 

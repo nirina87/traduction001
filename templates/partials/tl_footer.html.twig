@@ -1,0 +1,34 @@
+{% set accueil_url = path('accueil') %}
+{% set on_accueil = app.request.attributes.get('_route') == 'accueil' %}
+{% import 'macros/tl.html.twig' as tl %}
+
+<footer class="tl-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">Traduction&nbsp;Légale</div>
+        <p>Traducteur assermenté inscrit près d'une Cour d'Appel, spécialisé en traduction certifiée de documents officiels et juridiques.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Documents</h4>
+        {{ tl.section_link(on_accueil, accueil_url, 'documents', 'Tous les documents') }}
+        <a href="{{ path('services') }}">Catalogue complet</a>
+      </div>
+      <div class="footer-col">
+        <h4>Service</h4>
+        {{ tl.section_link(on_accueil, accueil_url, 'parcours', 'Le parcours') }}
+        {{ tl.section_link(on_accueil, accueil_url, 'tarifs', 'Tarifs') }}
+        {{ tl.section_link(on_accueil, accueil_url, 'faq', 'FAQ') }}
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="{{ path('contact') }}">Demander un devis</a>
+        <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ "now"|date("Y") }} Traduction Légale — Traducteur assermenté</span>
+      <span><a href="{{ path('mentions_legales') }}">Mentions légales</a> · CGV · Politique de confidentialité</span>
+    </div>
+  </div>
+</footer>

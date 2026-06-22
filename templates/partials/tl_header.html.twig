@@ -1,0 +1,22 @@
+{% set current_route = app.request.attributes.get('_route') %}
+{% set cartCount = app.session.get('cart', [])|length %}
+
+<header class="topbar">
+  <div class="wrap">
+    <a href="{{ path('accueil') }}" class="brand">
+      <img src="{{ asset('logo-tl.png') }}" alt="Traductions Légales — Traductions assermentées">
+    </a>
+    <nav aria-label="Navigation principale">
+      <a href="{{ path('accueil') }}" class="{{ current_route == 'accueil' ? 'is-active' : '' }}">Accueil</a>
+      <a href="{{ path('services') }}" class="{{ current_route == 'services' ? 'is-active' : '' }}">Services</a>
+      <a href="{{ path('qui_sommes_nous') }}" class="{{ current_route == 'qui_sommes_nous' ? 'is-active' : '' }}">Qui sommes-nous</a>
+      <a href="{{ path('contact') }}" class="{{ current_route == 'contact' ? 'is-active' : '' }}">Contact</a>
+      <div class="nav-actions">
+        <a href="{{ path('panier') }}" class="nav-panier">
+          Mon panier{% if cartCount > 0 %} <span class="nav-badge">{{ cartCount }}</span>{% endif %}
+        </a>
+        <a href="{{ path('contact') }}" class="nav-cta">Demander un devis</a>
+      </div>
+    </nav>
+  </div>
+</header>

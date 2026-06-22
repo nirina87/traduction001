@@ -1,0 +1,3 @@
+{% macro section_link(on_accueil, accueil_url, anchor, label) %}
+  <a href="{{ on_accueil ? '#' ~ anchor : accueil_url ~ '#' ~ anchor }}">{{ label }}</a>
+{% endmacro %}

@@ -1,540 +1,314 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %} Traductions légales - Accueil {% endblock %}
+{% block title %}Traducteur Assermenté — Traduction Légale Certifiée dès 28€ | Inscrit près de la Cour d'Appel{% endblock %}
+
+{% block meta_description %}Traducteur assermenté inscrit près de la Cour d'Appel. Traduction certifiée de vos actes officiels, diplômes, jugements et documents juridiques dès 28€ la page. Devis sous 2h, envoi postal et numérique.{% endblock %}
+
+{% block meta_extra %}
+<meta name="keywords" content="traducteur assermenté, traduction certifiée, traduction juridique, cour d'appel, traduction officielle, acte de naissance traduction">
+<meta property="og:title" content="Traducteur Assermenté — Traduction Légale Certifiée">
+<meta property="og:description" content="Traduction assermentée de vos documents officiels, reconnue par toutes les administrations françaises et étrangères. Dès 28€ la page.">
+<meta property="og:type" content="website">
+<link rel="canonical" href="{{ url('accueil') }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LegalService",
+  "name": "Traduction Légale — Traducteur Assermenté",
+  "description": "Service de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+  "priceRange": "À partir de 28€",
+  "areaServed": "FR"
+}
+</script>
+{% endblock %}
 
 {% block body %}
-<div role="main" class="main">
-    <div class="owl-carousel owl-carousel-light owl-carousel-light-init-fadeIn owl-theme manual dots-inside dots-horizontal-center show-dots-hover nav-inside nav-inside-plus nav-dark nav-md nav-font-size-md show-nav-hover mb-0" data-plugin-options="{'autoplayTimeout': 7000}" data-dynamic-height="['670px','670px','670px','550px','500px']" style="height: 670px;">
-        <div class="owl-stage-outer">
-            <div class="owl-stage">
 
-                <!-- Carousel Slide 1 -->
-                <div class="owl-item position-relative" style="background-image: url(slider.jpg); background-color: #2E3136; background-size: cover; background-position: center;">
-                    <div class="container position-relative z-index-1 h-100">
-                        <div class="d-flex flex-column align-items-center justify-content-center h-100">
-                            <h3 class="position-relative text-color-light text-5 line-height-5 font-weight-medium px-4 mb-2 appear-animation" data-appear-animation="fadeInDownShorter" data-plugin-options="{'minWindowWidth': 0}">
-                                <span class="position-absolute right-100pct top-50pct transform3dy-n50 opacity-3">
-                                    <img src="img/slides/slide-title-border.png" class="w-auto appear-animation" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="250" data-plugin-options="{'minWindowWidth': 0}" alt="" />
-                                </span>
-                                BESOIN D'UNE <span class="position-relative">TRADUCTION <span class="position-absolute left-50pct transform3dx-n50 top-0 mt-4"><img src="img/slides/slide-blue-line.png" class="w-auto appear-animation" data-appear-animation="fadeInLeftShorterPlus" data-appear-animation-delay="1000" data-plugin-options="{'minWindowWidth': 0}" alt="" /></span></span>
-                                <span class="position-absolute left-100pct top-50pct transform3dy-n50 opacity-3">
-                                    <img src="img/slides/slide-title-border.png" class="w-auto appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="250" data-plugin-options="{'minWindowWidth': 0}" alt="" />
-                                </span>
-                            </h3>
-                            <h1 class="text-color-light font-weight-extra-bold text-12 mb-3 appear-animation" data-appear-animation="blurIn" data-appear-animation-delay="500" data-plugin-options="{'minWindowWidth': 0}">ASSERMENTÉE?</h1>
-                            <p class="text-4 text-color-light font-weight-light opacity-7 mb-0" data-plugin-animated-letters data-plugin-options="{'startDelay': 1000, 'minWindowWidth': 0}">Consultez nos services professionnels</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Carousel Slide 2 -->
-                <div class="owl-item position-relative" style="background-image: url(slider.jpg); background-color: #2E3136; background-size: cover; background-position: center;">
-                    <div class="container position-relative z-index-3 h-100">
-                        <div class="row justify-content-center align-items-center h-100">
-                            <div class="col-lg-6">
-                                <div class="d-flex flex-column align-items-center">
-                                    <h3 class="position-relative text-color-light text-5 line-height-5 font-weight-medium px-4 mb-2 appear-animation" data-appear-animation="fadeInDownShorter" data-plugin-options="{'minWindowWidth': 0}">
-                                        <span class="position-absolute right-100pct top-50pct transform3dy-n50 opacity-3">
-                                            <img loading="lazy" src="img/slides/slide-title-border.png" class="w-auto appear-animation" data-appear-animation="fadeInLeftShorter" data-appear-animation-delay="250" data-plugin-options="{'imgFluid': false, 'minWindowWidth': 0}" alt="" />
-                                        </span>
-                                        NOS TRADUCTIONS SONT CERTIFIÉES 
-                                        <span class="position-absolute left-100pct top-50pct transform3dy-n50 opacity-3">
-                                            <img loading="lazy" src="img/slides/slide-title-border.png" class="w-auto appear-animation" data-appear-animation="fadeInRightShorter" data-appear-animation-delay="250" data-plugin-options="{'imgFluid': false, 'minWindowWidth': 0}" alt="" />
-                                        </span>
-                                    </h3>
-                                    <h2 class="text-color-light font-weight-extra-bold text-12 mb-3 appear-animation" data-appear-animation="blurIn" data-appear-animation-delay="500" data-plugin-options="{'minWindowWidth': 0}">ET RECONNUES</h2>
-                                    <p class="text-4 text-color-light font-weight-light opacity-7 text-center mb-0" data-plugin-animated-letters data-plugin-options="{'startDelay': 1000, 'minWindowWidth': 0, 'animationSpeed': 30}">Approuvé par plus de <strong class="text-color-light">10,000</strong> clients satisfaits, nos traductions assermentées sont acceptées par les tribunaux</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div class="owl-nav">
-            <button type="button" role="presentation" class="owl-prev" aria-label="Previous"></button>
-            <button type="button" role="presentation" class="owl-next" aria-label="Next"></button>
-        </div>
-        <div class="owl-dots mb-5">
-            <button role="button" class="owl-dot active"><span></span></button>
-            <button role="button" class="owl-dot"><span></span></button>
-        </div>
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Traducteur assermenté · inscrit près d'une Cour d'Appel</span>
+      <h1>Votre document a force légale.<br>Sa traduction <em>aussi</em>.</h1>
+      <p class="hero-lede">
+        Traduction certifiée de vos actes officiels — état civil, diplômes, jugements, contrats — reconnue par les administrations, ambassades et tribunaux français et étrangers.
+      </p>
+      <div class="hero-actions">
+        <a href="{{ path('contact') }}" class="btn-primary">
+          Demander un devis gratuit
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#tarifs" class="btn-secondary">Voir les tarifs</a>
+      </div>
+      <div class="hero-proof">
+        <div class="item"><b>28€</b>à partir de / page traduite</div>
+        <div class="item"><b>24–48h</b>délai moyen de livraison</div>
+        <div class="item"><b>100%</b>traductions certifiées conformes</div>
+      </div>
     </div>
 
-    <div class="home-intro bg-primary" id="home-intro">
-        <div class="container">
-
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <p>
-                        Accélèrez vos projets juridiques en <span class="highlighted-word">Traductions Assermentées</span>
-                        <span>Découvrez nos services professionnels et nos avantages.</span>
-                    </p>
-                </div>
-                <div class="col-lg-4">
-                    <div class="get-started text-start text-lg-end">
-                        <a href="/#products" class="btn btn-dark btn-lg text-3 font-weight-semibold px-4 py-3">Commencez Maintenant</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+    <div class="seal-wrap">
+      <div class="seal">
+        <svg viewBox="0 0 300 300" fill="none">
+          <defs>
+            <path id="circlePath" d="M 150, 150 m -118, 0 a 118,118 0 1,1 236,0 a 118,118 0 1,1 -236,0" />
+          </defs>
+          <circle cx="150" cy="150" r="135" stroke="#3d3d3d" stroke-width="1.2" opacity="0.5"/>
+          <circle cx="150" cy="150" r="118" stroke="#0a2047" stroke-width="1.5"/>
+          <circle cx="150" cy="150" r="92" stroke="#0a2047" stroke-width="1"/>
+          <text font-family="JetBrains Mono" font-size="11.5" letter-spacing="3" fill="#0a2047">
+            <textPath href="#circlePath" startOffset="2%">
+              TRADUCTEUR · ASSERMENTÉ · COUR D'APPEL ·
+            </textPath>
+          </text>
+          <g font-family="Fraunces" fill="#0a2047" text-anchor="middle">
+            <text x="150" y="138" font-size="20" font-weight="600">CERTIFIÉ</text>
+            <text x="150" y="166" font-size="13" letter-spacing="1" fill="#3d3d3d">CONFORME&nbsp;À&nbsp;L'ORIGINAL</text>
+          </g>
+          <line x1="110" y1="184" x2="190" y2="184" stroke="#3d3d3d" stroke-width="1" opacity="0.7"/>
+          <text x="150" y="200" font-family="JetBrains Mono" font-size="9" fill="#3d3d3d" text-anchor="middle" letter-spacing="1" opacity="0.85">N° DE RÉPERTOIRE — SCEAU OFFICIEL</text>
+        </svg>
+      </div>
     </div>
+  </div>
+</section>
 
-    <div class="container">
-
-        <div class="row text-center pt-3">
-            <div class="col-md-10 mx-md-auto">
-                <h1 class="word-rotator slide font-weight-bold text-8 mb-3 appear-animation" data-appear-animation="fadeInUpShorter">
-                    <span>Traduction Légales est </span>
-                    <span class="word-rotator-words bg-dark">
-                        <b class="is-visible">fiable</b>
-                        <b>professionnelle</b>
-                        <b>certifiée</b>
-                        <b>reconnue internationalement</b>
-                    </span>
-                    
-                </h1>
-                <p class="lead appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="300">
-                    Nos traducteurs assermentés offrent des services de qualité exceptionnelle pour tous vos documents juridiques, officiels et commerciaux. Avec une expérience de plus de 15 ans, nous garantissons l'exactitude et la conformité de chaque traduction.
-                </p>
-            </div>
-        </div>
-
+<div class="trustbar">
+  <div class="wrap">
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+      Accepté par préfectures, mairies &amp; ambassades
     </div>
-
-    <div class="appear-animation" data-appear-animation="fadeInUpShorter" data-appear-animation-delay="200">
-        <div class="home-concept mt-5">
-            <div class="container">
-
-                <div class="row text-center">
-                    <span class="sun"></span>
-                    <span class="cloud"></span>
-                    <div class="col-lg-2 ms-lg-auto">
-                        <div class="process-image">
-                            <img src="{{ asset('traduction-assermentee-1.jpg') }}" alt="Traduction assermentée - Analyse des documents" />
-                            <strong>Analyse</strong>
-                        </div>
-                    </div>
-                    <div class="col-lg-2">
-                        <div class="process-image process-image-on-middle">
-                            <img src="{{ asset('traduction-assermentee-2.jpg') }}" alt="Traduction assermentée - Traduction" />
-                            <strong>Traduction</strong>
-                        </div>
-                    </div>
-                    <div class="col-lg-2">
-                        <div class="process-image">
-                            <img src="{{ asset('traduction-assermentee-3.jpg') }}" alt="Traduction assermentée - Certification" />
-                            <strong>Certification</strong>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 ms-lg-auto">
-                        <div class="project-image">
-                            <div>
-                                <ul class="fc-slides">
-                                    <a href="/services" aria-label=""><img class="img-fluid" src="{{ asset('traductions-legales.jpg') }}" alt="" /></a>
-                                </ul>
-                            </div>
-                            <strong class="our-work">Nos Traductions</strong>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7l9-4 9 4-9 4-9-4zm0 0v10l9 4 9-4V7"/></svg>
+      Cachet, signature et numéro de répertoire
     </div>
-
-    <div class="container mb-5 pb-4">
-
-        <div class="row">
-            <div class="col mb-4">
-                <hr class="my-5">
-            </div>
-        </div>
-        
-        <div class="row mb-5" id="products">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-4 px-4">
-                    <div class="row align-items-end justify-content-between mb-4">
-                        <div class="col-lg-12 mb-5">
-                            <p class="text-uppercase text-color-primary font-weight-semibold mb-2 text-center"> Vos documents à traduire </p>
-                            <h2 class="font-weight-normal text-7 mb-2 text-center">Liste des <strong class="font-weight-extra-bold">Les documents </strong> à traduire</h2>
-                        </div>
-                    </div>
-                    <div class="row g-4">
-                       {% for product in products|slice(0, 6) %}
-                        <div class="col-md-6 col-xl-4">
-                            <article class="border rounded-4 p-3 h-100 bg-light-5 shadow-sm">
-                                <img src="{{ asset('uploads/' ~ product.image) }}"
-                                        class="img-fluid rounded-3 mb-3"
-                                        alt="{{ product.name }}"
-                                        style="height: 110px; object-fit: cover; width: 100%;" />
-
-                                <h4 class="text-4 mb-2">{{ product.name }}</h4>
-
-                                <p class="mb-3 text-muted">{{ product.basePrice }} €</p>
-
-                                <div class="">
-                                    <a href="{{ path('produit_detail', {'id': product.id}) }}"
-                                    class="btn btn-outline-primary full-width">
-                                        Voir le détail
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
-                    {% endfor %}
-                    </div>
-                    <a href="/services" style="max-width:350px; margin:auto" class="my-5 btn font-weight-semibold text-3 py-3 border-radius p-relative bottom-1 custom-header-1-btn-1 btn-gradient"> 
-                        Voir tous les documents 
-                    </a>
-                </div>
-            </div>
-        </div>
-        <!--services -->
-        <div class="row pb-3">
-            <div class="col-lg-8">
-                <h2 class="font-weight-normal text-7">Nos <strong class="font-weight-extra-bold">Services</strong></h2>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-support text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Support Client 24/7</h4>
-                                <p class="mb-4">Notre équipe est disponible pour répondre à vos questions et suivre votre commande</p>
-                            </div>
-                        </div>
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-doc text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Traducteurs Certifiés</h4>
-                                <p class="mb-4">Tous nos traducteurs sont assermentés et disposent d'une expertise spécialisée</p>
-                            </div>
-                        </div>
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-social-google text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">50+ Paires de Langues</h4>
-                                <p class="mb-4">Nous couvrons plus de 50 combinaisons de langues pour tous vos besoins</p>
-                            </div>
-                        </div>
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-pencil text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Délais Rapides</h4>
-                                <p class="mb-4">Nous respectons vos délais tout en maintenant une qualité exceptionnelle</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-layers text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Traduction Assermentée</h4>
-                                <p class="mb-4">Tous nos documents sont légalement reconnus auprès des tribunaux</p>
-                            </div>
-                        </div>
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-user text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Tarifs Compétitifs</h4>
-                                <p class="mb-4">Nos prix sont transparents et compétitifs pour tous les budgets</p>
-                            </div>
-                        </div>
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-menu text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Documents Variés</h4>
-                                <p class="mb-4">Traductions de contrats, procédures, brevets, factures et bien plus</p>
-                            </div>
-                        </div>
-                        <div class="feature-box feature-box-style-2">
-                            <div class="feature-box-icon">
-                                <i class="icons icon-screen-desktop text-color-primary"></i>
-                            </div>
-                            <div class="feature-box-info">
-                                <h4 class="font-weight-bold text-4-5 mb-1">Confidentialité</h4>
-                                <p class="mb-4">Nous garantissons la confidentialité totale de vos documents sensibles</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <h2 class="font-weight-normal text-6">et bien plus...</h2>
-
-                <div class="accordion accordion-modern" id="accordion">
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h4 class="card-title m-0">
-                                <a class="accordion-toggle text-color-dark font-weight-bold" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapseOne">
-                                    <i class="icons icon-diamond text-color-primary"></i>
-                                    Expertise Juridique
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseOne" class="collapse show">
-                            <div class="card-body text-2">
-                                <p>Notre équipe spécialisée possède une expertise approfondie en droit international, commercial et civil.</p>
-                                <p class="mb-0">Nous gérons les traductions les plus complexes avec précision et rigueur. <a href="#" class="d-block text-color-dark font-weight-semibold pt-4">en savoir plus <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h4 class="card-title m-0">
-                                <a class="accordion-toggle text-color-dark font-weight-bold" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapseTwo">
-                                    <i class="icons icon-bubble text-color-primary"></i>
-                                    Service Rapide
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="collapse">
-                            <div class="card-body text-2">
-                                <p class="mb-0">Nous proposons un service express pour les demandes urgentes sans compromettre la qualité.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card card-default">
-                        <div class="card-header">
-                            <h4 class="card-title m-0">
-                                <a class="accordion-toggle text-color-dark font-weight-bold" data-bs-toggle="collapse" data-bs-parent="#accordion" href="#collapseThree">
-                                    <i class="icons icon-grid text-color-primary"></i>
-                                    Livraison Certifiée
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseThree" class="collapse">
-                            <div class="card-body text-2">
-                                <p class="mb-0">Tous nos documents sont livrés avec cachet et signature assermentée, prêts à présenter aux autorités.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--fin services-->
-
-        <div class="row text-center pt-4">
-            <div class="col">
-                <h2 class="word-rotator slide font-weight-bold text-8 mb-2">
-                    <span>Nous ne sommes pas les seuls </span>
-                    <span class="word-rotator-words bg-primary">
-                        <b class="is-visible">satisfaits</b>
-                        <b>confiants</b>
-                    </span>
-                    <span> de Traduction Légales...</span>
-                </h2>
-                <h4 class="text-primary lead tall text-4">10,000 CLIENTS DANS 50 PAYS FONT CONFIANCE À TRADUCTION LÉGALES. DÉCOUVREZ NOS CLIENTS.</h4>
-            </div>
-        </div>
-
-        <div class="row text-center mt-5">
-            <div class="owl-carousel owl-theme carousel-center-active-item" data-plugin-options="{'responsive': {'0': {'items': 1}, '476': {'items': 1}, '768': {'items': 5}, '992': {'items': 7}, '1200': {'items': 7}}, 'autoplay': true, 'autoplayTimeout': 3000, 'dots': false}">
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-1.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-2.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-3.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-4.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-5.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-6.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-4.png" alt="">
-                </div>
-                <div>
-                    <img class="img-fluid" src="img/logos/logo-2.png" alt="">
-                </div>
-            </div>
-        </div>
-
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      Devis sous 2h ouvrées
     </div>
-
-    <section class="section section-custom-map appear-animation lazyload" data-appear-animation="fadeInUpShorter" data-bg-src="img/map.png" style="background-color: transparent; background-position: center 0; background-repeat: no-repeat;">
-        <section class="section section-default section-footer">
-            <div class="container">
-                <div class="row mt-5 appear-animation" data-appear-animation="fadeInUpShorter">
-                    <div class="col-lg-6">
-                        <div class="recent-posts mb-5">
-                            <h2 class="font-weight-normal text-6 mb-4"><strong class="font-weight-extra-bold">Derniers</strong> Articles</h2>
-                            <div class="owl-carousel owl-theme dots-title mb-0" data-plugin-options="{'items': 1, 'autoHeight': true, 'autoplay': true, 'autoplayTimeout': 8000}">
-                                <div class="row">
-                                    <div class="col-lg-6 mb-4 mb-lg-0">
-                                        <article>
-                                            <div class="row">
-                                                <div class="col-auto pe-0">
-                                                    <div class="date">
-                                                        <span class="day font-weight-extra-bold">15</span>
-                                                        <span class="month text-1">JAN</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="{{ path('contact') }}">Nos services de traduction pour les avocats</a></h4>
-                                                    <p class="pe-4 mb-0">Comment nous aidons les professionnels du droit dans leurs besoins de traduction.</p>
-                                                    <a href="{{ path('contact') }}" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <article>
-                                            <div class="row">
-                                                <div class="col-auto pe-0">
-                                                    <div class="date">
-                                                        <span class="day font-weight-extra-bold">14</span>
-                                                        <span class="month text-1">JAN</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="{{ path('contact') }}">Les défis de la traduction technique et commerciale</a></h4>
-                                                    <p class="pe-4 mb-0">Comment nous assurons la précision dans les traductions spécialisées.</p>
-                                                    <a href="{{ path('contact') }}" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 mb-4 mb-lg-0">
-                                        <article>
-                                            <div class="row">
-                                                <div class="col-auto pe-0">
-                                                    <div class="date">
-                                                        <span class="day font-weight-extra-bold">13</span>
-                                                        <span class="month text-1">JAN</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="{{ path('contact') }}">Certification et reconnaissance internationale des traductions</a></h4>
-                                                    <p class="pe-4 mb-0">Comprendre le processus d'assermentation et ses avantages légaux.</p>
-                                                    <a href="{{ path('contact') }} " class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <article>
-                                            <div class="row">
-                                                <div class="col-auto pe-0">
-                                                    <div class="date">
-                                                        <span class="day font-weight-extra-bold">12</span>
-                                                        <span class="month text-1">JAN</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a class="d-block" href="/#products">Comment choisir le bon service de traduction pour votre projet</a></h4>
-                                                    <p class="pe-4 mb-0">Critères essentiels à considérer pour une traduction de qualité.</p>
-                                                    <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6 mb-4 mb-lg-0">
-                                        <article>
-                                            <div class="row">
-                                                <div class="col-auto pe-0">
-                                                    <div class="date">
-                                                        <span class="day font-weight-extra-bold">11</span>
-                                                        <span class="month text-1">JAN</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a href="/#products">Traduction de contrats internationaux : nos bonnes pratiques</a></h4>
-                                                    <p class="pe-4 mb-0">Les étapes cruciales pour une traduction juridique sans risque.</p>
-                                                    <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <article>
-                                            <div class="row">
-                                                <div class="col-auto pe-0">
-                                                    <div class="date">
-                                                        <span class="day font-weight-extra-bold">10</span>
-                                                        <span class="month text-1">JAN</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col ps-1">
-                                                    <h4 class="text-primary text-4"><a href="/">Traductions urgentes : solutions rapides et fiables</a></h4>
-                                                    <p class="pe-4 mb-0">Nos services express pour les délais serrés.</p>
-                                                    <a href="/" class="read-more text-color-dark font-weight-semibold text-2">lire la suite <i class="fas fa-angle-right position-relative top-1 ms-1"></i></a>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <h2 class="font-weight-normal text-6 mb-4"><strong class="font-weight-extra-bold">Avis</strong> des Clients</h2>
-                        <div class="row">
-                            <div class="owl-carousel owl-theme dots-title dots-title-pos-2 mb-0" data-plugin-options="{'items': 1, 'autoHeight': true}">
-                                <div>
-                                    <div class="col">
-                                        <div class="testimonial testimonial-primary">
-                                            <blockquote>
-                                                <p class="mb-0">Traduction Légales a dépassé toutes nos attentes. Une équipe professionnelle et des traductions de très haut calibre. Fortement recommandé!</p>
-                                            </blockquote>
-                                            <div class="testimonial-arrow-down"></div>
-                                            <div class="testimonial-author">
-                                                <div class="testimonial-author-thumbnail">
-                                                    <img src="img/clients/client-1.jpg" class="rounded-circle" alt="" />
-                                                </div>
-                                                <p><strong>Marie Dupont</strong><span>Cabinet Juridique Paris</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="col">
-                                        <div class="testimonial testimonial-primary">
-                                            <blockquote>
-                                                <p class="mb-0">Nous utilisons les services de Traduction Légales depuis 5 ans pour tous nos documents commerciaux. La qualité est constante et les délais sont respectés. C'est devenu notre partenaire de confiance!</p>
-                                            </blockquote>
-                                            <div class="testimonial-arrow-down"></div>
-                                            <div class="testimonial-author">
-                                                <div class="testimonial-author-thumbnail">
-                                                    <img src="img/clients/client-1.jpg" class="rounded-circle" alt="" />
-                                                </div>
-                                                <p><strong>Pierre Martin</strong><span>Directeur Commercial International</span></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
+    <div class="trust-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 8l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+      Envoi numérique + original par courrier
+    </div>
+  </div>
 </div>
+
+<section id="documents">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Documents pris en charge</span>
+      <h2>Chaque pièce traduite avec la rigueur qu'elle exige</h2>
+      <p>Du simple extrait d'acte au jugement complexe, chaque traduction est relue terme à terme avant d'être certifiée conforme.</p>
+    </div>
+
+    <div class="docs-grid" id="docs-grid">
+      {% set activeProducts = products|filter(product => product.active) %}
+      {% for product in activeProducts %}
+        <article class="doc-card{% if loop.index > 6 %} doc-card-extra{% endif %}">
+          <a href="{{ path('produit_detail', {'id': product.id}) }}">
+            {% if product.image %}
+              <img src="{{ asset('uploads/' ~ product.image) }}"
+                   class="doc-thumb"
+                   alt="{{ product.name }}"
+                   loading="lazy">
+            {% else %}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6"/></svg>
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            {% if product.description %}
+              <div class="doc-desc">{{ product.description|raw }}</div>
+            {% endif %}
+            {% if product.basePrice %}
+              <p class="doc-price">À partir de {{ product.basePrice }} €</p>
+            {% endif %}
+            <span class="doc-link">
+              Voir le détail
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </a>
+        </article>
+      {% else %}
+        <div class="doc-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 2h9l5 5v13a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><path d="M14 2v6h6"/></svg>
+          <h3>Documents officiels</h3>
+          <p>Consultez notre catalogue de documents à traduire.</p>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if activeProducts|length > 6 %}
+    <div class="docs-grid-footer" id="docs-grid-footer">
+      <button type="button" class="btn-primary" id="docs-show-all">Voir tous les documents</button>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="dossier" id="parcours">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Le parcours de votre dossier</span>
+      <h2>De l'envoi du document au sceau officiel</h2>
+      <p>Quatre étapes, aucune surprise. Vous savez à chaque instant où en est votre dossier.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v7a2 2 0 01-2 2z"/></svg>
+        </div>
+        <span class="tl-tag">Étape 1</span>
+        <h3>Document reçu</h3>
+        <p>Vous envoyez une photo ou un scan de votre document via le formulaire. Aucun déplacement n'est nécessaire à ce stade.</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        </div>
+        <span class="tl-tag">Étape 2</span>
+        <h3>Traduction certifiée</h3>
+        <p>Le document est traduit intégralement, terme juridique par terme juridique, puis relu une seconde fois.</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <span class="tl-tag">Étape 3</span>
+        <h3>Cachet apposé</h3>
+        <p>Signature, cachet et numéro de répertoire sont apposés : le document devient juridiquement opposable.</p>
+      </div>
+      <div class="tl-step">
+        <div class="tl-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 8l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg>
+        </div>
+        <span class="tl-tag">Étape 4</span>
+        <h3>Document délivré</h3>
+        <p>Version numérique envoyée immédiatement, original papier expédié par courrier suivi sous 24h.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="tarifs">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Tarifs</span>
+      <h2>Un prix clair, annoncé avant traduction</h2>
+      <p>Le tarif définitif dépend de la langue, de la longueur et de la complexité du document. Il vous est toujours confirmé avant le lancement de la traduction.</p>
+    </div>
+
+    <div class="price-table">
+      <div class="price-row head">
+        <div class="cell">Type de document</div>
+        <div class="cell">Tarif indicatif</div>
+      </div>
+      <div class="price-row featured">
+        <div class="cell">Acte d'état civil (naissance, mariage…)</div>
+        <div class="cell">À partir de 28€ / page</div>
+      </div>
+      <div class="price-row">
+        <div class="cell">Diplôme ou relevé de notes</div>
+        <div class="cell">À partir de 35€ / page</div>
+      </div>
+      <div class="price-row">
+        <div class="cell">Jugement, contrat, acte notarié</div>
+        <div class="cell">Sur devis selon volume</div>
+      </div>
+      <div class="price-row">
+        <div class="cell">Casier judiciaire / attestation courte</div>
+        <div class="cell">À partir de 28€ / page</div>
+      </div>
+    </div>
+
+    <p class="price-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+      Le tarif de 28€ s'applique aux documents standards d'une page en anglais, espagnol, italien ou allemand. Les langues rares, les documents longs ou les mentions manuscrites peuvent faire varier le prix — toujours communiqué avant validation.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Pourquoi cette traduction est reconnue</span>
+      <h2>Une traduction assermentée n'est pas une traduction comme les autres</h2>
+    </div>
+
+    <div class="why-grid">
+      <div class="why-item">
+        <span class="why-num">A</span>
+        <div>
+          <h3>Inscription officielle près de la Cour d'Appel</h3>
+          <p>La traduction porte un cachet et une signature reconnus par les juridictions, préfectures et organismes publics français.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <span class="why-num">B</span>
+        <div>
+          <h3>Conformité ligne à ligne</h3>
+          <p>Chaque mention du document d'origine — tampons, signatures, annotations marginales — est restituée, rien n'est omis.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <span class="why-num">C</span>
+        <div>
+          <h3>Numéro de répertoire traçable</h3>
+          <p>Chaque traduction est enregistrée sous un numéro unique, consultable en cas de vérification par une administration.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <span class="why-num">D</span>
+        <div>
+          <h3>Recevable à l'international</h3>
+          <p>Reconnue par la majorité des ambassades et administrations étrangères, avec apostille sur demande si nécessaire.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Questions fréquentes</span>
+      <h2>Avant de nous confier votre document</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary class="faq-q">Qu'est-ce qu'une traduction assermentée exactement ?<span class="plus">+</span></summary>
+        <div class="faq-a">C'est une traduction réalisée par un traducteur inscrit près d'une Cour d'Appel, qui certifie sur le document que la traduction est conforme à l'original. Elle porte un cachet, une signature et un numéro de répertoire, ce qui lui donne une valeur officielle devant les administrations et tribunaux.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Le tarif de 28€ s'applique-t-il à tous les documents ?<span class="plus">+</span></summary>
+        <div class="faq-a">Ce tarif de base concerne les documents courts et standards (un acte d'une page, dans une langue courante). Les documents longs, les langues rares ou les mentions manuscrites peuvent légèrement augmenter le prix — vous recevez toujours un devis précis avant tout engagement.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Combien de temps pour recevoir ma traduction ?<span class="plus">+</span></summary>
+        <div class="faq-a">Le délai moyen est de 24 à 48 heures pour un document standard. La version numérique certifiée vous est envoyée dès la fin de la traduction ; l'original papier avec cachet est expédié par courrier suivi le jour même.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Ma traduction sera-t-elle acceptée à l'étranger ?<span class="plus">+</span></summary>
+        <div class="faq-a">Dans la grande majorité des cas, oui. Certains pays exigent en plus une apostille ou une légalisation, démarche que nous pouvons vous indiquer selon votre destination.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Dois-je envoyer le document original par courrier ?<span class="plus">+</span></summary>
+        <div class="faq-a">Non, un scan ou une photo nette et lisible suffit pour démarrer la traduction. L'original ne vous sera demandé que si l'administration destinataire l'exige spécifiquement.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final" id="contact">
+  <div class="wrap">
+    <span class="eyebrow" style="color:#fdfdfd;justify-content:center;">Démarrer votre dossier</span>
+    <h2>Envoyez votre document, recevez votre devis sous 2h</h2>
+    <p>Contactez-nous pour obtenir le tarif exact et le délai pour votre document.</p>
+    <a href="{{ path('contact') }}" class="btn-primary">
+      Recevoir mon devis
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
 {% endblock %}
