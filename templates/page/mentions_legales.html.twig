@@ -1,63 +1,318 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_tl.html.twig' %}
 
-{% block title %}Mentions légales{% endblock %}
+{% set legal_updated = "now"|date('d/m/Y') %}
+{% set seo_title = "Mentions Légales — Éditeur, Hébergement & RGPD | Traduction Légale" %}
+{% set seo_description = "Mentions légales de Traduction Légale : éditeur du site, directeur de publication, propriété intellectuelle, données personnelles (RGPD), hébergement O2Switch et responsabilité. Traducteur assermenté inscrit près de la Cour d'Appel — Paris, France." %}
+{% set seo_keywords = "mentions légales traduction légale, éditeur site traduction assermentée, rgpd traduction certifiée, hébergement o2switch, propriété intellectuelle traducteur, informations légales cour d'appel, lcen traduction assermentée, directeur publication traduction légale" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set page_url = absolute_url(path('mentions_legales')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+{% set og_image_alt = "Traduction Légale — Mentions légales, éditeur et informations RGPD" %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="{{ og_image_alt }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="{{ og_image_alt }}">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'description': 'Traducteur assermenté — traduction certifiée de documents officiels',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'logo': og_image,
+      'image': og_image,
+      'description': "Cabinet de traduction assermentée et certifiée de documents officiels, inscrit près d'une Cour d'Appel.",
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'priceRange': 'À partir de 28€',
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      },
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': 'Paris',
+        'addressCountry': 'FR'
+      },
+      'serviceType': 'Traduction assermentée',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'knowsAbout': [
+        'Mentions légales',
+        'RGPD',
+        'Traduction assermentée',
+        'Documents officiels',
+        'Cour d\'Appel',
+        'LCEN'
+      ],
+      'contactPoint': {'@id': page_url ~ '#contactpoint-rgpd'}
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'about': {'@id': accueil_url ~ '#organization'},
+      'mainEntity': {'@id': page_url ~ '#legal-sections'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'dateModified': "now"|date('c'),
+      'primaryImageOfPage': {
+        '@type': 'ImageObject',
+        'url': og_image,
+        'caption': 'Traduction Légale — mentions légales et informations éditeur'
+      },
+      'potentialAction': [
+        {
+          '@type': 'CommunicateAction',
+          'target': contact_url,
+          'name': 'Exercer vos droits RGPD'
+        },
+        {
+          '@type': 'CommunicateAction',
+          'target': 'mailto:contact@traduction-legale.fr',
+          'name': 'Contacter l\'éditeur'
+        }
+      ]
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Accueil',
+          'item': accueil_url
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Mentions légales',
+          'item': page_url
+        }
+      ]
+    },
+    {
+      '@type': 'ItemList',
+      '@id': page_url ~ '#legal-sections',
+      'name': 'Sections des mentions légales — Traduction Légale',
+      'description': 'Informations légales obligatoires du site traduction-legale.fr (LCEN, RGPD, hébergement).',
+      'numberOfItems': 7,
+      'itemListElement': [
+        {
+          '@type': 'ListItem',
+          'position': 1,
+          'name': 'Éditeur du site',
+          'description': 'Traduction Légale — traducteur assermenté, Paris, France',
+          'url': page_url ~ '#editeur'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 2,
+          'name': 'Directeur de la publication',
+          'description': 'Traducteur assermenté responsable du cabinet',
+          'url': page_url ~ '#directeur-publication'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 3,
+          'name': 'Propriété intellectuelle',
+          'description': 'Droits sur les contenus, logo et éléments du site',
+          'url': page_url ~ '#propriete-intellectuelle'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 4,
+          'name': 'Données personnelles',
+          'description': 'Traitement des données et droits RGPD des utilisateurs',
+          'url': page_url ~ '#donnees-personnelles'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 5,
+          'name': 'Hébergement du site',
+          'description': 'O2Switch — Clermont-Ferrand, France',
+          'url': page_url ~ '#hebergement'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 6,
+          'name': 'Responsabilité',
+          'description': 'Limites de responsabilité sur les informations et traductions',
+          'url': page_url ~ '#responsabilite'
+        },
+        {
+          '@type': 'ListItem',
+          'position': 7,
+          'name': 'Droit applicable',
+          'description': 'Droit français — mise à jour le ' ~ legal_updated,
+          'url': page_url ~ '#droit-applicable'
+        }
+      ]
+    },
+    {
+      '@type': 'ContactPoint',
+      '@id': page_url ~ '#contactpoint-rgpd',
+      'contactType': 'privacy',
+      'name': 'Traduction Légale — Données personnelles',
+      'url': contact_url,
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it'],
+      'areaServed': {
+        '@type': 'Country',
+        'name': 'France'
+      }
+    },
+    {
+      '@type': 'Organization',
+      '@id': page_url ~ '#publisher',
+      'name': 'Traduction Légale',
+      'url': accueil_url,
+      'logo': og_image,
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': 'Paris',
+        'addressCountry': 'FR'
+      },
+      'parentOrganization': {'@id': accueil_url ~ '#organization'}
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
 
 {% block body %}
-<!-- Page Header Start -->
-<div class="page-header parallaxie">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <!-- Page Header Box Start -->
-                <div class="page-header-box">
-                    <h1 class="text-anime-style-2" data-cursor="-opaque">Mentions légales</h1>
-                    <nav class="wow fadeInUp">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ path('accueil') }}">Accueil</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Mentions légales</li>
-                        </ol>
-                    </nav>
-                </div>
-                <!-- Page Header Box End -->
-            </div>
-        </div>
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Informations légales</span>
+      <h1 id="page-title">Mentions légales</h1>
     </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Mentions légales</span>
+    </nav>
+  </div>
 </div>
-<!-- Page Header End -->
-<section class="mentions-legales container py-5" >
 
-    <h2>Éditeur du site</h2>
-    <p>
-        La société <strong>Espace Hygiène 3D</strong> est le propriétaire du présent site web.
-    </p>
-    <ul>
-        <li><strong>Siège social :</strong> 5 rue Henri Dunant, 94370 Sucy-en-Brie</li>
-        <li><strong>SIRET :</strong> 83534234600029</li>
-    </ul>
+<section class="legal-page" id="mentions-legales" aria-label="Contenu des mentions légales">
+  <div class="wrap">
+    <div class="legal-content">
+      <p class="legal-content__intro">
+        Conformément aux dispositions des articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), les présentes mentions légales s'appliquent au site <strong>Traduction Légale</strong>.
+      </p>
 
-    <h2>Propriété intellectuelle</h2>
-    <p>
-        La société <strong>Espace Hygiène 3D</strong> est propriétaire de l’ensemble du contenu présent sur ce site (textes, images, graphismes, logo, etc.).
-        Toute reproduction, distribution, modification ou utilisation, totale ou partielle, de ces contenus est strictement interdite sans autorisation préalable écrite.
-    </p>
+      <article class="legal-block" id="editeur" aria-labelledby="legal-editeur-title">
+        <h2 id="legal-editeur-title">Éditeur du site</h2>
+        <p>Le site <a href="{{ path('accueil') }}">traduction-legale.fr</a> est édité par :</p>
+        <ul class="legal-list">
+          <li><strong>Raison sociale :</strong> Traduction Légale</li>
+          <li><strong>Activité :</strong> Traduction assermentée et certifiée de documents officiels</li>
+          <li><strong>Statut :</strong> Traducteur assermenté inscrit près d'une Cour d'Appel</li>
+          <li><strong>Siège :</strong> Paris, France</li>
+          <li><strong>E-mail :</strong> <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a></li>
+          <li><strong>Téléphone :</strong> <a href="tel:+33187663433">01 87 66 34 33</a></li>
+        </ul>
+      </article>
 
-    <h2>Hébergement du site</h2>
-    <p>
-        Le site est hébergé par :
-    </p>
-    <ul>
-        <li><strong>O2Switch</strong></li>
-        <li>222 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France</li>
-        <li>SIRET : 510 909 807 00032</li>
-        <li>Site : <a href="https://www.o2switch.fr" target="_blank" rel="noopener noreferrer">www.o2switch.fr</a></li>
-    </ul>
+      <article class="legal-block" id="directeur-publication" aria-labelledby="legal-directeur-title">
+        <h2 id="legal-directeur-title">Directeur de la publication</h2>
+        <p>Le directeur de la publication est le traducteur assermenté responsable du cabinet Traduction Légale, joignable à l'adresse <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a>.</p>
+      </article>
 
-    <h2>Responsabilité</h2>
-    <p>
-        Les informations diffusées sur le site 
-        <a href="https://www.espacehygiene3d.fr" target="_blank">www.espacehygiene3d.fr</a> 
-        sont fournies à titre informatif. La société Espace Hygiène 3D s’efforce de garantir leur exactitude, mais ne saurait être tenue responsable des omissions, inexactitudes ou défauts de mise à jour.
-    </p>
+      <article class="legal-block" id="propriete-intellectuelle" aria-labelledby="legal-pi-title">
+        <h2 id="legal-pi-title">Propriété intellectuelle</h2>
+        <p>
+          L'ensemble du contenu présent sur ce site (textes, images, graphismes, logo, structure, éléments visuels et code) est la propriété exclusive de <strong>Traduction Légale</strong>, sauf mention contraire.
+        </p>
+        <p>
+          Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, de ces éléments est strictement interdite sans autorisation écrite préalable.
+        </p>
+      </article>
 
+      <article class="legal-block" id="donnees-personnelles" aria-labelledby="legal-donnees-title">
+        <h2 id="legal-donnees-title">Données personnelles</h2>
+        <p>
+          Les données collectées via les formulaires de contact, d'inscription et de commande sont nécessaires au traitement de votre demande de traduction assermentée. Elles sont conservées pour la durée strictement nécessaire à la gestion de la relation commerciale et aux obligations légales du cabinet.
+        </p>
+        <p>
+          Conformément au Règlement général sur la protection des données (RGPD), vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité de vos données. Pour exercer ces droits, contactez-nous à <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a> ou via notre <a href="{{ path('contact') }}">formulaire de contact</a>.
+        </p>
+      </article>
+
+      <article class="legal-block" id="hebergement" aria-labelledby="legal-hebergement-title">
+        <h2 id="legal-hebergement-title">Hébergement du site</h2>
+        <p>Le site est hébergé par :</p>
+        <ul class="legal-list">
+          <li><strong>O2Switch</strong></li>
+          <li>222 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France</li>
+          <li>SIRET : 510 909 807 00032</li>
+          <li>Site : <a href="https://www.o2switch.fr" target="_blank" rel="noopener noreferrer">www.o2switch.fr</a></li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="responsabilite" aria-labelledby="legal-responsabilite-title">
+        <h2 id="legal-responsabilite-title">Responsabilité</h2>
+        <p>
+          Les informations diffusées sur le site <a href="{{ path('accueil') }}">traduction-legale.fr</a> sont fournies à titre informatif. Traduction Légale s'efforce d'en garantir l'exactitude et leur mise à jour, mais ne saurait être tenue responsable des omissions, inexactitudes ou indisponibilités temporaires du service.
+        </p>
+        <p>
+          Les traductions assermentées sont réalisées conformément aux règles professionnelles applicables aux traducteurs inscrits près d'une Cour d'Appel. Toutefois, la responsabilité du cabinet ne saurait être engagée pour l'usage fait par le client des documents traduits auprès de tiers.
+        </p>
+      </article>
+
+      <article class="legal-block" id="droit-applicable" aria-labelledby="legal-droit-title">
+        <h2 id="legal-droit-title">Droit applicable</h2>
+        <p>
+          Les présentes mentions légales sont régies par le droit français. En cas de litige, et à défaut de résolution amiable, les tribunaux français seront seuls compétents.
+        </p>
+        <p class="legal-content__updated">Dernière mise à jour : {{ legal_updated }}.</p>
+      </article>
+    </div>
+  </div>
 </section>
+
 {% endblock %}
