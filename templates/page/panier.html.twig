@@ -366,7 +366,7 @@
             </div>
           </dl>
 
-          <a href="{{ path('commande') }}" class="btn-primary btn-block">
+          <a href="{{ path('commande') }}" class="btn-primary btn-block" id="checkoutBtn" data-cart-value="{{ (totalCents / 100)|number_format(2, '.', '') }}">
             Passer la commande
           </a>
           <p class="cart-summary__trust">
@@ -409,6 +409,20 @@
 {% if cart is not empty %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', function () {
+      if (typeof gtag === 'function') {
+        gtag('event', 'conversion', {
+          'send_to': 'AW-16598173516/3ukFCOvoucMcEMyO0Oo9',
+          'value': parseFloat(checkoutBtn.getAttribute('data-cart-value')) || 1.0,
+          'currency': 'EUR',
+          'transaction_id': ''
+        });
+      }
+    });
+  }
+
   const modal = document.getElementById('cartRemoveModal');
   if (!modal) {
     return;

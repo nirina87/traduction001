@@ -304,3 +304,26 @@
 </section>
 
 {% endblock %}
+
+{% block javascripts %}
+{% set stripe_session_id = app.request.query.get('session_id') %}
+{% if paymentConfirmed|default(false) and order and stripe_session_id %}
+<script>
+(function () {
+  if (typeof gtag !== 'function') return;
+
+  var txId = {{ stripe_session_id|json_encode|raw }};
+  var storageKey = 'gtag_tl_purchase_' + txId;
+  if (sessionStorage.getItem(storageKey)) return;
+  sessionStorage.setItem(storageKey, '1');
+
+  gtag('event', 'conversion', {
+    'send_to': 'AW-16598173516/dni6CJnCs8McEMyO0Oo9',
+    'value': {{ order.total|number_format(2, '.', '') }},
+    'currency': {{ order.currency|default('EUR')|json_encode|raw }},
+    'transaction_id': txId
+  });
+})();
+</script>
+{% endif %}
+{% endblock %}

@@ -259,7 +259,7 @@
             {% endif %}
             <div class="auth-actions">
               <button type="submit" class="form-submit">Se connecter</button>
-              <a href="{{ path('app_register', target_path ? {_target_path: target_path} : {}) }}" class="btn-outline btn-block">Créer un compte</a>
+              <a href="{{ path('app_register', target_path ? {_target_path: target_path} : {}) }}" class="btn-outline btn-block" data-gtag-register>Créer un compte</a>
             </div>
           </form>
         {% endif %}
@@ -273,4 +273,8 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block javascripts %}
+{% include 'partials/gtag_register_conversion.html.twig' %}
 {% endblock %}

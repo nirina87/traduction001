@@ -385,6 +385,15 @@ document.addEventListener('DOMContentLoaded', function () {
       showSelectedFile(files[0]);
     });
   }
+
+  const orderForm = document.getElementById('productOrderForm');
+  if (orderForm) {
+    orderForm.addEventListener('submit', function () {
+      if (typeof gtag === 'function') {
+        gtag('event', 'conversion', {'send_to': 'AW-16598173516/8PwjCIvKucMcEMyO0Oo9'});
+      }
+    });
+  }
 });
 </script>
 {% endblock %}

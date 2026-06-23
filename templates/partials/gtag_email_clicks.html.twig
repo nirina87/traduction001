@@ -1,0 +1,12 @@
+{# Event snippet for TL - Clics e-mail conversion page #}
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="mailto:"]');
+    if (!link) return;
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {'send_to': 'AW-16598173516/1qo7CMK_ucMcEMyO0Oo9'});
+    }
+  });
+})();
+</script>

@@ -1,0 +1,12 @@
+{# Event snippet for TL - Clics téléphone conversion page #}
+<script>
+(function () {
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="tel:"]');
+    if (!link) return;
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {'send_to': 'AW-16598173516/MxguCIzSssMcEMyO0Oo9'});
+    }
+  });
+})();
+</script>

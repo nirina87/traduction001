@@ -103,6 +103,7 @@
           if (successEl) {
             successEl.classList.add('show');
           }
+          form.dispatchEvent(new CustomEvent('tl:contact-success'));
           return;
         }
 

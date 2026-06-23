@@ -310,3 +310,19 @@
   </div>
 </section>
 {% endblock %}
+
+{% block javascripts %}
+<script>
+(function () {
+  var form = document.getElementById('contactForm');
+  if (!form) return;
+
+  form.addEventListener('tl:contact-success', function () {
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {'send_to': 'AW-16598173516/bDBuCOa9nsMcEMyO0Oo9'});
+    }
+  });
+})();
+</script>
+{% include 'partials/gtag_phone_clicks.html.twig' %}
+{% endblock %}

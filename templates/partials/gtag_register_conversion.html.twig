@@ -1,0 +1,19 @@
+{# Event snippet for TL - Création de compte conversion page #}
+<script>
+(function () {
+  function trackRegisterConversion() {
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {'send_to': 'AW-16598173516/C21aCNC3n8McEMyO0Oo9'});
+    }
+  }
+
+  document.querySelectorAll('[data-gtag-register]').forEach(function (el) {
+    el.addEventListener('click', trackRegisterConversion);
+  });
+
+  var registerForm = document.getElementById('register-form');
+  if (registerForm) {
+    registerForm.addEventListener('submit', trackRegisterConversion);
+  }
+})();
+</script>

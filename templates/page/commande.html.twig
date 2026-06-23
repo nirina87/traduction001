@@ -321,7 +321,7 @@
           <p class="checkout-auth__hint">Vos données seront utilisées pour la facture et le paiement Stripe.</p>
 
           {% if cart is not empty %}
-            <a href="{{ path('commande_checkout') }}" class="btn-primary btn-block checkout-pay-btn">
+            <a href="{{ path('commande_checkout') }}" class="btn-primary btn-block checkout-pay-btn" id="stripePayBtn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
               Payer avec Stripe
             </a>
@@ -339,7 +339,7 @@
 
           <div class="checkout-auth__actions">
             <a href="{{ path('app_user_login', {_target_path: path('commande')}) }}" class="btn-primary btn-block">Connexion client</a>
-            <a href="{{ path('app_register', {_target_path: path('commande')}) }}" class="btn-outline btn-block">Créer un compte</a>
+            <a href="{{ path('app_register', {_target_path: path('commande')}) }}" class="btn-outline btn-block" data-gtag-register>Créer un compte</a>
           </div>
         {% endif %}
       </aside>
@@ -347,4 +347,19 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block javascripts %}
+{% include 'partials/gtag_register_conversion.html.twig' %}
+<script>
+(function () {
+  var stripePayBtn = document.getElementById('stripePayBtn');
+  if (!stripePayBtn) return;
+  stripePayBtn.addEventListener('click', function () {
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {'send_to': 'AW-16598173516/5EvmCJWQusMcEMyO0Oo9'});
+    }
+  });
+})();
+</script>
 {% endblock %}

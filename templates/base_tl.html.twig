@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16598173516"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-16598173516');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}Traduction Légale — Traducteur Assermenté{% endblock %}</title>
@@ -33,6 +42,7 @@
 {% include 'partials/tl_footer.html.twig' %}
 
 <script src="{{ asset('js/traduction-legale.js') }}" defer></script>
+{% include 'partials/gtag_email_clicks.html.twig' %}
 {% block javascripts %}{% endblock %}
 
 </body>
