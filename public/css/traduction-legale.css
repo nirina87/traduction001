@@ -150,6 +150,28 @@ nav > a.is-active{
   transition:background .2s;
 }
 .nav-cta:hover{background:var(--seal-deep);}
+.nav-burger{
+  display:none;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+  width:44px;
+  height:44px;
+  padding:10px;
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.nav-burger__bar{
+  display:block;
+  width:22px;
+  height:2px;
+  background:var(--ink);
+  border-radius:1px;
+  transition:transform .2s, opacity .2s;
+}
 
 .hero{
   position:relative;
@@ -673,7 +695,52 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   .timeline::before{display:none;}
   .docs-grid{grid-template-columns:1fr 1fr;}
   .why-grid{grid-template-columns:1fr;}
-  nav{display:none;}
+  .topbar{position:relative;}
+  .nav-burger{display:flex;}
+  nav.main-nav{display:none;}
+  .topbar.is-nav-open nav.main-nav{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    z-index:60;
+    gap:0;
+    padding:8px 20px 20px;
+    background:rgba(253,253,253,0.98);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 10px 28px rgba(10,32,71,0.1);
+  }
+  .topbar.is-nav-open nav.main-nav > a{
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    font-size:1rem;
+  }
+  .topbar.is-nav-open nav.main-nav .nav-actions{
+    flex-direction:column;
+    margin-left:0;
+    margin-top:16px;
+    width:100%;
+    gap:10px;
+  }
+  .topbar.is-nav-open nav.main-nav .nav-panier,
+  .topbar.is-nav-open nav.main-nav .nav-cta{
+    width:100%;
+    justify-content:center;
+    text-align:center;
+  }
+  .topbar.is-nav-open .nav-burger__bar:nth-child(1){
+    transform:translateY(7px) rotate(45deg);
+  }
+  .topbar.is-nav-open .nav-burger__bar:nth-child(2){
+    opacity:0;
+  }
+  .topbar.is-nav-open .nav-burger__bar:nth-child(3){
+    transform:translateY(-7px) rotate(-45deg);
+  }
   .footer-grid{grid-template-columns:1fr 1fr;}
 }
 @media (max-width:640px){

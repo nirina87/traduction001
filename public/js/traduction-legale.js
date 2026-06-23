@@ -1,4 +1,32 @@
 (function () {
+  var topbar = document.querySelector('.topbar');
+  var burger = document.querySelector('.nav-burger');
+  var nav = document.getElementById('main-nav');
+
+  if (topbar && burger && nav) {
+    function setNavOpen(open) {
+      topbar.classList.toggle('is-nav-open', open);
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    }
+
+    burger.addEventListener('click', function () {
+      setNavOpen(!topbar.classList.contains('is-nav-open'));
+    });
+
+    nav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        setNavOpen(false);
+      });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        setNavOpen(false);
+      }
+    });
+  }
+
   var btn = document.getElementById('docs-show-all');
   if (btn) {
     btn.addEventListener('click', function () {

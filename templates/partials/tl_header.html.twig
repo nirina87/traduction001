@@ -6,7 +6,12 @@
     <a href="{{ path('accueil') }}" class="brand">
       <img src="{{ asset('logo-tl.png') }}" alt="Traductions Légales — Traductions assermentées">
     </a>
-    <nav aria-label="Navigation principale">
+    <button class="nav-burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="main-nav">
+      <span class="nav-burger__bar" aria-hidden="true"></span>
+      <span class="nav-burger__bar" aria-hidden="true"></span>
+      <span class="nav-burger__bar" aria-hidden="true"></span>
+    </button>
+    <nav id="main-nav" class="main-nav" aria-label="Navigation principale">
       <a href="{{ path('accueil') }}" class="{{ current_route == 'accueil' ? 'is-active' : '' }}">Accueil</a>
       <a href="{{ path('services') }}" class="{{ current_route in ['services', 'produit_detail'] ? 'is-active' : '' }}">Services</a>
       <a href="{{ path('qui_sommes_nous') }}" class="{{ current_route == 'qui_sommes_nous' ? 'is-active' : '' }}">Qui sommes-nous</a>
