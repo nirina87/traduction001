@@ -233,6 +233,18 @@ class PageController extends AbstractController
         return $this->render('page/mentions_legales.html.twig');
     }
 
+    #[Route('/cgv', name: 'cgv')]
+    public function cgv(): Response
+    {
+        return $this->render('page/cgv.html.twig');
+    }
+
+    #[Route('/politique-de-confidentialite', name: 'politique_confidentialite')]
+    public function politiqueConfidentialite(): Response
+    {
+        return $this->render('page/politique_confidentialite.html.twig');
+    }
+
     #[Route('/agroalimentaire', name: 'agroalimentaire')]
     public function agroalimentaire(EntityManagerInterface $em): Response
     {

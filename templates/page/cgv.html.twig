@@ -1,0 +1,282 @@
+{% extends 'base_tl.html.twig' %}
+
+{% set legal_updated = "now"|date('d/m/Y') %}
+{% set seo_title = "Conditions Générales de Vente — Traduction Assermentée | Traduction Légale" %}
+{% set seo_description = "CGV de Traduction Légale : commande en ligne de traductions assermentées, tarifs, paiement Stripe, délais, livraison, obligations du client et droit de rétractation. Traducteur inscrit près de la Cour d'Appel." %}
+{% set seo_keywords = "cgv traduction assermentée, conditions générales vente traduction légale, commande traduction certifiée, paiement stripe traduction, tarif traducteur assermenté, conditions traduction officielle" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set services_url = absolute_url(path('services')) %}
+{% set politique_url = absolute_url(path('politique_confidentialite')) %}
+{% set page_url = absolute_url(path('cgv')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block meta_description %}{{ seo_description }}{% endblock %}
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Conditions générales de vente">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'serviceType': 'Traduction assermentée'
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'dateModified': "now"|date('c')
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {'@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': accueil_url},
+        {'@type': 'ListItem', 'position': 2, 'name': 'CGV', 'item': page_url}
+      ]
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Informations légales</span>
+      <h1 id="page-title">Conditions générales de vente</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">CGV</span>
+    </nav>
+  </div>
+</div>
+
+<section class="legal-page" id="cgv" aria-label="Conditions générales de vente">
+  <div class="wrap">
+    <div class="legal-content">
+      <p class="legal-content__intro">
+        Les présentes Conditions Générales de Vente (ci-après « CGV ») régissent les relations contractuelles entre <strong>Traduction Légale</strong>, traducteur assermenté inscrit près d'une Cour d'Appel, et toute personne physique ou morale (ci-après « le Client ») souhaitant commander une traduction assermentée via le site <a href="{{ path('accueil') }}">traduction-legale.fr</a>.
+      </p>
+
+      <article class="legal-block" id="cgv-objet" aria-labelledby="cgv-objet-title">
+        <h2 id="cgv-objet-title">1. Objet et champ d'application</h2>
+        <p>
+          Les CGV définissent les conditions dans lesquelles Traduction Légale propose et exécute des prestations de <strong>traduction assermentée et certifiée</strong> de documents officiels, administratifs et juridiques (actes d'état civil, diplômes, jugements, contrats, pièces d'identité, casiers judiciaires, etc.).
+        </p>
+        <p>
+          Toute commande passée sur le site implique l'acceptation pleine et entière des présentes CGV, sans restriction ni réserve. Le Client déclare en avoir pris connaissance avant validation de sa commande.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-vendeur" aria-labelledby="cgv-vendeur-title">
+        <h2 id="cgv-vendeur-title">2. Le prestataire</h2>
+        <ul class="legal-list">
+          <li><strong>Raison sociale :</strong> Traduction Légale</li>
+          <li><strong>Activité :</strong> Traduction assermentée et certifiée de documents officiels</li>
+          <li><strong>Statut :</strong> Traducteur assermenté inscrit près d'une Cour d'Appel</li>
+          <li><strong>Siège :</strong> Paris, France</li>
+          <li><strong>E-mail :</strong> <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a></li>
+          <li><strong>Téléphone :</strong> <a href="tel:+33187663433">01 87 66 34 33</a></li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="cgv-services" aria-labelledby="cgv-services-title">
+        <h2 id="cgv-services-title">3. Prestations proposées</h2>
+        <p>Traduction Légale propose notamment :</p>
+        <ul class="legal-list">
+          <li>La traduction assermentée de documents listés dans le <a href="{{ path('services') }}">catalogue en ligne</a> ;</li>
+          <li>La traduction de documents personnalisés déposés par le Client (fichier joint lors de la commande) ;</li>
+          <li>L'établissement de devis gratuits sur demande via le <a href="{{ path('contact') }}">formulaire de contact</a> ;</li>
+          <li>La certification de conformité à l'original, avec cachet, signature et numéro de répertoire du traducteur assermenté ;</li>
+          <li>La remise de la traduction certifiée sous format numérique et, le cas échéant, par envoi postal de l'original papier.</li>
+        </ul>
+        <p>
+          Les traductions sont réalisées conformément aux règles professionnelles applicables aux traducteurs inscrits près d'une Cour d'Appel et sont reconnues par les administrations françaises et, selon les exigences locales, par les autorités étrangères.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-prix" aria-labelledby="cgv-prix-title">
+        <h2 id="cgv-prix-title">4. Prix et tarifs</h2>
+        <p>
+          Les prix sont indiqués en <strong>euros (€) toutes taxes comprises (TTC)</strong> sur le site, à partir de <strong>28 €</strong> pour un document standard d'une page dans une langue courante.
+        </p>
+        <p>
+          Le tarif affiché lors de la configuration d'une commande dépend notamment du type de document, de la <strong>langue cible</strong> sélectionnée et du nombre d'exemplaires. Le montant définitif est confirmé dans le récapitulatif du panier avant paiement.
+        </p>
+        <p>
+          Pour les demandes complexes (documents longs, langues rares, mentions manuscrites, urgence), un devis personnalisé peut être établi préalablement via le formulaire de contact. Ce devis, une fois accepté par le Client, fait foi pour la facturation.
+        </p>
+        <p>Traduction Légale se réserve le droit de modifier ses tarifs à tout moment. Les prix applicables sont ceux en vigueur au moment de la validation de la commande par le Client.</p>
+      </article>
+
+      <article class="legal-block" id="cgv-commande" aria-labelledby="cgv-commande-title">
+        <h2 id="cgv-commande-title">5. Processus de commande</h2>
+        <p>La commande en ligne s'effectue selon les étapes suivantes :</p>
+        <ul class="legal-list">
+          <li><strong>Sélection du document</strong> dans le catalogue ou dépôt d'un fichier à traduire (formats acceptés : PDF, Word, RTF, TXT, JPG, PNG — taille maximale 10 Mo) ;</li>
+          <li><strong>Choix de la langue cible</strong> et ajout au panier ;</li>
+          <li><strong>Vérification du panier</strong> et clic sur « Passer la commande » ;</li>
+          <li><strong>Création d'un compte client</strong> ou connexion à un compte existant ;</li>
+          <li><strong>Paiement sécurisé</strong> via la plateforme Stripe ;</li>
+          <li><strong>Confirmation de commande</strong> par e-mail après validation du paiement.</li>
+        </ul>
+        <p>
+          La commande n'est définitivement validée qu'après encaissement effectif du paiement. Un numéro de facture est attribué à chaque commande et une facture est disponible dans l'espace client.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-paiement" aria-labelledby="cgv-paiement-title">
+        <h2 id="cgv-paiement-title">6. Paiement</h2>
+        <p>
+          Le règlement s'effectue <strong>intégralement en ligne</strong> par carte bancaire via <strong>Stripe</strong>, prestataire de paiement sécurisé. Les données bancaires sont traitées directement par Stripe et ne sont pas conservées par Traduction Légale.
+        </p>
+        <p>
+          En cas d'interruption ou d'annulation du paiement, la commande n'est pas enregistrée et le panier reste disponible. Aucun débit n'est effectué tant que le paiement n'est pas confirmé.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-delais" aria-labelledby="cgv-delais-title">
+        <h2 id="cgv-delais-title">7. Délais de traitement et livraison</h2>
+        <p>
+          Le délai moyen de traitement est de <strong>24 à 48 heures ouvrées</strong> pour un document standard, à compter de la réception du paiement et d'un dossier complet (document lisible, langue confirmée, informations nécessaires).
+        </p>
+        <p>
+          La version <strong>numérique certifiée</strong> est transmise par e-mail dès achèvement de la traduction. L'<strong>original papier</strong> comportant cachet et signature est expédié par courrier suivi le jour même de la finalisation, sauf demande contraire du Client.
+        </p>
+        <p>
+          En cas de retard imputable à Traduction Légale, le Client peut contacter le service client à <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a>. Aucun délai expressément convenu ne constitue une condition essentielle du contrat sauf accord écrit préalable.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-obligations" aria-labelledby="cgv-obligations-title">
+        <h2 id="cgv-obligations-title">8. Obligations du Client</h2>
+        <p>Le Client s'engage à :</p>
+        <ul class="legal-list">
+          <li>Fournir des documents lisibles, complets et conformes à l'usage prévu de la traduction ;</li>
+          <li>Communiquer des informations exactes lors de l'inscription, de la commande et du contact ;</li>
+          <li>Vérifier la langue cible et le contenu de sa commande avant paiement ;</li>
+          <li>Ne transmettre que des documents dont il détient les droits ou l'autorisation de faire traduire ;</li>
+          <li>Conserver une copie de ses documents originaux.</li>
+        </ul>
+        <p>
+          Traduction Légale se réserve le droit de refuser ou de suspendre une commande en cas de document illisible, incomplet, frauduleux ou contraire à la réglementation en vigueur, avec remboursement du montant payé le cas échéant.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-retractation" aria-labelledby="cgv-retractation-title">
+        <h2 id="cgv-retractation-title">9. Droit de rétractation</h2>
+        <p>
+          Conformément à l'article L. 221-28 du Code de la consommation, le droit de rétractation de 14 jours <strong>ne peut être exercé</strong> pour les prestations de services pleinement exécutées avant la fin du délai de rétractation et dont l'exécution a commencé après accord préalable exprès du Client, ainsi que pour les biens confectionnés selon les spécifications du Client ou nettement personnalisés.
+        </p>
+        <p>
+          La traduction assermentée étant une prestation réalisée sur mesure à partir des documents fournis par le Client, le Client accepte expressément que l'exécution de la prestation puisse commencer dès validation du paiement et renonce à son droit de rétractation une fois la traduction entamée.
+        </p>
+        <p>
+          Toutefois, si la prestation n'a pas encore débuté, le Client peut demander l'annulation de sa commande par e-mail dans un délai de 14 jours suivant la validation du paiement. Un remboursement intégral sera alors effectué.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-garanties" aria-labelledby="cgv-garanties-title">
+        <h2 id="cgv-garanties-title">10. Garanties et conformité</h2>
+        <p>
+          Traduction Légale garantit que chaque traduction assermentée est réalisée par un traducteur inscrit près d'une Cour d'Appel, porte le cachet officiel, la signature et le numéro de répertoire requis, et certifie la conformité de la traduction à l'original.
+        </p>
+        <p>
+          En cas d'erreur de traduction imputable au prestataire, signalée par écrit dans un délai de 30 jours suivant la réception, Traduction Légale s'engage à procéder à la correction dans les meilleurs délais, sans frais supplémentaires pour le Client.
+        </p>
+        <p>
+          Le Client demeure seul responsable de l'usage des documents traduits auprès des administrations, institutions ou tiers, et de la vérification des exigences spécifiques du pays ou de l'organisme destinataire.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-responsabilite" aria-labelledby="cgv-responsabilite-title">
+        <h2 id="cgv-responsabilite-title">11. Responsabilité</h2>
+        <p>
+          La responsabilité de Traduction Légale est limitée au montant de la commande concernée. Elle ne saurait être engagée pour les conséquences indirectes d'une utilisation des documents traduits, ni pour les retards résultant d'un dossier incomplet ou d'un cas de force majeure.
+        </p>
+        <p>
+          Le site peut être temporairement indisponible pour maintenance. Traduction Légale s'efforce d'en limiter la durée et d'en informer les utilisateurs dans la mesure du possible.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-confidentialite" aria-labelledby="cgv-confidentialite-title">
+        <h2 id="cgv-confidentialite-title">12. Confidentialité et données personnelles</h2>
+        <p>
+          Les documents transmis et les données personnelles du Client sont traités de manière strictement confidentielle, dans le cadre de l'exécution de la prestation et conformément au RGPD.
+        </p>
+        <p>
+          Pour plus de détails sur la collecte, l'utilisation et la conservation des données, consultez notre <a href="{{ path('politique_confidentialite') }}">Politique de confidentialité</a>.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-reclamations" aria-labelledby="cgv-reclamations-title">
+        <h2 id="cgv-reclamations-title">13. Réclamations et médiation</h2>
+        <p>
+          Toute réclamation doit être adressée par e-mail à <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a> ou via le <a href="{{ path('contact') }}">formulaire de contact</a>, en indiquant le numéro de commande concerné. Traduction Légale s'engage à y répondre dans un délai de 15 jours ouvrés.
+        </p>
+        <p>
+          Conformément aux articles L. 612-1 et suivants du Code de la consommation, le Client consommateur peut recourir gratuitement à un médiateur de la consommation en cas de litige non résolu. Les coordonnées du médiateur compétent seront communiquées sur demande.
+        </p>
+      </article>
+
+      <article class="legal-block" id="cgv-droit" aria-labelledby="cgv-droit-title">
+        <h2 id="cgv-droit-title">14. Droit applicable et litiges</h2>
+        <p>
+          Les présentes CGV sont soumises au <strong>droit français</strong>. En cas de litige, les parties s'engagent à rechercher une solution amiable. À défaut, les tribunaux français seront seuls compétents, sous réserve des règles impératives applicables aux consommateurs.
+        </p>
+        <p class="legal-content__updated">Dernière mise à jour : {{ legal_updated }}.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+{% include 'partials/gtag_phone_clicks.html.twig' %}
+{% endblock %}

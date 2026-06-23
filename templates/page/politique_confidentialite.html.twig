@@ -1,0 +1,263 @@
+{% extends 'base_tl.html.twig' %}
+
+{% set legal_updated = "now"|date('d/m/Y') %}
+{% set seo_title = "Politique de Confidentialité — Protection des Données RGPD | Traduction Légale" %}
+{% set seo_description = "Politique de confidentialité de Traduction Légale : données collectées, finalités, durée de conservation, cookies, sous-traitants (Stripe, Mailjet, Google) et droits RGPD. Traducteur assermenté — Paris, France." %}
+{% set seo_keywords = "politique confidentialité traduction légale, rgpd traduction assermentée, données personnelles traducteur, protection données client traduction, cookies traduction-legale.fr" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set cgv_url = absolute_url(path('cgv')) %}
+{% set page_url = absolute_url(path('politique_confidentialite')) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+{% block meta_description %}{{ seo_description }}{% endblock %}
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="Traduction Légale — Politique de confidentialité et RGPD">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{{ {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': accueil_url ~ '#website',
+      'url': accueil_url,
+      'name': 'Traduction Légale',
+      'inLanguage': 'fr-FR',
+      'publisher': {'@id': accueil_url ~ '#organization'}
+    },
+    {
+      '@type': 'LegalService',
+      '@id': accueil_url ~ '#organization',
+      'name': 'Traduction Légale — Traducteur Assermenté',
+      'url': accueil_url,
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33'
+    },
+    {
+      '@type': 'WebPage',
+      '@id': page_url ~ '#webpage',
+      'url': page_url,
+      'name': seo_title,
+      'description': seo_description,
+      'isPartOf': {'@id': accueil_url ~ '#website'},
+      'breadcrumb': {'@id': page_url ~ '#breadcrumb'},
+      'inLanguage': 'fr-FR',
+      'dateModified': "now"|date('c')
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': page_url ~ '#breadcrumb',
+      'itemListElement': [
+        {'@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': accueil_url},
+        {'@type': 'ListItem', 'position': 2, 'name': 'Politique de confidentialité', 'item': page_url}
+      ]
+    },
+    {
+      '@type': 'ContactPoint',
+      '@id': page_url ~ '#contactpoint-privacy',
+      'contactType': 'privacy',
+      'name': 'Traduction Légale — Protection des données',
+      'url': contact_url,
+      'email': 'contact@traduction-legale.fr',
+      'telephone': '+33-1-87-66-34-33',
+      'availableLanguage': ['fr', 'en', 'es', 'de', 'it']
+    }
+  ]
+}|json_encode(320)|raw }}
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Informations légales</span>
+      <h1 id="page-title">Politique de confidentialité</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Politique de confidentialité</span>
+    </nav>
+  </div>
+</div>
+
+<section class="legal-page" id="politique-confidentialite" aria-label="Politique de confidentialité">
+  <div class="wrap">
+    <div class="legal-content">
+      <p class="legal-content__intro">
+        La présente politique de confidentialité décrit comment <strong>Traduction Légale</strong> collecte, utilise et protège vos données personnelles lors de votre navigation sur <a href="{{ path('accueil') }}">traduction-legale.fr</a> et de l'utilisation de nos services de traduction assermentée, conformément au Règlement général sur la protection des données (RGPD) et à la loi Informatique et Libertés.
+      </p>
+
+      <article class="legal-block" id="privacy-responsable" aria-labelledby="privacy-responsable-title">
+        <h2 id="privacy-responsable-title">1. Responsable du traitement</h2>
+        <p>Le responsable du traitement des données personnelles est :</p>
+        <ul class="legal-list">
+          <li><strong>Traduction Légale</strong> — traducteur assermenté inscrit près d'une Cour d'Appel</li>
+          <li><strong>Adresse :</strong> Paris, France</li>
+          <li><strong>E-mail :</strong> <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a></li>
+          <li><strong>Téléphone :</strong> <a href="tel:+33187663433">01 87 66 34 33</a></li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="privacy-donnees" aria-labelledby="privacy-donnees-title">
+        <h2 id="privacy-donnees-title">2. Données collectées</h2>
+        <p>Selon les interactions avec le site, nous sommes amenés à collecter les catégories de données suivantes :</p>
+        <ul class="legal-list">
+          <li><strong>Données d'identification et de contact :</strong> prénom, nom, adresse e-mail, numéro de téléphone, raison sociale (facultatif) ;</li>
+          <li><strong>Données de compte client :</strong> identifiant de connexion, mot de passe (stocké de manière chiffrée) ;</li>
+          <li><strong>Données de commande :</strong> documents sélectionnés, langue cible, quantités, montants, numéro de facture, historique des commandes ;</li>
+          <li><strong>Documents transmis :</strong> fichiers déposés pour traduction (PDF, Word, RTF, TXT, images) ;</li>
+          <li><strong>Données de paiement :</strong> traitées exclusivement par Stripe ; Traduction Légale ne conserve pas les coordonnées bancaires ;</li>
+          <li><strong>Données de navigation :</strong> pages consultées, clics, données techniques transmises par votre navigateur (adresse IP, type d'appareil, système) via des cookies et traceurs ;</li>
+          <li><strong>Correspondances :</strong> messages envoyés via le formulaire de contact (type de document, langue souhaitée, contenu du message).</li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="privacy-finalites" aria-labelledby="privacy-finalites-title">
+        <h2 id="privacy-finalites-title">3. Finalités du traitement</h2>
+        <p>Vos données sont traitées pour les finalités suivantes :</p>
+        <ul class="legal-list">
+          <li>Gestion de votre compte client et authentification sécurisée ;</li>
+          <li>Traitement, suivi et facturation de vos commandes de traduction assermentée ;</li>
+          <li>Exécution de la prestation de traduction et envoi des documents certifiés ;</li>
+          <li>Réponse à vos demandes de contact et établissement de devis ;</li>
+          <li>Envoi d'e-mails transactionnels (confirmation de commande, identifiants de compte) ;</li>
+          <li>Amélioration du site et mesure d'audience publicitaire (Google Ads) ;</li>
+          <li>Respect des obligations légales et comptables du prestataire.</li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="privacy-bases" aria-labelledby="privacy-bases-title">
+        <h2 id="privacy-bases-title">4. Bases légales</h2>
+        <p>Les traitements reposent sur les bases légales suivantes :</p>
+        <ul class="legal-list">
+          <li><strong>Exécution du contrat</strong> (article 6.1.b RGPD) : gestion du compte, commande, traduction et facturation ;</li>
+          <li><strong>Intérêt légitime</strong> (article 6.1.f RGPD) : sécurisation du site, prévention de la fraude, amélioration des services ;</li>
+          <li><strong>Consentement</strong> (article 6.1.a RGPD) : cookies publicitaires et traceurs non essentiels, lorsque requis ;</li>
+          <li><strong>Obligation légale</strong> (article 6.1.c RGPD) : conservation comptable et fiscale des pièces justificatives.</li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="privacy-destinataires" aria-labelledby="privacy-destinataires-title">
+        <h2 id="privacy-destinataires-title">5. Destinataires et sous-traitants</h2>
+        <p>Vos données peuvent être communiquées aux destinataires suivants, dans la stricte limite de leurs missions :</p>
+        <ul class="legal-list">
+          <li><strong>O2Switch</strong> — hébergement du site (222 Boulevard Gustave Flaubert, 63000 Clermont-Ferrand, France) ;</li>
+          <li><strong>Stripe</strong> — traitement sécurisé des paiements en ligne ;</li>
+          <li><strong>Mailjet</strong> (Sinch Email) — envoi des e-mails transactionnels (confirmation de commande, identifiants) ;</li>
+          <li><strong>Google</strong> — mesure de conversions publicitaires via Google Ads (tag gtag.js).</li>
+        </ul>
+        <p>
+          Ces prestataires sont sélectionnés pour leurs garanties en matière de sécurité et de conformité. Des clauses contractuelles appropriées sont mises en place lorsque des données sont traitées en dehors de l'Union européenne.
+        </p>
+      </article>
+
+      <article class="legal-block" id="privacy-conservation" aria-labelledby="privacy-conservation-title">
+        <h2 id="privacy-conservation-title">6. Durée de conservation</h2>
+        <ul class="legal-list">
+          <li><strong>Compte client :</strong> conservé tant que le compte est actif, puis supprimé ou anonymisé dans un délai de 3 ans après la dernière activité ;</li>
+          <li><strong>Données de commande et facturation :</strong> conservées 10 ans conformément aux obligations comptables ;</li>
+          <li><strong>Documents transmis pour traduction :</strong> conservés le temps nécessaire à l'exécution de la prestation et à la gestion des éventuelles réclamations, puis supprimés ou archivés selon les besoins du service ;</li>
+          <li><strong>Messages de contact :</strong> conservés 3 ans à compter du dernier échange ;</li>
+          <li><strong>Données de connexion et logs techniques :</strong> conservés jusqu'à 12 mois ;</li>
+          <li><strong>Données publicitaires (cookies) :</strong> selon la durée définie par Google, généralement jusqu'à 13 mois.</li>
+        </ul>
+      </article>
+
+      <article class="legal-block" id="privacy-cookies" aria-labelledby="privacy-cookies-title">
+        <h2 id="privacy-cookies-title">7. Cookies et traceurs</h2>
+        <p>
+          Le site utilise des cookies et technologies similaires pour assurer son fonctionnement et mesurer l'efficacité de nos campagnes publicitaires.
+        </p>
+        <ul class="legal-list">
+          <li><strong>Cookies strictement nécessaires :</strong> session de navigation, panier, authentification — indispensables au fonctionnement du site ;</li>
+          <li><strong>Cookies de mesure et publicité :</strong> Google Ads (identifiant AW-16598173516) permettant de suivre les conversions (prise de contact, ajout au panier, paiement, etc.).</li>
+        </ul>
+        <p>
+          Vous pouvez configurer votre navigateur pour refuser les cookies ou être alerté de leur dépôt. Le refus de certains cookies peut limiter l'accès à certaines fonctionnalités du site.
+        </p>
+        <p>
+          Pour en savoir plus sur les traceurs Google : <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.
+        </p>
+      </article>
+
+      <article class="legal-block" id="privacy-securite" aria-labelledby="privacy-securite-title">
+        <h2 id="privacy-securite-title">8. Sécurité des données</h2>
+        <p>
+          Traduction Légale met en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos données contre la destruction, la perte, l'altération, la divulgation ou l'accès non autorisé : connexion HTTPS, mots de passe chiffrés, hébergement sécurisé, accès restreint aux données, paiement délégué à Stripe (certifié PCI-DSS).
+        </p>
+        <p>
+          Les documents transmis pour traduction sont traités de manière confidentielle par le traducteur assermenté et ne sont pas communiqués à des tiers non autorisés.
+        </p>
+      </article>
+
+      <article class="legal-block" id="privacy-droits" aria-labelledby="privacy-droits-title">
+        <h2 id="privacy-droits-title">9. Vos droits</h2>
+        <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+        <ul class="legal-list">
+          <li><strong>Droit d'accès</strong> — obtenir la confirmation que vos données sont traitées et en recevoir une copie ;</li>
+          <li><strong>Droit de rectification</strong> — faire corriger des données inexactes ou incomplètes ;</li>
+          <li><strong>Droit à l'effacement</strong> — demander la suppression de vos données, sous réserve des obligations légales de conservation ;</li>
+          <li><strong>Droit à la limitation</strong> — demander la suspension temporaire d'un traitement ;</li>
+          <li><strong>Droit d'opposition</strong> — vous opposer à un traitement fondé sur l'intérêt légitime ou à des fins de prospection ;</li>
+          <li><strong>Droit à la portabilité</strong> — recevoir vos données dans un format structuré, lorsque applicable ;</li>
+          <li><strong>Droit de retirer votre consentement</strong> — à tout moment, pour les traitements fondés sur le consentement.</li>
+        </ul>
+        <p>
+          Pour exercer vos droits, contactez-nous à <a href="mailto:contact@traduction-legale.fr">contact@traduction-legale.fr</a> ou via notre <a href="{{ path('contact') }}">formulaire de contact</a>, en joignant une copie d'un justificatif d'identité si nécessaire. Nous répondons dans un délai maximal d'un mois.
+        </p>
+      </article>
+
+      <article class="legal-block" id="privacy-cnil" aria-labelledby="privacy-cnil-title">
+        <h2 id="privacy-cnil-title">10. Réclamation auprès de la CNIL</h2>
+        <p>
+          Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de la Commission Nationale de l'Informatique et des Libertés (CNIL) : <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>.
+        </p>
+      </article>
+
+      <article class="legal-block" id="privacy-mineurs" aria-labelledby="privacy-mineurs-title">
+        <h2 id="privacy-mineurs-title">11. Mineurs</h2>
+        <p>
+          Le site et les services de Traduction Légale s'adressent aux personnes majeures ou aux mineurs agissant avec l'autorisation de leur représentant légal. Nous ne collectons pas sciemment de données personnelles concernant des enfants de moins de 15 ans sans consentement parental.
+        </p>
+      </article>
+
+      <article class="legal-block" id="privacy-liens" aria-labelledby="privacy-liens-title">
+        <h2 id="privacy-liens-title">12. Liens utiles</h2>
+        <p>
+          Cette politique complète nos <a href="{{ path('mentions_legales') }}">Mentions légales</a> et nos <a href="{{ path('cgv') }}">Conditions générales de vente</a>, qui décrivent respectivement les informations légales du site et les conditions contractuelles de nos prestations.
+        </p>
+        <p class="legal-content__updated">Dernière mise à jour : {{ legal_updated }}.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block javascripts %}
+{% include 'partials/gtag_phone_clicks.html.twig' %}
+{% endblock %}
