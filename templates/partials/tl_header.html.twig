@@ -2,7 +2,17 @@
 {% set cartCount = app.session.get('cart', [])|length %}
 
 <header class="topbar">
-  <div class="wrap">
+  <div class="topbar__contact">
+    <div class="wrap">
+      <div class="topbar__contact-links">
+        <a href="tel:+33187663433">01 87 66 34 33</a>
+        <span class="topbar__contact-sep" aria-hidden="true">·</span>
+        <a href="mailto:contact@traduction-legales.fr">contact@traduction-legales.fr</a>
+      </div>
+    </div>
+  </div>
+  <div class="topbar__rule" role="presentation"></div>
+  <div class="wrap topbar__main">
     <a href="{{ path('accueil') }}" class="brand">
       <img src="{{ asset('logo-tl.png') }}" alt="Traductions Légales — Traductions assermentées">
     </a>

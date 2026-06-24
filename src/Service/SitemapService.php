@@ -74,7 +74,6 @@ final class SitemapService
             ['route' => 'services', 'changefreq' => 'weekly', 'priority' => '0.9'],
             ['route' => 'qui_sommes_nous', 'changefreq' => 'monthly', 'priority' => '0.8'],
             ['route' => 'contact', 'changefreq' => 'monthly', 'priority' => '0.8'],
-            ['route' => 'mentions_legales', 'changefreq' => 'yearly', 'priority' => '0.3'],
             ['route' => 'cgv', 'changefreq' => 'yearly', 'priority' => '0.3'],
             ['route' => 'politique_confidentialite', 'changefreq' => 'yearly', 'priority' => '0.3'],
         ];
