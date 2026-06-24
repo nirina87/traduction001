@@ -313,8 +313,8 @@ class PageController extends AbstractController
 
             // ✅ EMAIL
             $mail = (new Email())
-                ->from(new Address('contact@traduction-legales.fr', 'Traduction Légale'))
-                ->to(new Address('contact@traduction-legales.fr'))
+                ->from(new Address('contact@traductions-legales.fr', 'Traduction Légale'))
+                ->to(new Address('contact@traductions-legales.fr'))
                 ->replyTo($email)
                 ->subject('Nouveau message de contact — Traduction Légale')
                 ->html("

@@ -11,7 +11,7 @@ parameters:
     env(MAILJET_API_SECRET): ''
     env(MAILJET_TEMPLATE_CONFIRMATION_ID): '8108111'
     env(MAILJET_TEMPLATE_CREDENTIALS_ID): '8108287'
-    env(MAILJET_SENDER_EMAIL): 'contact@traduction-legales.fr'
+    env(MAILJET_SENDER_EMAIL): 'contact@traductions-legales.fr'
     env(MAILJET_SUPPORT_EMAIL): 'support@traduction-legale.fr'
 
 services:
