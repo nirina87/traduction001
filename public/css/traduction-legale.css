@@ -250,6 +250,9 @@ h1 em{
   font-weight:500;
   color:var(--seal-deep);
 }
+.hero-title-line{
+  white-space:nowrap;
+}
 .hero-lede{
   font-size:1.1rem;
   color:var(--ink-soft);
@@ -1006,26 +1009,15 @@ a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visibl
   margin-bottom:16px;
 }
 .about-portrait{
-  aspect-ratio:4/5;
-  background:var(--paper-deep);
-  border:1px solid var(--line);
-  border-radius:4px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  aspect-ratio:918/1152;
+  display:block;
   position:relative;
 }
-.about-portrait svg{
-  width:64px;
-  height:64px;
-  color:var(--seal-deep);
-  opacity:0.7;
-}
-.about-portrait::before{
-  content:'';
-  position:absolute;
-  inset:14px;
-  border:1px dashed rgba(10,32,71,0.2);
+.about-portrait img{
+  display:block;
+  width:100%;
+  height:auto;
+  border-radius:4px;
 }
 .values-grid{
   display:grid;
