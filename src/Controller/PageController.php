@@ -116,13 +116,15 @@ class PageController extends AbstractController
             'active' => true,
         ]);
 
-        $priceCents = $rate ? $rate->getPrice() : ((int) ($document->getBasePrice() ?? 0)) * 100;
+        $pageCount = max(1, min(99, (int) $request->request->get('pageCount', 1)));
+        $unitPriceCents = $rate ? $rate->getPrice() : ((int) ($document->getBasePrice() ?? 0)) * 100;
+        $totalPriceCents = $unitPriceCents * $pageCount;
 
         $clientDocument = new ClientDocument();
         $clientDocument->setTitle($uploadedFile->getClientOriginalName());
         $clientDocument->setDocument($document);
         $clientDocument->setLanguage($language);
-        $clientDocument->setPrice($priceCents);
+        $clientDocument->setPrice($totalPriceCents);
         $clientDocument->setFile($uploadedFile);
 
         $user = $this->getUser();
@@ -143,10 +145,11 @@ class PageController extends AbstractController
             'id' => $clientDocument->getId(),
             'documentId' => $document->getId(),
             'title' => $clientDocument->getTitle(),
-            'description' => $document->getName() . ' — traduction ' . $language,
-            'price' => $priceCents,
+            'description' => $document->getName() . ' — traduction ' . $language . ' — ' . $pageCount . ' page' . ($pageCount > 1 ? 's' : ''),
+            'price' => $unitPriceCents,
             'language' => $language,
-            'quantity' => 1,
+            'pageCount' => $pageCount,
+            'quantity' => $pageCount,
             'uploaded' => true,
         ];
 

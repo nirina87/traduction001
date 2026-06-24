@@ -193,7 +193,7 @@
       <aside class="product-detail-order" aria-labelledby="order-title">
         <span class="product-eyebrow">Commander</span>
         <h3 id="order-title" class="product-detail-order-title">Configurez votre traduction</h3>
-        <p class="product-detail-order-lede">Sélectionnez la langue d'origine et la langue cible, joignez votre fichier, puis ajoutez au panier.</p>
+        <p class="product-detail-order-lede">Sélectionnez la langue d'origine et la langue cible, joignez votre fichier, indiquez le nombre de pages, puis ajoutez au panier.</p>
 
         <form
           method="post"
@@ -244,9 +244,28 @@
             </label>
           </div>
 
+          <div class="product-detail-step">
+            <label for="pageCount" class="product-detail-label">
+              <span class="product-detail-step-num">3</span>
+              Nombre de pages
+            </label>
+            <input
+              type="number"
+              id="pageCount"
+              name="pageCount"
+              class="product-detail-select"
+              min="1"
+              max="99"
+              step="1"
+              value="1"
+              inputmode="numeric"
+              required
+            >
+          </div>
+
           <div class="product-detail-price-box" aria-live="polite">
             <div class="product-detail-price-row">
-              <span>Tarif estimé</span>
+              <span>Montant estimé</span>
               <strong class="product-detail-price" id="estimatedPrice">
                 {% if basePriceCents > 0 %}
                   {{ (basePriceCents / 100)|number_format(2, ',', ' ') }} €
@@ -257,7 +276,7 @@
             </div>
             <p class="product-detail-price-hint" id="priceHint">
               {% if basePriceCents > 0 %}
-                Prix de base affiché. Le tarif final dépend de la paire de langues sélectionnée.
+                1 page × {{ (basePriceCents / 100)|number_format(2, ',', ' ') }} € par page. Le tarif final dépend de la paire de langues sélectionnée.
               {% else %}
                 Sélectionnez une paire de langues pour afficher le tarif.
               {% endif %}
@@ -295,6 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const translationRates = {{ translationRates|json_encode|raw }};
   const basePriceCents = {{ basePriceCents }};
   const languageSelect = document.getElementById('language');
+  const pageCountInput = document.getElementById('pageCount');
   const priceEl = document.getElementById('estimatedPrice');
   const priceHint = document.getElementById('priceHint');
   const fileInput = document.getElementById('documentFile');
@@ -312,24 +332,50 @@ document.addEventListener('DOMContentLoaded', function () {
     }) + ' €';
   }
 
+  function getPageCount() {
+    if (!pageCountInput) {
+      return 1;
+    }
+
+    const value = parseInt(pageCountInput.value, 10);
+    if (!Number.isFinite(value) || value < 1) {
+      return 1;
+    }
+
+    return Math.min(99, value);
+  }
+
+  function getUnitPriceCents(language) {
+    if (!language) {
+      return basePriceCents;
+    }
+
+    return Object.prototype.hasOwnProperty.call(translationRates, language)
+      ? translationRates[language]
+      : basePriceCents;
+  }
+
   function updatePrice() {
     const language = languageSelect.value;
+    const pageCount = getPageCount();
+
     if (!language) {
-      priceEl.textContent = basePriceCents > 0 ? formatPrice(basePriceCents) : '—';
+      const fallbackCents = basePriceCents > 0 ? basePriceCents * pageCount : 0;
+      priceEl.textContent = fallbackCents > 0 ? formatPrice(fallbackCents) : '—';
       priceHint.textContent = basePriceCents > 0
-        ? 'Prix de base affiché. Le tarif final dépend de la paire de langues sélectionnée.'
+        ? pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(basePriceCents) + ' par page. Le tarif final dépend de la paire de langues sélectionnée.'
         : 'Sélectionnez une paire de langues pour afficher le tarif.';
       return;
     }
 
-    const cents = Object.prototype.hasOwnProperty.call(translationRates, language)
-      ? translationRates[language]
-      : basePriceCents;
+    const unitCents = getUnitPriceCents(language);
+    const totalCents = unitCents * pageCount;
 
-    priceEl.textContent = formatPrice(cents);
-    priceHint.textContent = Object.prototype.hasOwnProperty.call(translationRates, language)
-      ? 'Tarif spécifique pour ' + language + '.'
-      : 'Tarif de base appliqué pour ' + language + '.';
+    priceEl.textContent = formatPrice(totalCents);
+    priceHint.textContent = pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(unitCents) + ' par page'
+      + (Object.prototype.hasOwnProperty.call(translationRates, language)
+        ? ' — tarif spécifique pour ' + language + '.'
+        : ' — tarif de base appliqué pour ' + language + '.');
   }
 
   function showSelectedFile(file) {
@@ -350,6 +396,15 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   languageSelect.addEventListener('change', updatePrice);
+  if (pageCountInput) {
+    pageCountInput.addEventListener('input', updatePrice);
+    pageCountInput.addEventListener('change', function () {
+      if (getPageCount() !== parseInt(pageCountInput.value, 10)) {
+        pageCountInput.value = String(getPageCount());
+      }
+      updatePrice();
+    });
+  }
   updatePrice();
 
   if (fileInput) {
