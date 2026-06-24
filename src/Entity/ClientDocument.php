@@ -13,6 +13,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class ClientDocument
 {
+    public const PAPER_DELIVERY_SURCHARGE_CENTS = 1500;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -34,6 +36,9 @@ class ClientDocument
 
     #[ORM\Column(nullable: true)]
     private ?int $price = 0;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $receiveByPaper = false;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fileName = null;
@@ -60,6 +65,8 @@ class ClientDocument
     public function setLanguage(?string $language): static { $this->language = $language; return $this; }
     public function getPrice(): ?int { return $this->price; }
     public function setPrice(?int $price): static { $this->price = $price; return $this; }
+    public function isReceiveByPaper(): bool { return $this->receiveByPaper; }
+    public function setReceiveByPaper(bool $receiveByPaper): static { $this->receiveByPaper = $receiveByPaper; return $this; }
     public function getFileName(): ?string { return $this->fileName; }
     public function setFileName(?string $fileName): static { $this->fileName = $fileName; return $this; }
     public function getUploadedAt(): ?\DateTimeImmutable { return $this->uploadedAt; }

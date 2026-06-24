@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -49,6 +50,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             TextField::new('title')->setLabel('Nom du fichier envoyé'),
             TextField::new('language')->setLabel('Langue demandée'),
             IntegerField::new('price')->setLabel('Prix estimé (centimes)'),
+            BooleanField::new('receiveByPaper')->setLabel('Réception par papier'),
             DateTimeField::new('uploadedAt')->setLabel('Date d’envoi')->hideOnForm(),
             UrlField::new('fileUrl')
                 ->setLabel('Document')

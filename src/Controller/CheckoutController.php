@@ -124,7 +124,8 @@ class CheckoutController extends AbstractController
             if (($item['type'] ?? null) === 'client_upload') {
                 $unitPriceCents = (int) ($item['price'] ?? 0);
                 $quantity = (int) ($item['quantity'] ?? 1);
-                $total += $unitPriceCents * $quantity;
+                $paperSurchargeCents = (int) ($item['paperSurchargeCents'] ?? 0);
+                $total += $unitPriceCents * $quantity + $paperSurchargeCents;
 
                 $lineItems[] = [
                     'price_data' => [
@@ -137,6 +138,20 @@ class CheckoutController extends AbstractController
                     ],
                     'quantity' => $quantity,
                 ];
+
+                if ($paperSurchargeCents > 0) {
+                    $lineItems[] = [
+                        'price_data' => [
+                            'currency' => 'eur',
+                            'product_data' => [
+                                'name' => 'Réception par papier — ' . $item['title'],
+                                'description' => 'Envoi postal de la traduction assermentée',
+                            ],
+                            'unit_amount' => $paperSurchargeCents,
+                        ],
+                        'quantity' => 1,
+                    ];
+                }
 
                 continue;
             }
@@ -210,8 +225,9 @@ class CheckoutController extends AbstractController
             if (($item['type'] ?? null) === 'client_upload') {
                 $quantity = (int) ($item['quantity'] ?? 1);
                 $unitPriceCents = (int) ($item['price'] ?? 0);
+                $paperSurchargeCents = (int) ($item['paperSurchargeCents'] ?? 0);
                 $unitPrice = (string) number_format($unitPriceCents / 100, 2, '.', '');
-                $lineTotal = (string) number_format(($unitPriceCents * $quantity) / 100, 2, '.', '');
+                $lineTotal = (string) number_format(($unitPriceCents * $quantity + $paperSurchargeCents) / 100, 2, '.', '');
 
                 $orderItem = new OrderItem();
                 $orderItem->setProductId((int) $item['id']);

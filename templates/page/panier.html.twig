@@ -45,16 +45,18 @@
   {% if item.type is defined and item.type == 'client_upload' %}
     {% set linePriceLd = item.price %}
     {% set lineQtyLd = item.quantity|default(1) %}
+    {% set linePaperLd = item.paperSurchargeCents|default(0) %}
     {% set itemTitleLd = item.title %}
     {% set itemUrlLd = products[item.documentId] is defined ? absolute_url(path('produit_detail', {id: item.documentId})) : page_url %}
   {% else %}
     {% set linePriceLd = products[item.id].price %}
     {% set lineQtyLd = item.quantity %}
+    {% set linePaperLd = 0 %}
     {% set itemTitleLd = item.title %}
     {% set itemUrlLd = absolute_url(path('produit_detail', {id: item.id})) %}
   {% endif %}
   {% set totalQtyLd = totalQtyLd + lineQtyLd %}
-  {% set totalCentsLd = totalCentsLd + (linePriceLd * lineQtyLd) %}
+  {% set totalCentsLd = totalCentsLd + (linePriceLd * lineQtyLd) + linePaperLd %}
   {% set cart_items_ld = cart_items_ld|merge([{
     '@type': 'ListItem',
     'position': loop.index,
@@ -237,13 +239,15 @@
         {% if item.type is defined and item.type == 'client_upload' %}
           {% set linePrice = item.price %}
           {% set lineQty = item.quantity|default(1) %}
+          {% set linePaper = item.paperSurchargeCents|default(0) %}
         {% else %}
           {% set product = products[item.id] %}
           {% set linePrice = product.price %}
           {% set lineQty = item.quantity %}
+          {% set linePaper = 0 %}
         {% endif %}
         {% set totalQty = totalQty + lineQty %}
-        {% set totalCents = totalCents + (linePrice * lineQty) %}
+        {% set totalCents = totalCents + (linePrice * lineQty) + linePaper %}
       {% endfor %}
 
       <div class="cart-page-grid">
@@ -260,7 +264,8 @@
               {% set product = products[item.documentId]|default(null) %}
               {% set linePrice = item.price %}
               {% set lineQty = item.quantity|default(1) %}
-              {% set lineTotal = linePrice * lineQty %}
+              {% set linePaper = item.paperSurchargeCents|default(0) %}
+              {% set lineTotal = linePrice * lineQty + linePaper %}
               {% set itemTitle = item.title %}
               {% set itemLink = product ? path('produit_detail', {id: item.documentId}) : null %}
               {% set itemImage = product ? asset(product.image) : asset('logo-tl.png') %}
@@ -268,6 +273,7 @@
               {% set product = products[item.id] %}
               {% set linePrice = product.price %}
               {% set lineQty = item.quantity %}
+              {% set linePaper = 0 %}
               {% set lineTotal = linePrice * lineQty %}
               {% set itemTitle = item.title %}
               {% set itemLink = path('produit_detail', {id: item.id}) %}
@@ -293,11 +299,21 @@
                       {{ itemTitle }}
                     {% endif %}
                   </h3>
-                  <div class="cart-item__desc">{{ item.description|raw }}</div>
-                  <p class="cart-item__unit-price">
-                    <span>Prix unitaire :</span>
-                    <strong>{{ (linePrice / 100)|number_format(2, ',', ' ') }} €</strong>
-                  </p>
+                  {% if item.description is defined and item.description %}
+                    <p class="cart-item__desc">{{ item.description|striptags }}</p>
+                  {% endif %}
+                  <div class="cart-item__meta">
+                    {% if (item.receiveByPaper is defined and item.receiveByPaper) or linePaper > 0 %}
+                      <span class="cart-item__paper-option">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 7l9 6 9-6"/><path d="M21 10v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8"/><path d="M12 22V13"/></svg>
+                        Réception par papier{% if linePaper > 0 %} (+ {{ (linePaper / 100)|number_format(2, ',', ' ') }} €){% endif %}
+                      </span>
+                    {% endif %}
+                    <span class="cart-item__unit-price">
+                      <span class="cart-item__unit-price-label">Prix unitaire</span>
+                      <strong>{{ (linePrice / 100)|number_format(2, ',', ' ') }} €</strong>
+                    </span>
+                  </div>
                 </div>
               </div>
 

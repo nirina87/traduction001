@@ -263,6 +263,21 @@
             >
           </div>
 
+          <div class="product-detail-step">
+            <label class="product-detail-checkbox" for="receiveByPaper">
+              <input
+                type="checkbox"
+                id="receiveByPaper"
+                name="receiveByPaper"
+                value="1"
+              >
+              <span class="product-detail-checkbox-label">
+                <span class="product-detail-checkbox-title">Recevoir par papier</span>
+                <span class="product-detail-checkbox-hint">+ 15,00 € — envoi postal de votre traduction assermentée</span>
+              </span>
+            </label>
+          </div>
+
           <div class="product-detail-price-box" aria-live="polite">
             <div class="product-detail-price-row">
               <span>Montant estimé</span>
@@ -313,8 +328,10 @@
 document.addEventListener('DOMContentLoaded', function () {
   const translationRates = {{ translationRates|json_encode|raw }};
   const basePriceCents = {{ basePriceCents }};
+  const paperSurchargeCents = {{ constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') }};
   const languageSelect = document.getElementById('language');
   const pageCountInput = document.getElementById('pageCount');
+  const receiveByPaperInput = document.getElementById('receiveByPaper');
   const priceEl = document.getElementById('estimatedPrice');
   const priceHint = document.getElementById('priceHint');
   const fileInput = document.getElementById('documentFile');
@@ -355,27 +372,40 @@ document.addEventListener('DOMContentLoaded', function () {
       : basePriceCents;
   }
 
+  function getPaperSurchargeCents() {
+    return receiveByPaperInput && receiveByPaperInput.checked ? paperSurchargeCents : 0;
+  }
+
   function updatePrice() {
     const language = languageSelect.value;
     const pageCount = getPageCount();
+    const paperCents = getPaperSurchargeCents();
 
     if (!language) {
-      const fallbackCents = basePriceCents > 0 ? basePriceCents * pageCount : 0;
+      const fallbackCents = basePriceCents > 0 ? basePriceCents * pageCount + paperCents : 0;
       priceEl.textContent = fallbackCents > 0 ? formatPrice(fallbackCents) : '—';
-      priceHint.textContent = basePriceCents > 0
+      let hint = basePriceCents > 0
         ? pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(basePriceCents) + ' par page. Le tarif final dépend de la paire de langues sélectionnée.'
         : 'Sélectionnez une paire de langues pour afficher le tarif.';
+      if (paperCents > 0) {
+        hint += ' Inclut ' + formatPrice(paperCents) + ' pour la réception par papier.';
+      }
+      priceHint.textContent = hint;
       return;
     }
 
     const unitCents = getUnitPriceCents(language);
-    const totalCents = unitCents * pageCount;
+    const totalCents = unitCents * pageCount + paperCents;
 
     priceEl.textContent = formatPrice(totalCents);
-    priceHint.textContent = pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(unitCents) + ' par page'
+    let hint = pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(unitCents) + ' par page'
       + (Object.prototype.hasOwnProperty.call(translationRates, language)
         ? ' — tarif spécifique pour ' + language + '.'
         : ' — tarif de base appliqué pour ' + language + '.');
+    if (paperCents > 0) {
+      hint += ' Inclut ' + formatPrice(paperCents) + ' pour la réception par papier.';
+    }
+    priceHint.textContent = hint;
   }
 
   function showSelectedFile(file) {
@@ -396,6 +426,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   languageSelect.addEventListener('change', updatePrice);
+  if (receiveByPaperInput) {
+    receiveByPaperInput.addEventListener('change', updatePrice);
+  }
   if (pageCountInput) {
     pageCountInput.addEventListener('input', updatePrice);
     pageCountInput.addEventListener('change', function () {

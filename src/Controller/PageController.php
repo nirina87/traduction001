@@ -117,14 +117,19 @@ class PageController extends AbstractController
         ]);
 
         $pageCount = max(1, min(99, (int) $request->request->get('pageCount', 1)));
+        $receiveByPaper = $request->request->has('receiveByPaper');
         $unitPriceCents = $rate ? $rate->getPrice() : ((int) ($document->getBasePrice() ?? 0)) * 100;
         $totalPriceCents = $unitPriceCents * $pageCount;
+        if ($receiveByPaper) {
+            $totalPriceCents += ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS;
+        }
 
         $clientDocument = new ClientDocument();
         $clientDocument->setTitle($uploadedFile->getClientOriginalName());
         $clientDocument->setDocument($document);
         $clientDocument->setLanguage($language);
         $clientDocument->setPrice($totalPriceCents);
+        $clientDocument->setReceiveByPaper($receiveByPaper);
         $clientDocument->setFile($uploadedFile);
 
         $user = $this->getUser();
@@ -140,16 +145,23 @@ class PageController extends AbstractController
         $session = $request->getSession();
         $cart = $session->get('cart', []);
 
+        $description = $document->getName() . ' — traduction ' . $language . ' — ' . $pageCount . ' page' . ($pageCount > 1 ? 's' : '');
+        if ($receiveByPaper) {
+            $description .= ' — réception par papier';
+        }
+
         $cart[] = [
             'type' => 'client_upload',
             'id' => $clientDocument->getId(),
             'documentId' => $document->getId(),
             'title' => $clientDocument->getTitle(),
-            'description' => $document->getName() . ' — traduction ' . $language . ' — ' . $pageCount . ' page' . ($pageCount > 1 ? 's' : ''),
+            'description' => $description,
             'price' => $unitPriceCents,
             'language' => $language,
             'pageCount' => $pageCount,
             'quantity' => $pageCount,
+            'receiveByPaper' => $receiveByPaper,
+            'paperSurchargeCents' => $receiveByPaper ? ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS : 0,
             'uploaded' => true,
         ];
 
