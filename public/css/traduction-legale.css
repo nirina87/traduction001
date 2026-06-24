@@ -250,8 +250,10 @@ h1 em{
   font-weight:500;
   color:var(--seal-deep);
 }
-.hero-title-line{
-  white-space:nowrap;
+@media (min-width:768px){
+  .hero-title-line{
+    white-space:nowrap;
+  }
 }
 .hero-lede{
   font-size:1.1rem;
