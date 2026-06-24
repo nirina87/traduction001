@@ -193,7 +193,7 @@
       <aside class="product-detail-order" aria-labelledby="order-title">
         <span class="product-eyebrow">Commander</span>
         <h3 id="order-title" class="product-detail-order-title">Configurez votre traduction</h3>
-        <p class="product-detail-order-lede">Sélectionnez la langue cible, joignez votre fichier, puis ajoutez au panier.</p>
+        <p class="product-detail-order-lede">Sélectionnez la langue d'origine et la langue cible, joignez votre fichier, puis ajoutez au panier.</p>
 
         <form
           method="post"
@@ -205,12 +205,16 @@
           <div class="product-detail-step">
             <label for="language" class="product-detail-label">
               <span class="product-detail-step-num">1</span>
-              Langue cible
+              Langue d'origine et langue cible
             </label>
             <select id="language" name="language" class="product-detail-select" required>
-              <option value="">Choisir une langue…</option>
-              {% for language in languages %}
-                <option value="{{ language }}">{{ language }}</option>
+              <option value="">Choisir une paire de langues…</option>
+              {% for source, pairs in languagePairs %}
+                <optgroup label="{{ source }}">
+                  {% for pair in pairs %}
+                    <option value="{{ pair }}">{{ pair }}</option>
+                  {% endfor %}
+                </optgroup>
               {% endfor %}
             </select>
           </div>
@@ -253,9 +257,9 @@
             </div>
             <p class="product-detail-price-hint" id="priceHint">
               {% if basePriceCents > 0 %}
-                Prix de base affiché. Le tarif final dépend de la langue sélectionnée.
+                Prix de base affiché. Le tarif final dépend de la paire de langues sélectionnée.
               {% else %}
-                Sélectionnez une langue pour afficher le tarif.
+                Sélectionnez une paire de langues pour afficher le tarif.
               {% endif %}
             </p>
           </div>
@@ -313,8 +317,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!language) {
       priceEl.textContent = basePriceCents > 0 ? formatPrice(basePriceCents) : '—';
       priceHint.textContent = basePriceCents > 0
-        ? 'Prix de base affiché. Le tarif final dépend de la langue sélectionnée.'
-        : 'Sélectionnez une langue pour afficher le tarif.';
+        ? 'Prix de base affiché. Le tarif final dépend de la paire de langues sélectionnée.'
+        : 'Sélectionnez une paire de langues pour afficher le tarif.';
       return;
     }
 

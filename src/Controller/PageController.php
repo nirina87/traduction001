@@ -67,7 +67,7 @@ class PageController extends AbstractController
 
         return $this->render('page/produit_detail.html.twig', [
             'product' => $product,
-            'languages' => TargetLanguages::all(),
+            'languagePairs' => TargetLanguages::pairsGroupedBySource(),
             'translationRates' => $translationRates,
             'basePriceCents' => ((int) ($product->getBasePrice() ?? 0)) * 100,
         ]);
@@ -104,8 +104,8 @@ class PageController extends AbstractController
         }
 
         $language = trim((string) $request->request->get('language', ''));
-        if ('' === $language) {
-            $this->addFlash('error', 'Veuillez sélectionner une langue cible.');
+        if ('' === $language || !TargetLanguages::isValid($language)) {
+            $this->addFlash('error', 'Veuillez sélectionner une paire de langues valide.');
 
             return $this->redirectToRoute('produit_detail', ['id' => $id]);
         }
