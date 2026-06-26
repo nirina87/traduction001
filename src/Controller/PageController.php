@@ -11,15 +11,13 @@ use App\Entity\TranslationRate;
 use App\Entity\User;
 use App\Repository\DocumentRepository;
 use App\Service\ClientDocumentOwnerService;
+use App\Service\MailjetService;
 use App\Support\TargetLanguages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class PageController extends AbstractController
@@ -274,7 +272,9 @@ class PageController extends AbstractController
     #[Route('/contact', name: 'contact')]
     public function contact(): Response
     {
-        return $this->render('page/contact.html.twig');
+        return $this->render('page/contact.html.twig', [
+            'languagePairs' => TargetLanguages::pairsGroupedBySource(),
+        ]);
     }
 
     #[Route('/modele', name: 'modele')]
@@ -284,7 +284,7 @@ class PageController extends AbstractController
     }
 
     #[Route('/contact/ajax', name: 'contact_ajax', methods: ['POST'])]
-    public function ajax(Request $request, EntityManagerInterface $em, MailerInterface $mailer): JsonResponse
+    public function ajax(Request $request, EntityManagerInterface $em, MailjetService $mailjetService): JsonResponse
     {
         $nom = $request->request->get('nom');
         $prenom = $request->request->get('prenom');
@@ -299,35 +299,27 @@ class PageController extends AbstractController
         }
 
         try {
-            // ✅ ENREGISTREMENT
+            $createdAt = new \DateTime();
+
             $contact = new Contact();
             $contact->setNom($nom);
             $contact->setPrenom($prenom);
             $contact->setEmail($email);
             $contact->setTelephone($telephone);
             $contact->setMessage($message);
-            $contact->setCreatedAt(new \DateTime());
+            $contact->setCreatedAt($createdAt);
 
             $em->persist($contact);
             $em->flush();
 
-            // ✅ EMAIL
-            $mail = (new Email())
-                ->from(new Address('contact@traductions-legales.fr', 'Traduction Légale'))
-                ->to(new Address('contact@traductions-legales.fr'))
-                ->replyTo($email)
-                ->subject('Nouveau message de contact — Traduction Légale')
-                ->html("
-                    <h2>Nouveau message</h2>
-                    <p><strong>Nom :</strong> {$nom}</p>
-                    <p><strong>Prénom :</strong> {$prenom}</p>
-                    <p><strong>Email :</strong> {$email}</p>
-                    <p><strong>Téléphone :</strong> {$telephone}</p>
-                    <p><strong>Message :</strong><br>{$message}</p>
-                    <p><strong>Date :</strong> " . (new \DateTime())->format('d/m/Y H:i') . "</p>
-                ");
-
-            $mailer->send($mail);
+            $mailjetService->sendContactRequestNotification(
+                (string) $nom,
+                $prenom ? (string) $prenom : null,
+                (string) $email,
+                $telephone ? (string) $telephone : null,
+                (string) $message,
+                $createdAt,
+            );
 
             return new JsonResponse([
                 'success' => true

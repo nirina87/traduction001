@@ -243,7 +243,16 @@
             </div>
             <div class="form-row">
               <label for="lang">Langue souhaitée</label>
-              <input type="text" id="lang" name="lang" placeholder="Ex. Anglais → Français">
+              <select id="lang" name="lang">
+                <option value="">Choisir une paire de langues…</option>
+                {% for source, pairs in languagePairs %}
+                  <optgroup label="{{ source }}">
+                    {% for pair in pairs %}
+                      <option value="{{ pair }}">{{ pair }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
             </div>
           </div>
 

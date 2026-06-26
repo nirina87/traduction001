@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Nouvelle demande de contact — Traductions Légales</title>
+    <!--
+
+    ID Template : (à renseigner après import dans Mailjet)
+
+    Paramètres Mailjet du modèle :
+    - Nom de l'expéditeur  : Traductions Légales
+    - Objet                : Nouveau message de contact — {{var:prenom:""}} {{var:nom:""}}
+    - Texte de prévisualisation : Un client a envoyé un message via le formulaire de contact. Consultez les détails et répondez-lui directement.
+    - Important            : définir l'objet dans Mailjet (ne pas le passer via l'API).
+    - Important            : version texte = ne pas autogénérer (risque d'erreur "string not closed" sur les href).
+    - Important            : configurer Reply-To côté API (adresse email du client).
+    - Syntaxe variables    : {{var:nom_variable:""}} (comme les autres templates Mailjet du compte)
+
+    Variables Mailjet à déclarer dans le modèle :
+    - nom                 : Nom du client
+    - prenom              : Prénom du client
+    - email               : Adresse email du client
+    - telephone           : Numéro de téléphone (ou « Non renseigné »)
+    - message             : Contenu du message (HTML, sauts de ligne convertis côté serveur)
+    - date_demande        : Date et heure de la demande (ex. 26 juin 2026 à 14:30)
+
+    Liens (URL fixes, pas de variables dans href) :
+    - Site : https://traduction-legale.fr
+
+    Logo (URL fixe) : https://www.traductions-legales.fr/logo-tl.png
+
+    Palette de couleurs :
+    - #0b2047 : primaire (bandeaux, accents, titres, CTA)
+    - #3d3d3d : texte et contenu secondaire
+    - #fefefe : fonds et texte sur fond sombre
+    -->
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <style type="text/css">
+        body, table, td, p, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        body { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
+        @media only screen and (max-width: 620px) {
+            .wrapper { width: 100% !important; }
+            .mobile-padding { padding-left: 24px !important; padding-right: 24px !important; }
+            .mobile-stack { display: block !important; width: 100% !important; }
+            .mobile-center { text-align: center !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #fefefe; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+    <!-- Préheader -->
+    <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #fefefe;">
+        Un client a envoyé un message via le formulaire de contact. Consultez les détails et répondez-lui directement.
+    </div>
+
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe;">
+        <tr>
+            <td align="center" style="padding: 32px 16px;">
+
+                <table role="presentation" class="wrapper" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; width: 100%;">
+
+                    <!-- En-tête -->
+                    <tr>
+                        <td style="background-color: #fefefe; border-radius: 16px 16px 0 0; padding: 32px 40px 24px 40px;" class="mobile-padding">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" class="mobile-center">
+                                        <img src="https://www.traductions-legales.fr/logo-tl.png" alt="Traductions Légales" width="160" style="display: block; max-width: 160px; height: auto; margin: 0 auto;">
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Bandeau notification -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #0b2047 0%, #081a38 100%); background-color: #0b2047; padding: 36px 40px;" class="mobile-padding">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center">
+                                        <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(254,254,254,0.85);">
+                                            Formulaire de contact
+                                        </p>
+                                        <h1 style="margin: 0 0 12px 0; font-size: 28px; line-height: 1.3; font-weight: 700; color: #fefefe;">
+                                            Nouvelle demande reçue
+                                        </h1>
+                                        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: rgba(254,254,254,0.92);">
+                                            Un visiteur a soumis le formulaire de contact sur le site. Les informations transmises sont détaillées ci-dessous.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Corps du message -->
+                    <tr>
+                        <td style="background-color: #fefefe; padding: 40px;" class="mobile-padding">
+                            <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.7; color: #3d3d3d;">
+                                Bonjour,
+                            </p>
+                            <p style="margin: 0 0 28px 0; font-size: 16px; line-height: 1.7; color: #3d3d3d;">
+                                Vous avez reçu une nouvelle demande de contact via <strong style="color: #0b2047;">Traductions Légales</strong>. Merci de traiter cette demande dans les meilleurs délais.
+                            </p>
+
+                            <!-- Encadré coordonnées -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe; border: 1px solid rgba(11,32,71,0.12); border-radius: 12px; margin-bottom: 32px;">
+                                <tr>
+                                    <td style="padding: 24px;">
+                                        <p style="margin: 0 0 16px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
+                                            Coordonnées du client
+                                        </p>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; width: 40%;">Nom</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right;">{{var:nom:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Prénom</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:prenom:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Email</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:email:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Téléphone</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:telephone:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Date de la demande</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:date_demande:""}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Message du client -->
+                            <p style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
+                                Message du client
+                            </p>
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 32px;">
+                                <tr>
+                                    <td style="padding: 20px 24px; background-color: rgba(11,32,71,0.04); border-left: 4px solid #0b2047; border-radius: 0 8px 8px 0;">
+                                        <div style="margin: 0; font-size: 15px; line-height: 1.7; color: #3d3d3d;">
+                                            {{var:message:""}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Rappel réponse -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: rgba(11,32,71,0.06); border-radius: 12px; margin-bottom: 8px;">
+                                <tr>
+                                    <td style="padding: 20px 24px;">
+                                        <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 600; color: #0b2047;">
+                                            Comment répondre ?
+                                        </p>
+                                        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">
+                                            Utilisez la fonction <strong>Répondre</strong> de votre messagerie : la réponse sera automatiquement adressée au client à l'adresse indiquée ci-dessus.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+
+                    <!-- Bandeau confiance -->
+                    <tr>
+                        <td style="background-color: #0b2047; padding: 28px 40px;" class="mobile-padding">
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                <tr>
+                                    <td align="center" class="mobile-stack mobile-center" style="padding: 8px; width: 33%; vertical-align: top;">
+                                        <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #fefefe;">15+</p>
+                                        <p style="margin: 0; font-size: 12px; color: rgba(254,254,254,0.75);">années d'expérience</p>
+                                    </td>
+                                    <td align="center" class="mobile-stack mobile-center" style="padding: 8px; width: 33%; vertical-align: top;">
+                                        <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #fefefe;">100%</p>
+                                        <p style="margin: 0; font-size: 12px; color: rgba(254,254,254,0.75);">traducteurs assermentés</p>
+                                    </td>
+                                    <td align="center" class="mobile-stack mobile-center" style="padding: 8px; width: 33%; vertical-align: top;">
+                                        <p style="margin: 0 0 4px 0; font-size: 22px; font-weight: 700; color: #fefefe;">&#128274;</p>
+                                        <p style="margin: 0; font-size: 12px; color: rgba(254,254,254,0.75);">confidentialité garantie</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Pied de page -->
+                    <tr>
+                        <td style="background-color: #fefefe; border-radius: 0 0 16px 16px; padding: 32px 40px;" class="mobile-padding">
+                            <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.6; color: #3d3d3d; text-align: center;">
+                                Notification interne — formulaire de contact du site
+                            </p>
+                            <p style="margin: 0 0 20px 0; font-size: 14px; text-align: center;">
+                                <a href="https://traduction-legale.fr" style="color: #0b2047; font-weight: 600; text-decoration: none;">traduction-legale.fr</a>
+                            </p>
+                            <p style="margin: 0; font-size: 12px; line-height: 1.6; color: rgba(61,61,61,0.65); text-align: center;">
+                                Traductions Légales &mdash; Traduction assermentée en France<br>
+                                Paris, France<br>
+                                &copy; 2026 Traductions Légales. Tous droits réservés.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

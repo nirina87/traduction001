@@ -17,8 +17,10 @@ class MailjetService
         private readonly string $apiSecret,
         private readonly int $confirmationTemplateId,
         private readonly int $credentialsTemplateId,
+        private readonly int $contactTemplateId,
         private readonly string $senderEmail,
         private readonly string $supportEmail,
+        private readonly array $contactCcEmails,
     ) {
     }
 
@@ -57,32 +59,88 @@ class MailjetService
         );
     }
 
+    public function sendContactRequestNotification(
+        string $nom,
+        ?string $prenom,
+        string $email,
+        ?string $telephone,
+        string $message,
+        \DateTimeInterface $createdAt,
+    ): void {
+        if ('' === $this->apiKey || '' === $this->apiSecret || 0 === $this->contactTemplateId) {
+            return;
+        }
+
+        $replyToName = trim(sprintf('%s %s', (string) $prenom, $nom));
+
+        $this->sendTemplateEmail(
+            $this->senderEmail,
+            $this->contactTemplateId,
+            $this->sanitizeTemplateVariables($this->buildContactRequestVariables(
+                $nom,
+                $prenom,
+                $email,
+                $telephone,
+                $message,
+                $createdAt,
+            )),
+            '' !== $replyToName ? $replyToName : $nom,
+            $email,
+            false,
+            $this->contactCcEmails,
+        );
+    }
+
     /**
-     * @param array<string, string> $variables
+     * @param array<string, string>  $variables
+     * @param list<string>           $ccEmails
      */
-    private function sendTemplateEmail(string $toEmail, int $templateId, array $variables): void
-    {
+    private function sendTemplateEmail(
+        string $toEmail,
+        int $templateId,
+        array $variables,
+        ?string $replyToName = null,
+        ?string $replyToEmail = null,
+        bool $copySupport = true,
+        array $ccEmails = [],
+    ): void {
         try {
+            $message = [
+                'From' => [
+                    'Email' => $this->senderEmail,
+                    'Name' => self::SENDER_NAME,
+                ],
+                'To' => [
+                    ['Email' => $toEmail],
+                ],
+                'TemplateID' => $templateId,
+                'TemplateLanguage' => true,
+                'Variables' => $variables,
+            ];
+
+            $ccList = $ccEmails;
+            if ($copySupport && '' !== $this->supportEmail) {
+                $ccList[] = $this->supportEmail;
+            }
+
+            if ([] !== $ccList) {
+                $message['Cc'] = array_map(
+                    static fn (string $email): array => ['Email' => $email],
+                    array_values(array_unique($ccList)),
+                );
+            }
+
+            if (null !== $replyToEmail && '' !== $replyToEmail) {
+                $message['ReplyTo'] = [
+                    'Email' => $replyToEmail,
+                    'Name' => $replyToName ?: $replyToEmail,
+                ];
+            }
+
             $this->httpClient->request('POST', self::API_URL, [
                 'auth_basic' => [$this->apiKey, $this->apiSecret],
                 'json' => [
-                    'Messages' => [
-                        [
-                            'From' => [
-                                'Email' => $this->senderEmail,
-                                'Name' => self::SENDER_NAME,
-                            ],
-                            'To' => [
-                                ['Email' => $toEmail],
-                            ],
-                            'Cc' => [
-                                ['Email' => $this->supportEmail],
-                            ],
-                            'TemplateID' => $templateId,
-                            'TemplateLanguage' => true,
-                            'Variables' => $variables,
-                        ],
-                    ],
+                    'Messages' => [$message],
                 ],
             ]);
         } catch (\Throwable) {
@@ -128,6 +186,27 @@ class MailjetService
             'devise' => (string) $order->getCurrency(),
             'date_commande' => $this->formatOrderDate($order),
             'details_commande' => $this->buildOrderItemsHtml($order),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function buildContactRequestVariables(
+        string $nom,
+        ?string $prenom,
+        string $email,
+        ?string $telephone,
+        string $message,
+        \DateTimeInterface $createdAt,
+    ): array {
+        return [
+            'nom' => $nom,
+            'prenom' => (string) $prenom,
+            'email' => $email,
+            'telephone' => $this->formatContactPhone($telephone),
+            'message' => $this->formatContactMessage($message),
+            'date_demande' => $this->formatContactDate($createdAt),
         ];
     }
 
@@ -184,5 +263,30 @@ class MailjetService
     private function formatMoney(float $amount): string
     {
         return number_format($amount, 2, ',', ' ') . ' €';
+    }
+
+    private function formatContactPhone(?string $telephone): string
+    {
+        $telephone = trim((string) $telephone);
+
+        return '' !== $telephone ? $telephone : 'Non renseigné';
+    }
+
+    private function formatContactMessage(string $message): string
+    {
+        return nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8'));
+    }
+
+    private function formatContactDate(\DateTimeInterface $createdAt): string
+    {
+        if (class_exists(\IntlDateFormatter::class)) {
+            $dateFormatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+            $formattedDate = $dateFormatter->format($createdAt);
+            if (false !== $formattedDate) {
+                return sprintf('%s à %s', $formattedDate, $createdAt->format('H:i'));
+            }
+        }
+
+        return $createdAt->format('d/m/Y à H:i');
     }
 }
