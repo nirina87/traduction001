@@ -8,6 +8,12 @@ parameters:
     app.mailjet.contact_cc_emails:
         - 'kmcom20@yahoo.fr'
         - 'Inanc93700@gmail.com'
+        - 'info@traductions-legales.fr'
+
+    app.mailjet.traitement_cc_emails:
+        - 'kmcom20@yahoo.fr'
+        - 'Inanc93700@gmail.com'
+        - 'info@traductions-legales.fr'
 
     env(STRIPE_SECRET_KEY): ''
     env(STRIPE_PUBLIC_KEY): ''
@@ -16,7 +22,9 @@ parameters:
     env(MAILJET_TEMPLATE_CONFIRMATION_ID): '8108111'
     env(MAILJET_TEMPLATE_CREDENTIALS_ID): '8108287'
     env(MAILJET_TEMPLATE_CONTACT_ID): '8148551'
+    env(MAILJET_TEMPLATE_TRAITEMENT_ID): '8148687'
     env(MAILJET_SENDER_EMAIL): 'contact@traductions-legales.fr'
+    env(MAILJET_TRAITEMENT_EMAIL): 'traitement@traductions-legales.fr'
     env(MAILJET_SUPPORT_EMAIL): 'support@traduction-legale.fr'
 
 services:
@@ -45,9 +53,12 @@ services:
             $confirmationTemplateId: '%env(int:MAILJET_TEMPLATE_CONFIRMATION_ID)%'
             $credentialsTemplateId: '%env(int:MAILJET_TEMPLATE_CREDENTIALS_ID)%'
             $contactTemplateId: '%env(int:MAILJET_TEMPLATE_CONTACT_ID)%'
+            $processingTemplateId: '%env(int:MAILJET_TEMPLATE_TRAITEMENT_ID)%'
             $senderEmail: '%env(MAILJET_SENDER_EMAIL)%'
             $supportEmail: '%env(MAILJET_SUPPORT_EMAIL)%'
+            $processingEmail: '%env(MAILJET_TRAITEMENT_EMAIL)%'
             $contactCcEmails: '%app.mailjet.contact_cc_emails%'
+            $processingCcEmails: '%app.mailjet.traitement_cc_emails%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

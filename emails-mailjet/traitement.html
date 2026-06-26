@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Nouvelle demande de contact — Traductions Légales</title>
+    <title>Nouvelle commande payée — Traductions Légales</title>
     <!--
 
-    ID Template : 8148551
+    ID Template : 8148687
 
     Paramètres Mailjet du modèle :
     - Nom de l'expéditeur  : Traductions Légales
-    - Objet                : Nouveau message de contact — {{var:prenom:""}} {{var:nom:""}}
-    - Texte de prévisualisation : Un client a envoyé un message via le formulaire de contact. Consultez les détails et répondez-lui directement.
+    - Objet                : Nouvelle commande payée — {{var:numero_commande:""}}
+    - Texte de prévisualisation : Un client vient de régler sa commande. Consultez les détails et lancez le traitement du dossier.
     - Important            : définir l'objet dans Mailjet (ne pas le passer via l'API).
     - Important            : version texte = ne pas autogénérer (risque d'erreur "string not closed" sur les href).
     - Important            : configurer Reply-To côté API (adresse email du client).
@@ -23,8 +23,15 @@
     - prenom              : Prénom du client
     - email               : Adresse email du client
     - telephone           : Numéro de téléphone (ou « Non renseigné »)
-    - message             : Contenu du message (HTML, sauts de ligne convertis côté serveur)
-    - date_demande        : Date et heure de la demande (ex. 26 juin 2026 à 14:30)
+    - societe             : Société du client (ou « Non renseignée »)
+    - numero_commande     : Numéro de facture / commande (ex. FACT-20260612-1234)
+    - montant_total_affiche : Montant payé formaté (ex. 56,00 €)
+    - date_commande       : Date de la commande (ex. 12 juin 2026)
+    - details_commande    : Bloc HTML des lignes de commande (généré côté serveur)
+
+    Destinataires (configurés côté API) :
+    - To  : traitement@traductions-legales.fr
+    - Cc  : kmcom20@yahoo.fr, Inanc93700@gmail.com
 
     Liens (URL fixes, pas de variables dans href) :
     - Site : https://traductions-legales.fr
@@ -63,7 +70,7 @@
 
     <!-- Préheader -->
     <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #fefefe;">
-        Un client a envoyé un message via le formulaire de contact. Consultez les détails et répondez-lui directement.
+        Un client vient de régler sa commande. Consultez les détails et lancez le traitement du dossier.
     </div>
 
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe;">
@@ -92,13 +99,13 @@
                                 <tr>
                                     <td align="center">
                                         <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(254,254,254,0.85);">
-                                            Formulaire de contact
+                                            Équipe traitement
                                         </p>
                                         <h1 style="margin: 0 0 12px 0; font-size: 28px; line-height: 1.3; font-weight: 700; color: #fefefe;">
-                                            Nouvelle demande reçue
+                                            Nouvelle commande payée
                                         </h1>
                                         <p style="margin: 0; font-size: 16px; line-height: 1.6; color: rgba(254,254,254,0.92);">
-                                            Un visiteur a soumis le formulaire de contact sur le site. Les informations transmises sont détaillées ci-dessous.
+                                            Le paiement a été confirmé. Le dossier est prêt à être pris en charge par l'équipe de traduction.
                                         </p>
                                     </td>
                                 </tr>
@@ -113,10 +120,10 @@
                                 Bonjour,
                             </p>
                             <p style="margin: 0 0 28px 0; font-size: 16px; line-height: 1.7; color: #3d3d3d;">
-                                Vous avez reçu une nouvelle demande de contact via <strong style="color: #0b2047;">Traductions Légales</strong>. Merci de traiter cette demande dans les meilleurs délais.
+                                Une nouvelle commande vient d'être réglée sur <strong style="color: #0b2047;">Traductions Légales</strong>. Merci de traiter ce dossier dans les meilleurs délais.
                             </p>
 
-                            <!-- Encadré coordonnées -->
+                            <!-- Encadré coordonnées client -->
                             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe; border: 1px solid rgba(11,32,71,0.12); border-radius: 12px; margin-bottom: 32px;">
                                 <tr>
                                     <td style="padding: 24px;">
@@ -134,31 +141,98 @@
                                             </tr>
                                             <tr>
                                                 <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Email</td>
-                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:email:""}}</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; word-break: break-all; border-top: 1px solid rgba(61,61,61,0.15);">{{var:email:""}}</td>
                                             </tr>
                                             <tr>
                                                 <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Téléphone</td>
                                                 <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:telephone:""}}</td>
                                             </tr>
                                             <tr>
-                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Date de la demande</td>
-                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:date_demande:""}}</td>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Société</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:societe:""}}</td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
                             </table>
 
-                            <!-- Message du client -->
+                            <!-- Encadré récapitulatif commande -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #fefefe; border: 1px solid rgba(11,32,71,0.12); border-radius: 12px; margin-bottom: 32px;">
+                                <tr>
+                                    <td style="padding: 24px;">
+                                        <p style="margin: 0 0 16px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
+                                            Récapitulatif de la commande
+                                        </p>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; width: 45%;">Numéro de commande</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right;">{{var:numero_commande:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Date</td>
+                                                <td style="padding: 8px 0; font-size: 14px; font-weight: 600; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:date_commande:""}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; font-size: 14px; color: #3d3d3d; border-top: 1px solid rgba(61,61,61,0.15);">Montant payé</td>
+                                                <td style="padding: 8px 0; font-size: 18px; font-weight: 700; color: #0b2047; text-align: right; border-top: 1px solid rgba(61,61,61,0.15);">{{var:montant_total_affiche:""}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Détail des services commandés -->
                             <p style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
-                                Message du client
+                                Services commandés
                             </p>
                             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 32px;">
                                 <tr>
-                                    <td style="padding: 20px 24px; background-color: rgba(11,32,71,0.04); border-left: 4px solid #0b2047; border-radius: 0 8px 8px 0;">
-                                        <div style="margin: 0; font-size: 15px; line-height: 1.7; color: #3d3d3d;">
-                                            {{var:message:""}}
-                                        </div>
+                                    <td style="padding: 0;">
+                                        {{var:details_commande:""}}
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Étapes de traitement -->
+                            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 32px;">
+                                <tr>
+                                    <td style="padding: 0 0 16px 0;">
+                                        <p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #0b2047;">
+                                            Prochaines étapes
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 12px 0; vertical-align: top; width: 36px;">
+                                                    <span style="display: inline-block; width: 28px; height: 28px; background-color: #0b2047; color: #fefefe; font-size: 14px; font-weight: 700; line-height: 28px; text-align: center; border-radius: 50%;">1</span>
+                                                </td>
+                                                <td style="padding: 12px 0 12px 8px; vertical-align: top;">
+                                                    <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">Vérifier le dossier</p>
+                                                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">Contrôlez les documents et informations transmis par le client. Contactez-le si des éléments sont manquants.</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 12px 0; vertical-align: top; width: 36px;">
+                                                    <span style="display: inline-block; width: 28px; height: 28px; background-color: #0b2047; color: #fefefe; font-size: 14px; font-weight: 700; line-height: 28px; text-align: center; border-radius: 50%;">2</span>
+                                                </td>
+                                                <td style="padding: 12px 0 12px 8px; vertical-align: top;">
+                                                    <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">Attribuer la traduction</p>
+                                                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">Confiez le dossier à un traducteur assermenté adapté à la langue et au type de document.</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 12px 0; vertical-align: top; width: 36px;">
+                                                    <span style="display: inline-block; width: 28px; height: 28px; background-color: #0b2047; color: #fefefe; font-size: 14px; font-weight: 700; line-height: 28px; text-align: center; border-radius: 50%;">3</span>
+                                                </td>
+                                                <td style="padding: 12px 0 12px 8px; vertical-align: top;">
+                                                    <p style="margin: 0 0 4px 0; font-size: 15px; font-weight: 600; color: #0b2047;">Informer le client</p>
+                                                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">Tenez le client informé de l'avancement et de la livraison de sa traduction assermentée.</p>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
@@ -168,10 +242,10 @@
                                 <tr>
                                     <td style="padding: 20px 24px;">
                                         <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 600; color: #0b2047;">
-                                            Comment répondre ?
+                                            Contacter le client
                                         </p>
                                         <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #3d3d3d;">
-                                            Utilisez la fonction <strong>Répondre</strong> de votre messagerie : la réponse sera automatiquement adressée au client à l'adresse indiquée ci-dessus.
+                                            Pour échanger avec le client, utilisez la fonction <strong>Répondre</strong> de votre messagerie : la réponse sera automatiquement adressée à l'adresse email indiquée ci-dessus.
                                         </p>
                                     </td>
                                 </tr>
@@ -206,10 +280,12 @@
                     <tr>
                         <td style="background-color: #fefefe; border-radius: 0 0 16px 16px; padding: 32px 40px;" class="mobile-padding">
                             <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.6; color: #3d3d3d; text-align: center;">
-                                Notification interne — formulaire de contact du site
+                                Notification interne — nouvelle commande payée
                             </p>
                             <p style="margin: 0 0 20px 0; font-size: 14px; text-align: center;">
                                 <a href="https://traductions-legales.fr" style="color: #0b2047; font-weight: 600; text-decoration: none;">traductions-legales.fr</a>
+                                &nbsp;&middot;&nbsp;
+                                <a href="mailto:traitement@traductions-legales.fr" style="color: #0b2047; font-weight: 600; text-decoration: none;">traitement@traductions-legales.fr</a>
                             </p>
                             <p style="margin: 0; font-size: 12px; line-height: 1.6; color: rgba(61,61,61,0.65); text-align: center;">
                                 Traductions Légales &mdash; Traduction assermentée en France<br>

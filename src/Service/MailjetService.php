@@ -18,9 +18,12 @@ class MailjetService
         private readonly int $confirmationTemplateId,
         private readonly int $credentialsTemplateId,
         private readonly int $contactTemplateId,
+        private readonly int $processingTemplateId,
         private readonly string $senderEmail,
         private readonly string $supportEmail,
+        private readonly string $processingEmail,
         private readonly array $contactCcEmails,
+        private readonly array $processingCcEmails,
     ) {
     }
 
@@ -56,6 +59,30 @@ class MailjetService
             (string) $user->getEmail(),
             $this->credentialsTemplateId,
             $this->sanitizeTemplateVariables($this->buildAccountCredentialsVariables($user, $plainPassword)),
+        );
+    }
+
+    public function sendOrderProcessingNotification(Order $order): void
+    {
+        if ('' === $this->apiKey || '' === $this->apiSecret || 0 === $this->processingTemplateId || '' === $this->processingEmail) {
+            return;
+        }
+
+        $user = $order->getUser();
+        if (!$user?->getEmail()) {
+            return;
+        }
+
+        $clientName = trim(sprintf('%s %s', (string) $user->getFirstName(), (string) $user->getLastName()));
+
+        $this->sendTemplateEmail(
+            $this->processingEmail,
+            $this->processingTemplateId,
+            $this->sanitizeTemplateVariables($this->buildOrderProcessingVariables($order)),
+            '' !== $clientName ? $clientName : (string) $user->getEmail(),
+            (string) $user->getEmail(),
+            false,
+            $this->processingCcEmails,
         );
     }
 
@@ -219,6 +246,22 @@ class MailjetService
             'email' => (string) $user->getEmail(),
             'mot_de_passe' => $plainPassword,
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function buildOrderProcessingVariables(Order $order): array
+    {
+        $user = $order->getUser();
+        $company = trim((string) $user?->getCompany());
+
+        return array_merge($this->buildOrderConfirmationVariables($order), [
+            'nom' => (string) $user?->getLastName(),
+            'prenom' => (string) $user?->getFirstName(),
+            'telephone' => $this->formatContactPhone($user?->getPhone()),
+            'societe' => '' !== $company ? $company : 'Non renseignée',
+        ]);
     }
 
     private function formatOrderDate(Order $order): string

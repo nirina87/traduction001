@@ -295,6 +295,7 @@ class CheckoutController extends AbstractController
 
             if (!$wasAlreadyPaid) {
                 $this->mailjetService->sendOrderConfirmationEmail($order);
+                $this->mailjetService->sendOrderProcessingNotification($order);
             }
         }
 
