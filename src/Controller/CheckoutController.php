@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ClientDocument;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\User;
@@ -237,6 +238,11 @@ class CheckoutController extends AbstractController
                 $orderItem->setUnitPrice($unitPrice);
                 $orderItem->setTotal($lineTotal);
                 $order->addItem($orderItem);
+
+                $clientDocument = $em->getRepository(ClientDocument::class)->find((int) $item['id']);
+                if ($clientDocument) {
+                    $clientDocument->setOrder($order);
+                }
 
                 continue;
             }

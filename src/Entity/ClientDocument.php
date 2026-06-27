@@ -28,6 +28,10 @@ class ClientDocument
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Document $document = null;
 
+    #[ORM\ManyToOne(targetEntity: Order::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Order $order = null;
+
     #[ORM\Column(length: 150)]
     private ?string $title = null;
 
@@ -59,6 +63,26 @@ class ClientDocument
     public function setUser(?User $user): static { $this->user = $user; return $this; }
     public function getDocument(): ?Document { return $this->document; }
     public function setDocument(?Document $document): static { $this->document = $document; return $this; }
+    public function getOrder(): ?Order { return $this->order; }
+    public function setOrder(?Order $order): static { $this->order = $order; return $this; }
+
+    public function getPaymentStatus(): string
+    {
+        if (null === $this->order) {
+            return 'none';
+        }
+
+        return 'paid' === $this->order->getStatus() ? 'paid' : 'pending';
+    }
+
+    public function getPaymentStatusLabel(): string
+    {
+        return match ($this->getPaymentStatus()) {
+            'paid' => 'Payé',
+            'pending' => 'Paiement en attente',
+            default => 'Non rattaché',
+        };
+    }
     public function getTitle(): ?string { return $this->title; }
     public function setTitle(string $title): static { $this->title = $title; return $this; }
     public function getLanguage(): ?string { return $this->language; }
