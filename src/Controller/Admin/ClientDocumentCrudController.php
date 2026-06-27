@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -20,8 +19,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NullFilter;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class ClientDocumentCrudController extends AbstractCrudController
@@ -37,7 +34,8 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Document client')
             ->setEntityLabelInPlural('Documents clients')
             ->setPageTitle(Crud::PAGE_INDEX, '📎 Gestion des documents clients')
-            ->setDefaultSort(['uploadedAt' => 'DESC']);
+            ->setDefaultSort(['uploadedAt' => 'DESC'])
+            ->overrideTemplate('crud/index', 'admin/client_document/index.html.twig');
     }
 
     public function configureActions(Actions $actions): Actions
@@ -45,18 +43,6 @@ class ClientDocumentCrudController extends AbstractCrudController
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('➕ Ajouter un document client'));
-    }
-
-    public function configureFilters(Filters $filters): Filters
-    {
-        return $filters
-            ->add(NullFilter::new('order')
-                ->setLabel('Rattaché à une commande')
-                ->setChoiceLabels('Non rattaché', 'Rattaché à une commande'))
-            ->add(ChoiceFilter::new('order.status', 'Statut de paiement')->setChoices([
-                'Payé' => 'paid',
-                'Paiement en attente' => 'pending',
-            ]));
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -76,11 +62,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             TextField::new('paymentStatusLabel')
                 ->setLabel('Statut paiement')
                 ->onlyOnIndex()
-                ->formatValue(fn (?string $value, ClientDocument $entity) => match ($entity->getPaymentStatus()) {
-                    'paid' => '<span class="badge bg-success">Payé</span>',
-                    'pending' => '<span class="badge bg-warning text-dark">Paiement en attente</span>',
-                    default => '<span class="badge bg-secondary">Non rattaché</span>',
-                })
+                ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderPaymentStatus($entity->getPaymentStatus()))
                 ->renderAsHtml(),
             AssociationField::new('document')->setLabel('Document à traduire'),
             TextField::new('title')->setLabel('Nom du fichier envoyé'),
@@ -111,10 +93,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             return '—';
         }
 
-        $statusBadge = match ($order->getStatus()) {
-            'paid' => '<span class="badge bg-success">Payé</span>',
-            default => '<span class="badge bg-warning text-dark">Paiement en attente</span>',
-        };
+        $statusBadge = $this->renderPaymentStatus($order->getStatus() === 'paid' ? 'paid' : 'pending');
 
         return sprintf(
             '%s — %s — %s € (%s)',
@@ -122,6 +101,21 @@ class ClientDocumentCrudController extends AbstractCrudController
             $statusBadge,
             $order->getTotal(),
             $order->getCreatedAt()?->format('d/m/Y H:i') ?? '—',
+        );
+    }
+
+    private function renderPaymentStatus(string $status): string
+    {
+        [$modifier, $label] = match ($status) {
+            'paid' => ['paid', 'Payé'],
+            'pending' => ['pending', 'Paiement en attente'],
+            default => ['none', 'Non rattaché'],
+        };
+
+        return sprintf(
+            '<span class="ea-payment-status ea-payment-status--%s"><span class="ea-payment-status__dot" aria-hidden="true"></span><span class="ea-payment-status__label">%s</span></span>',
+            $modifier,
+            htmlspecialchars($label, ENT_QUOTES),
         );
     }
 }
