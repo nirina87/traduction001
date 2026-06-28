@@ -193,7 +193,13 @@
       <aside class="product-detail-order" aria-labelledby="order-title">
         <span class="product-eyebrow">Commander</span>
         <h3 id="order-title" class="product-detail-order-title">Configurez votre traduction</h3>
-        <p class="product-detail-order-lede">Sélectionnez la langue d'origine et la langue cible, joignez votre fichier, indiquez le nombre de pages, puis ajoutez au panier.</p>
+        <p class="product-detail-order-lede">
+          {% if hasLanguagePairs %}
+            Sélectionnez la langue d'origine et la langue cible, joignez votre fichier, indiquez le nombre de pages, puis ajoutez au panier.
+          {% else %}
+            Joignez votre fichier, indiquez le nombre de pages, puis ajoutez au panier.
+          {% endif %}
+        </p>
 
         <form
           method="post"
@@ -202,6 +208,7 @@
           class="product-detail-form"
           id="productOrderForm"
         >
+          {% if hasLanguagePairs %}
           <div class="product-detail-step">
             <label for="language" class="product-detail-label">
               <span class="product-detail-step-num">1</span>
@@ -218,10 +225,11 @@
               {% endfor %}
             </select>
           </div>
+          {% endif %}
 
           <div class="product-detail-step">
             <span class="product-detail-label" id="upload-label">
-              <span class="product-detail-step-num">2</span>
+              <span class="product-detail-step-num">{{ hasLanguagePairs ? 2 : 1 }}</span>
               Votre fichier à traduire
             </span>
             <label for="documentFile" class="product-detail-upload" id="uploadZone">
@@ -246,7 +254,7 @@
 
           <div class="product-detail-step">
             <label for="pageCount" class="product-detail-label">
-              <span class="product-detail-step-num">3</span>
+              <span class="product-detail-step-num">{{ hasLanguagePairs ? 3 : 2 }}</span>
               Nombre de pages
             </label>
             <input
@@ -290,10 +298,16 @@
               </strong>
             </div>
             <p class="product-detail-price-hint" id="priceHint">
-              {% if basePriceCents > 0 %}
-                1 page × {{ (basePriceCents / 100)|number_format(2, ',', ' ') }} € par page. Le tarif final dépend de la paire de langues sélectionnée.
+              {% if hasLanguagePairs %}
+                {% if basePriceCents > 0 %}
+                  1 page × {{ (basePriceCents / 100)|number_format(2, ',', ' ') }} € par page. Le tarif final dépend de la paire de langues sélectionnée.
+                {% else %}
+                  Sélectionnez une paire de langues pour afficher le tarif.
+                {% endif %}
+              {% elseif basePriceCents > 0 %}
+                1 page × {{ (basePriceCents / 100)|number_format(2, ',', ' ') }} € par page.
               {% else %}
-                Sélectionnez une paire de langues pour afficher le tarif.
+                Tarif sur demande.
               {% endif %}
             </p>
           </div>
@@ -328,6 +342,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const translationRates = {{ translationRates|json_encode|raw }};
   const basePriceCents = {{ basePriceCents }};
+  const hasLanguagePairs = {{ hasLanguagePairs ? 'true' : 'false' }};
   const paperSurchargeCents = {{ constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') }};
   const languageSelect = document.getElementById('language');
   const pageCountInput = document.getElementById('pageCount');
@@ -338,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const uploadZone = document.getElementById('uploadZone');
   const selectedFileName = document.getElementById('selectedFileName');
 
-  if (!languageSelect || !priceEl) {
+  if (!priceEl) {
     return;
   }
 
@@ -377,16 +392,19 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function updatePrice() {
-    const language = languageSelect.value;
+    const language = languageSelect ? languageSelect.value : '';
     const pageCount = getPageCount();
     const paperCents = getPaperSurchargeCents();
 
-    if (!language) {
+    if (!hasLanguagePairs || !language) {
       const fallbackCents = basePriceCents > 0 ? basePriceCents * pageCount + paperCents : 0;
       priceEl.textContent = fallbackCents > 0 ? formatPrice(fallbackCents) : '—';
       let hint = basePriceCents > 0
-        ? pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(basePriceCents) + ' par page. Le tarif final dépend de la paire de langues sélectionnée.'
-        : 'Sélectionnez une paire de langues pour afficher le tarif.';
+        ? pageCount + ' page' + (pageCount > 1 ? 's' : '') + ' × ' + formatPrice(basePriceCents) + ' par page.'
+        : 'Tarif sur demande.';
+      if (hasLanguagePairs && basePriceCents > 0) {
+        hint += ' Le tarif final dépend de la paire de langues sélectionnée.';
+      }
       if (paperCents > 0) {
         hint += ' Inclut ' + formatPrice(paperCents) + ' pour la réception par papier.';
       }
@@ -425,7 +443,9 @@ document.addEventListener('DOMContentLoaded', function () {
     uploadZone.classList.add('product-detail-upload--filled');
   }
 
-  languageSelect.addEventListener('change', updatePrice);
+  if (languageSelect) {
+    languageSelect.addEventListener('change', updatePrice);
+  }
   if (receiveByPaperInput) {
     receiveByPaperInput.addEventListener('change', updatePrice);
   }

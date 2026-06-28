@@ -60,9 +60,12 @@ class PageController extends AbstractController
             $translationRates[$rate->getLanguagePair()] = $rate->getPrice();
         }
 
+        $languagePairs = $this->translationRateRepository->buildPairsGroupedBySourceForDocument($product);
+
         return $this->render('page/produit_detail.html.twig', [
             'product' => $product,
-            'languagePairs' => $this->translationRateRepository->buildPairsGroupedBySourceForDocument($product),
+            'languagePairs' => $languagePairs,
+            'hasLanguagePairs' => [] !== $languagePairs,
             'translationRates' => $translationRates,
             'basePriceCents' => ((int) ($product->getBasePrice() ?? 0)) * 100,
         ]);
@@ -99,16 +102,24 @@ class PageController extends AbstractController
         }
 
         $language = trim((string) $request->request->get('language', ''));
-        $rate = $this->translationRateRepository->findActiveForDocumentAndPair($document, $language);
-        if ('' === $language || null === $rate) {
-            $this->addFlash('error', 'Veuillez sélectionner une paire de langues valide.');
+        $hasLanguagePairs = [] !== $this->translationRateRepository->findActiveByDocument($document);
 
-            return $this->redirectToRoute('produit_detail', ['id' => $id]);
+        if ($hasLanguagePairs) {
+            $rate = $this->translationRateRepository->findActiveForDocumentAndPair($document, $language);
+            if ('' === $language || null === $rate) {
+                $this->addFlash('error', 'Veuillez sélectionner une paire de langues valide.');
+
+                return $this->redirectToRoute('produit_detail', ['id' => $id]);
+            }
+
+            $unitPriceCents = $rate->getPrice();
+        } else {
+            $unitPriceCents = ((int) ($document->getBasePrice() ?? 0)) * 100;
+            $language = '';
         }
 
         $pageCount = max(1, min(99, (int) $request->request->get('pageCount', 1)));
         $receiveByPaper = $request->request->has('receiveByPaper');
-        $unitPriceCents = $rate->getPrice();
         $totalPriceCents = $unitPriceCents * $pageCount;
         if ($receiveByPaper) {
             $totalPriceCents += ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS;
@@ -117,7 +128,7 @@ class PageController extends AbstractController
         $clientDocument = new ClientDocument();
         $clientDocument->setTitle($uploadedFile->getClientOriginalName());
         $clientDocument->setDocument($document);
-        $clientDocument->setLanguage($language);
+        $clientDocument->setLanguage('' !== $language ? $language : null);
         $clientDocument->setPrice($totalPriceCents);
         $clientDocument->setReceiveByPaper($receiveByPaper);
         $clientDocument->setFile($uploadedFile);
@@ -135,7 +146,11 @@ class PageController extends AbstractController
         $session = $request->getSession();
         $cart = $session->get('cart', []);
 
-        $description = $document->getName() . ' — traduction ' . $language . ' — ' . $pageCount . ' page' . ($pageCount > 1 ? 's' : '');
+        $description = $document->getName();
+        if ('' !== $language) {
+            $description .= ' — traduction ' . $language;
+        }
+        $description .= ' — ' . $pageCount . ' page' . ($pageCount > 1 ? 's' : '');
         if ($receiveByPaper) {
             $description .= ' — réception par papier';
         }
@@ -147,7 +162,7 @@ class PageController extends AbstractController
             'title' => $clientDocument->getTitle(),
             'description' => $description,
             'price' => $unitPriceCents,
-            'language' => $language,
+            'language' => '' !== $language ? $language : null,
             'pageCount' => $pageCount,
             'quantity' => $pageCount,
             'receiveByPaper' => $receiveByPaper,
