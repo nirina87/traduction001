@@ -41,7 +41,12 @@ class TranslationRateCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnDetail(),
             AssociationField::new('document')->setLabel('Document à traduire')->setRequired(true),
-            TextField::new('language')->setLabel('Langue')->setRequired(true),
+            TextField::new('languageOrigine')
+                ->setLabel('Langue d\'origine')
+                ->setRequired(true),
+            TextField::new('languageCible')
+                ->setLabel('Langue cible')
+                ->setRequired(true),
             IntegerField::new('price')->setLabel('Prix (centimes)')->setRequired(true),
             BooleanField::new('active')->setLabel('Actif'),
         ];

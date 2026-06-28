@@ -7,12 +7,11 @@ use App\Entity\Category;
 use App\Entity\ClientDocument;
 use App\Entity\Contact;
 use App\Entity\Document;
-use App\Entity\TranslationRate;
 use App\Entity\User;
 use App\Repository\DocumentRepository;
+use App\Repository\TranslationRateRepository;
 use App\Service\ClientDocumentOwnerService;
 use App\Service\MailjetService;
-use App\Support\TargetLanguages;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,6 +23,7 @@ class PageController extends AbstractController
 {
     public function __construct(
         private readonly DocumentRepository $documentRepository,
+        private readonly TranslationRateRepository $translationRateRepository,
         private readonly ClientDocumentOwnerService $clientDocumentOwnerService,
     ) {
     }
@@ -56,16 +56,13 @@ class PageController extends AbstractController
         }
 
         $translationRates = [];
-        foreach ($em->getRepository(TranslationRate::class)->findBy([
-            'document' => $product,
-            'active' => true,
-        ]) as $rate) {
-            $translationRates[$rate->getLanguage()] = $rate->getPrice();
+        foreach ($this->translationRateRepository->findActiveByDocument($product) as $rate) {
+            $translationRates[$rate->getLanguagePair()] = $rate->getPrice();
         }
 
         return $this->render('page/produit_detail.html.twig', [
             'product' => $product,
-            'languagePairs' => TargetLanguages::pairsGroupedBySource(),
+            'languagePairs' => $this->translationRateRepository->buildPairsGroupedBySourceForDocument($product),
             'translationRates' => $translationRates,
             'basePriceCents' => ((int) ($product->getBasePrice() ?? 0)) * 100,
         ]);
@@ -102,21 +99,16 @@ class PageController extends AbstractController
         }
 
         $language = trim((string) $request->request->get('language', ''));
-        if ('' === $language || !TargetLanguages::isValid($language)) {
+        $rate = $this->translationRateRepository->findActiveForDocumentAndPair($document, $language);
+        if ('' === $language || null === $rate) {
             $this->addFlash('error', 'Veuillez sélectionner une paire de langues valide.');
 
             return $this->redirectToRoute('produit_detail', ['id' => $id]);
         }
 
-        $rate = $em->getRepository(TranslationRate::class)->findOneBy([
-            'document' => $document,
-            'language' => $language,
-            'active' => true,
-        ]);
-
         $pageCount = max(1, min(99, (int) $request->request->get('pageCount', 1)));
         $receiveByPaper = $request->request->has('receiveByPaper');
-        $unitPriceCents = $rate ? $rate->getPrice() : ((int) ($document->getBasePrice() ?? 0)) * 100;
+        $unitPriceCents = $rate->getPrice();
         $totalPriceCents = $unitPriceCents * $pageCount;
         if ($receiveByPaper) {
             $totalPriceCents += ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS;
@@ -273,7 +265,7 @@ class PageController extends AbstractController
     public function contact(): Response
     {
         return $this->render('page/contact.html.twig', [
-            'languagePairs' => TargetLanguages::pairsGroupedBySource(),
+            'languagePairs' => $this->translationRateRepository->buildPairsGroupedBySource(),
         ]);
     }
 

@@ -4,12 +4,12 @@ namespace App\Entity;
 
 use App\Repository\TranslationRateRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Document;
 
 #[ORM\Entity(repositoryClass: TranslationRateRepository::class)]
 #[ORM\Table(name: 'translation_rate')]
 class TranslationRate
 {
+    private const PAIR_SEPARATOR = ' vers ';
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,8 +19,11 @@ class TranslationRate
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Document $document = null;
 
-    #[ORM\Column(length: 80)]
-    private ?string $language = null;
+    #[ORM\Column(name: 'language_origine', length: 80)]
+    private ?string $languageOrigine = null;
+
+    #[ORM\Column(name: 'language_cible', length: 80)]
+    private ?string $languageCible = null;
 
     #[ORM\Column(nullable: false)]
     private int $price = 0;
@@ -45,16 +48,63 @@ class TranslationRate
         return $this;
     }
 
-    public function getLanguage(): ?string
+    public function getLanguageOrigine(): ?string
     {
-        return $this->language;
+        return $this->languageOrigine;
     }
 
-    public function setLanguage(string $language): static
+    public function setLanguageOrigine(string $languageOrigine): static
     {
-        $this->language = $language;
+        $this->languageOrigine = $languageOrigine;
 
         return $this;
+    }
+
+    public function getLanguageCible(): ?string
+    {
+        return $this->languageCible;
+    }
+
+    public function setLanguageCible(string $languageCible): static
+    {
+        $this->languageCible = $languageCible;
+
+        return $this;
+    }
+
+    public function getLanguagePair(): string
+    {
+        return self::formatLanguagePair(
+            $this->languageOrigine ?? '',
+            $this->languageCible ?? '',
+        );
+    }
+
+    public static function formatLanguagePair(string $source, string $target): string
+    {
+        return $source . self::PAIR_SEPARATOR . $target;
+    }
+
+    /**
+     * @return array{source: string, target: string}|null
+     */
+    public static function parseLanguagePair(string $pair): ?array
+    {
+        $parts = explode(self::PAIR_SEPARATOR, $pair, 2);
+        if (2 !== \count($parts)) {
+            return null;
+        }
+
+        $source = trim($parts[0]);
+        $target = trim($parts[1]);
+        if ('' === $source || '' === $target) {
+            return null;
+        }
+
+        return [
+            'source' => $source,
+            'target' => $target,
+        ];
     }
 
     public function getPrice(): int
@@ -83,6 +133,10 @@ class TranslationRate
 
     public function __toString(): string
     {
-        return sprintf('%s (%s)', $this->language ?? 'Langue', $this->price ? $this->price . ' €' : 'prix libre');
+        $pair = ($this->languageOrigine && $this->languageCible)
+            ? $this->getLanguagePair()
+            : 'Paire de langues';
+
+        return sprintf('%s (%s)', $pair, $this->price ? $this->price . ' €' : 'prix libre');
     }
 }
