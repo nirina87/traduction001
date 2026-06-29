@@ -6,6 +6,11 @@
 {% set accueil_url = absolute_url(path('accueil')) %}
 {% set page_url = absolute_url(path('services')) %}
 {% set og_image = absolute_url(asset('logo-tl.png')) %}
+{% set activeProducts = products|filter(product => product.active) %}
+{% set otherProducts = activeProducts|filter(product => 'passeport' not in product.name|lower and 'attestation' not in product.name|lower) %}
+{% set passeportProduct = activeProducts|filter(product => 'passeport' in product.name|lower)|first %}
+{% set attestationProduct = activeProducts|filter(product => 'attestation' in product.name|lower)|first %}
+{% set catalogProducts = otherProducts|slice(0, 6)|merge(passeportProduct ? [passeportProduct] : [])|merge(otherProducts|slice(6, 2))|merge(attestationProduct ? [attestationProduct] : [])|merge(otherProducts|slice(8)) %}
 
 {% block title %}{{ seo_title }}{% endblock %}
 
@@ -36,7 +41,7 @@
 {% block structured_data %}
 {% set document_items = [] %}
 {% set catalog_offers = [] %}
-{% for product in products|filter(product => product.active) %}
+{% for product in catalogProducts %}
   {% set detail_url = absolute_url(path('produit_detail', {id: product.id})) %}
   {% set document_items = document_items|merge([{
     '@type': 'ListItem',
@@ -174,8 +179,7 @@
   <div class="wrap">
     <h2 id="catalog-title" class="visually-hidden">Catalogue des documents à traduire</h2>
     <div class="catalog-grid" role="list">
-      {% set activeProducts = products|filter(product => product.active) %}
-      {% for product in activeProducts %}
+      {% for product in catalogProducts %}
         <article class="product-card" role="listitem">
           <div class="product-thumb">
             {% if product.image %}
