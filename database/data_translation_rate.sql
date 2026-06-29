@@ -11,13 +11,13 @@
 --   TRADUCTION PERMIS DE CONDUIRE → document.id = 8 (PERMIS DE CONDUIRE)
 --   TRADUCTION JUGEMENT → document.id = 15 (JUGEMENTS)
 --   TRADUCTION ACTE DE DÉCÈS → document.id = 20 (ACTE DE DÉCÈS)
+--   TRADUCTION PASSEPORT → document.id = 21 (PASSEPORT)
 --
 -- Documents CSV sans correspondance dans la table document (lignes ignorées) :
---   TRADUCTION PASSEPORT
 --   TRADUCTION DE L'APOSTILLE
 --   TRADUCTION FACTURE
 --
--- Lignes insérées : 531 | Lignes ignorées : 179
+-- Lignes insérées : 589 | Lignes ignorées : 121
 -- Prix stockés en centimes (EUR × 100)
 
 INSERT INTO `translation_rate` (`language_origine`, `language_cible`, `price`, `active`, `document_id`) VALUES
@@ -572,3 +572,65 @@ INSERT INTO `translation_rate` (`language_origine`, `language_cible`, `price`, `
 ('Croate', 'Français', 3400, 1, 7),
 ('Portugais', 'Espagnol', 3400, 1, 7),
 ('Espagnol', 'Portugais', 3400, 1, 7);
+
+INSERT INTO `translation_rate` (`language_origine`, `language_cible`, `price`, `active`, `document_id`) VALUES
+('Français', 'Anglais', 2800, 1, 21),
+('Français', 'Allemand', 2800, 1, 21),
+('Français', 'Italien', 2800, 1, 21),
+('Français', 'Espagnol', 2800, 1, 21),
+('Français', 'Roumain', 3400, 1, 21),
+('Français', 'Arabe', 2800, 1, 21),
+('Français', 'Turc', 3400, 1, 21),
+('Français', 'Russe', 2800, 1, 21),
+('Français', 'Albanais', 3400, 1, 21),
+('Français', 'Chinois', 4500, 1, 21),
+('Français', 'Portugais', 3400, 1, 21),
+('Français', 'Grec', 4500, 1, 21),
+('Français', 'Japonais', 4500, 1, 21),
+('Français', 'Néerlandais', 3400, 1, 21),
+('Français', 'Tchèque', 3400, 1, 21),
+('Français', 'Slovaque', 3400, 1, 21),
+('Français', 'Mandarin', 7000, 1, 21),
+('Français', 'Cantonais', 7000, 1, 21),
+('Français', 'Hongrois', 3400, 1, 21),
+('Français', 'Polonais', 3400, 1, 21),
+('Français', 'Serbe', 4500, 1, 21),
+('Français', 'Vietnamien', 4500, 1, 21),
+('Français', 'Coréen', 4500, 1, 21),
+('Français', 'Danois', 4500, 1, 21),
+('Français', 'Suédois', 3400, 1, 21),
+('Français', 'Thaïlandais', 4500, 1, 21),
+('Français', 'Croate', 3400, 1, 21),
+('Anglais', 'Français', 2800, 1, 21),
+('Allemand', 'Français', 2800, 1, 21),
+('Italien', 'Français', 2800, 1, 21),
+('Espagnol', 'Français', 2800, 1, 21),
+('Roumain', 'Français', 3400, 1, 21),
+('Arabe', 'Français', 2800, 1, 21),
+('Portugais', 'Français', 2800, 1, 21),
+('Néerlandais', 'Français', 2800, 1, 21),
+('Turc', 'Français', 2800, 1, 21),
+('Chinois', 'Français', 4500, 1, 21),
+('Chinois', 'Anglais', 4500, 1, 21),
+('Russe', 'Français', 2800, 1, 21),
+('Albanais', 'Français', 3400, 1, 21),
+('Ukrainien', 'Français', 2800, 1, 21),
+('Slovaque', 'Français', 2800, 1, 21),
+('Serbe', 'Français', 4500, 1, 21),
+('Grec', 'Français', 3400, 1, 21),
+('Japonais', 'Français', 4500, 1, 21),
+('Polonais', 'Français', 2800, 1, 21),
+('Mandarin', 'Français', 7000, 1, 21),
+('Cantonais', 'Français', 7000, 1, 21),
+('Hongrois', 'Français', 3400, 1, 21),
+('Géorgien', 'Français', 3400, 1, 21);
+
+INSERT INTO `translation_rate` (`language_origine`, `language_cible`, `price`, `active`, `document_id`) VALUES
+('Tchèque', 'Français', 3400, 1, 21),
+('Vietnamien', 'Français', 4500, 1, 21),
+('Coréen', 'Français', 4500, 1, 21),
+('Danois', 'Français', 4500, 1, 21),
+('Suédois', 'Français', 3400, 1, 21),
+('Thaïlandais', 'Français', 4500, 1, 21),
+('Croate', 'Français', 3400, 1, 21),
+('Portugais', 'Espagnol', 3400, 1, 21);
