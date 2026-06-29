@@ -20,8 +20,6 @@
 -- Lignes insérées : 531 | Lignes ignorées : 179
 -- Prix stockés en centimes (EUR × 100)
 
-DELETE FROM `translation_rate`;
-
 INSERT INTO `translation_rate` (`language_origine`, `language_cible`, `price`, `active`, `document_id`) VALUES
 ('Français', 'Anglais', 3000, 1, 1),
 ('Français', 'Allemand', 3000, 1, 1),
