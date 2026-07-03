@@ -4,3 +4,47 @@
     {% include 'admin/client_document/_payment_status_legend.html.twig' %}
     {{ parent() }}
 {% endblock %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('change', async function (event) {
+            const select = event.target.closest('.ea-payment-status-select');
+            if (!select || select.disabled || select.dataset.loading === 'true') {
+                return;
+            }
+
+            const previousValue = select.dataset.previousValue || select.value;
+            const url = select.dataset.url;
+            const status = select.value;
+
+            select.dataset.loading = 'true';
+            select.classList.add('ea-payment-status-select--loading');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new URLSearchParams({ status }),
+                });
+
+                const payload = await response.json();
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Impossible de mettre à jour le statut.');
+                }
+
+                select.dataset.previousValue = payload.status;
+                select.className = 'ea-payment-status-select ea-payment-status-select--' + payload.status;
+            } catch (error) {
+                select.value = previousValue;
+                window.alert(error.message || 'Impossible de mettre à jour le statut.');
+            } finally {
+                delete select.dataset.loading;
+                select.classList.remove('ea-payment-status-select--loading');
+            }
+        });
+    </script>
+{% endblock %}

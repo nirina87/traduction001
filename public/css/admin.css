@@ -704,3 +704,54 @@
     line-height: 1.45;
     color: #64748b;
 }
+
+.ea-payment-status-select {
+    min-width: 11.5rem;
+    max-width: 100%;
+    padding: 0.4rem 2rem 0.4rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    cursor: pointer;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 0.65rem center;
+    background-size: 0.75rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%2364748b' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    transition: opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ea-payment-status-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.ea-payment-status-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.ea-payment-status-select--loading {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+.ea-payment-status-select--paid {
+    background-color: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+
+.ea-payment-status-select--pending {
+    background-color: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.ea-payment-status-select--none {
+    background-color: #f8fafc;
+    color: #475569;
+    border-color: #e2e8f0;
+}
