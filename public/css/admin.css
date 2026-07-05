@@ -1451,6 +1451,7 @@ body.page-doc-edit .content-top.ea-search-disabled .content-search {
 .admin-doc-edit .doc-form-body .input-file-container {
     position: relative;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .admin-doc-edit .doc-form-body .ea-vich-file-name {
@@ -1485,13 +1486,18 @@ body.page-doc-edit .content-top.ea-search-disabled .content-search {
     color: var(--paper);
 }
 
-.admin-doc-edit .doc-form-body .ea-vich-file input[type="file"] {
-    position: absolute;
-    width: 0.1px;
-    height: 0.1px;
+.admin-doc-edit .doc-form-body .input-file-container input[type="file"] {
+    cursor: inherit;
+    display: block;
+    font-size: 999px;
+    filter: opacity(0);
+    min-block-size: 100%;
+    min-inline-size: 100%;
     opacity: 0;
-    overflow: hidden;
-    z-index: -1;
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: 0;
+    text-align: right;
 }
 
 .admin-doc-edit .doc-form-body .invalid-feedback {
