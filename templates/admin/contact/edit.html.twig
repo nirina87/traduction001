@@ -1,0 +1,84 @@
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% extends '@EasyAdmin/crud/edit.html.twig' %}
+
+{% set contact = entity.instance %}
+
+{% block body_class %}page-content page-contact-edit ea-edit ea-edit-Contact{% endblock %}
+
+{% block page_title %}Message {{ contact.contactReference }} — {{ contact.fullName }}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_header_wrapper %}{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block main %}
+<div class="admin-dashboard admin-doc-edit">
+
+    <div class="admin-topbar">
+        <div>
+            <a class="doc-back-link" href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('index') }}">
+                ← Messages reçus
+            </a>
+            <h1>{{ contact.contactReference }}</h1>
+            <p class="subtitle">{{ contact.fullName }}</p>
+        </div>
+        <div class="admin-topbar-actions">
+            {% for item in entity.actions|reverse %}
+                {% if item.name != 'saveAndReturn' and item.name != 'saveAndContinue' and item.name != 'saveAndAddAnother' and item.name != 'index' %}
+                    {% if item.isActionGroup %}
+                        {{ include(item.templatePath, {group: item, entity: entity}, with_context: false) }}
+                    {% else %}
+                        {{ include(item.templatePath, {action: item, entity: entity}, with_context: false) }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="doc-edit-summary">
+        <div class="doc-edit-summary__item">
+            <span class="label">Reçu le</span>
+            <span class="mono">{{ contact.createdAt ? contact.createdAt|date('d/m/Y à H:i') : '—' }}</span>
+        </div>
+        <div class="doc-edit-summary__item">
+            <span class="label">Email</span>
+            {% if contact.email %}
+                <a class="mono" href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+            {% else %}
+                <span class="mono">—</span>
+            {% endif %}
+        </div>
+        <div class="doc-edit-summary__item">
+            <span class="label">Téléphone</span>
+            {% if contact.telephone %}
+                <a class="mono" href="tel:{{ contact.telephone }}">{{ contact.telephone }}</a>
+            {% else %}
+                <span class="mono">—</span>
+            {% endif %}
+        </div>
+        <div class="doc-edit-summary__item">
+            <span class="label">Statut</span>
+            <span class="pill pill-new">Nouveau</span>
+        </div>
+    </div>
+
+    <section class="admin-panel admin-panel--form">
+        <div class="doc-form-body">
+            {% block contact_form %}{{ form(edit_form) }}{% endblock %}
+        </div>
+        <div class="doc-form-footer">
+            {% for item in entity.actions|reverse %}
+                {% if item.name in ['saveAndReturn', 'saveAndContinue', 'saveAndAddAnother'] %}
+                    {% if item.isActionGroup %}
+                        {{ include(item.templatePath, {group: item, entity: entity}, with_context: false) }}
+                    {% else %}
+                        {{ include(item.templatePath, {action: item, entity: entity}, with_context: false) }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+
+{% include 'admin/contact/_delete_confirmation_modal.html.twig' %}
+{% endblock %}

@@ -1,0 +1,27 @@
+<form class="d-none" method="post" id="action-confirmation-form">
+    <input type="hidden" name="token" value="{{ csrf_token('ea-delete') }}" />
+</form>
+
+<div id="modal-action-confirmation" class="modal fade doc-delete-modal" tabindex="-1" aria-labelledby="contact-delete-modal-heading" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="contact-delete-modal-heading">Confirmer la suppression</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p id="action-confirmation-title" class="doc-delete-modal__message">
+                    Êtes-vous sûr de vouloir supprimer ce message ? Cette action est irréversible.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline btn-sm doc-delete-modal__cancel" data-bs-dismiss="modal">
+                    Annuler
+                </button>
+                <button type="button" class="btn btn-sm doc-delete-modal__confirm" id="modal-action-confirmation-button">
+                    Valider la suppression
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

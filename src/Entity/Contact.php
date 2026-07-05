@@ -52,4 +52,19 @@ class Contact
 
     public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
     public function setCreatedAt(\DateTimeInterface $createdAt): self { $this->createdAt = $createdAt; return $this; }
+
+    public function getContactReference(): string
+    {
+        return sprintf('CT-%04d', $this->id ?? 0);
+    }
+
+    public function getFullName(): string
+    {
+        return trim(sprintf('%s %s', $this->prenom ?? '', $this->nom ?? ''));
+    }
+
+    public function getCoordinates(): string
+    {
+        return '';
+    }
 }
