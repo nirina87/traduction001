@@ -26,4 +26,35 @@ class ClientDocumentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array{total: int, unpaid: int, inProgress: int, delivered: int}
+     */
+    public function getIndexStats(): array
+    {
+        return [
+            'total' => (int) $this->createQueryBuilder('cd')
+                ->select('COUNT(cd.id)')
+                ->getQuery()
+                ->getSingleScalarResult(),
+            'unpaid' => (int) $this->createQueryBuilder('cd')
+                ->select('COUNT(cd.id)')
+                ->andWhere('cd.status = :status')
+                ->setParameter('status', ClientDocument::STATUS_UNPAID)
+                ->getQuery()
+                ->getSingleScalarResult(),
+            'inProgress' => (int) $this->createQueryBuilder('cd')
+                ->select('COUNT(cd.id)')
+                ->andWhere('cd.status IN (:statuses)')
+                ->setParameter('statuses', [ClientDocument::STATUS_IN_TRANSLATION, ClientDocument::STATUS_TRANSLATION_COMPLETED])
+                ->getQuery()
+                ->getSingleScalarResult(),
+            'delivered' => (int) $this->createQueryBuilder('cd')
+                ->select('COUNT(cd.id)')
+                ->andWhere('cd.status = :status')
+                ->setParameter('status', ClientDocument::STATUS_DELIVERED)
+                ->getQuery()
+                ->getSingleScalarResult(),
+        ];
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ClientDocument;
 use App\Entity\Order;
+use App\Repository\ClientDocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -12,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -20,6 +22,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -34,6 +37,7 @@ class ClientDocumentCrudController extends AbstractCrudController
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly AdminUrlGenerator $adminUrlGenerator,
+        private readonly ClientDocumentRepository $clientDocumentRepository,
     ) {
     }
     public static function getEntityFqcn(): string
@@ -46,9 +50,16 @@ class ClientDocumentCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Document client')
             ->setEntityLabelInPlural('Documents clients')
-            ->setPageTitle(Crud::PAGE_INDEX, '📎 Gestion des documents clients')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Documents clients')
+            ->setPageTitle(Crud::PAGE_DETAIL, static fn (ClientDocument $doc) => sprintf('DC-%04d — %s', $doc->getId(), $doc->getTitle()))
+            ->setPageTitle(Crud::PAGE_EDIT, static fn (ClientDocument $doc) => sprintf('Modifier DC-%04d — %s', $doc->getId(), $doc->getTitle()))
+            ->setPageTitle(Crud::PAGE_NEW, 'Nouveau document client')
             ->setDefaultSort(['uploadedAt' => 'DESC'])
-            ->overrideTemplate('crud/index', 'admin/client_document/index.html.twig');
+            ->setSearchFields(null)
+            ->overrideTemplate('crud/index', 'admin/client_document/index.html.twig')
+            ->overrideTemplate('crud/detail', 'admin/client_document/detail.html.twig')
+            ->overrideTemplate('crud/edit', 'admin/client_document/edit.html.twig')
+            ->overrideTemplate('crud/new', 'admin/client_document/new.html.twig');
     }
 
     public function configureActions(Actions $actions): Actions
@@ -62,10 +73,33 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->displayIf(static fn () => false);
 
         return $actions
+            ->disable(Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $updatePaymentStatus)
             ->add(Crud::PAGE_INDEX, $updateWorkflowStatus)
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('➕ Ajouter un document client'));
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->displayIf(static fn () => false))
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(static fn () => false))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf(static fn () => false))
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => $action->displayIf(static fn () => false))
+            ->update(Crud::PAGE_DETAIL, Action::EDIT, fn (Action $action) => $action
+                ->setLabel('Modifier')
+                ->setCssClass('btn btn-outline btn-sm'))
+            ->update(Crud::PAGE_DETAIL, Action::INDEX, fn (Action $action) => $action->displayIf(static fn () => false))
+            ->update(Crud::PAGE_DETAIL, Action::DELETE, fn (Action $action) => $action
+                ->setLabel('Supprimer')
+                ->setCssClass('btn btn-outline btn-sm doc-action-delete')
+                ->askConfirmation(
+                    'Êtes-vous sûr de vouloir supprimer le document client %entity_id% ? Cette action est irréversible.',
+                    'Valider la suppression',
+                ))
+            ->add(Crud::PAGE_EDIT, Action::DELETE)
+            ->update(Crud::PAGE_EDIT, Action::DELETE, fn (Action $action) => $action
+                ->setLabel('Supprimer')
+                ->setCssClass('btn btn-outline btn-sm doc-action-delete')
+                ->askConfirmation(
+                    'Êtes-vous sûr de vouloir supprimer le document client %entity_id% ? Cette action est irréversible.',
+                    'Valider la suppression',
+                ));
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -77,66 +111,111 @@ class ClientDocumentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id')->onlyOnDetail(),
-            AssociationField::new('user')
-                ->setLabel('Client')
-                ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—'),
-            TextField::new('paymentStatusLabel')
-                ->setLabel('Statut paiement')
-                ->onlyOnIndex()
-                ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderPaymentStatusSelect($entity))
-                ->renderAsHtml(),
-            TextField::new('workflowStatusLabel')
-                ->setLabel('Statut')
-                ->onlyOnIndex()
-                ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
-                    'admin/client_document/_workflow_status_select.html.twig',
-                    ['doc' => $entity],
-                ))
-                ->renderAsHtml(),
-            ChoiceField::new('status')
-                ->setLabel('Statut du document')
-                ->setChoices(ClientDocument::getStatusChoices())
-                ->hideOnIndex(),
-            AssociationField::new('document')->setLabel('Document à traduire'),
-            TextField::new('title')->setLabel('Nom du fichier envoyé'),
-            TextField::new('language')->setLabel('Langue demandée'),
-            IntegerField::new('price')->setLabel('Prix estimé (centimes)'),
-            BooleanField::new('receiveByPaper')->setLabel('Réception par papier'),
-            AssociationField::new('order')
-                ->setLabel('Commande liée')
-                ->onlyOnDetail()
-                ->formatValue(fn ($value, ClientDocument $entity) => $this->formatOrderSummary($entity))
-                ->renderAsHtml()
-                ->hideOnForm(),
-            DateTimeField::new('uploadedAt')->setLabel('Date d’envoi')->hideOnForm(),
-            UrlField::new('fileUrl')
-                ->setLabel('Document')
-                ->onlyOnIndex()
-                ->formatValue(fn (?string $value, ClientDocument $entity) => $entity->getFileName() ?? '—'),
-            UrlField::new('fileUrl')
-                ->setLabel('Fichier envoyé')
-                ->onlyOnDetail(),
-            TextField::new('file')->setFormType(VichFileType::class)->setLabel('Fichier envoyé')->hideOnIndex(),
-            UrlField::new('documentTraduitUrl')
-                ->setLabel('Document traduit')
-                ->onlyOnIndex()
-                ->formatValue(fn (?string $value, ClientDocument $entity) => $entity->getDocumentTraduit() ?? '—'),
-            UrlField::new('documentTraduitUrl')
-                ->setLabel('Document traduit')
-                ->onlyOnDetail(),
-            TextField::new('translatedDocumentFile')
-                ->setFormType(VichFileType::class)
-                ->setLabel('Document traduit')
-                ->setFormTypeOptions([
-                    'required' => false,
-                    'allow_delete' => true,
-                    'download_uri' => static fn (ClientDocument $entity) => $entity->getDocumentTraduitUrl(),
-                    'download_label' => static fn (ClientDocument $entity) => $entity->getDocumentTraduit() ?? 'Télécharger',
-                ])
-                ->hideOnIndex(),
-        ];
+        if (Crud::PAGE_INDEX === $pageName) {
+            yield from $this->getIndexFields();
+
+            return;
+        }
+
+        if (Crud::PAGE_DETAIL === $pageName) {
+            yield from $this->getDetailFields();
+
+            return;
+        }
+
+        yield from $this->getFormFields();
+    }
+
+    public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
+    {
+        if (Crud::PAGE_INDEX === $responseParameters->get('pageName')) {
+            $responseParameters->set('indexStats', $this->clientDocumentRepository->getIndexStats());
+        }
+
+        return $responseParameters;
+    }
+
+    private function getIndexFields(): iterable
+    {
+        yield TextField::new('title')->setLabel('Titre');
+        yield TextField::new('language')->setLabel('Langue');
+        yield TextField::new('workflowStatusLabel')
+            ->setLabel('Statut')
+            ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
+                'admin/client_document/_workflow_status_select.html.twig',
+                ['doc' => $entity],
+            ))
+            ->renderAsHtml();
+        yield IntegerField::new('pageCount')->setLabel('Pages');
+        yield DateTimeField::new('uploadedAt')
+            ->setLabel('Reçu le')
+            ->setFormat('dd/MM/yyyy');
+        yield AssociationField::new('user')
+            ->setLabel('Client')
+            ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—');
+    }
+
+    private function getDetailFields(): iterable
+    {
+        yield IdField::new('id');
+        yield AssociationField::new('user')
+            ->setLabel('Client')
+            ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—');
+        yield ChoiceField::new('status')
+            ->setLabel('Statut du document')
+            ->setChoices(ClientDocument::getStatusChoices());
+        yield AssociationField::new('document')->setLabel('Document à traduire');
+        yield TextField::new('title')->setLabel('Nom du fichier envoyé');
+        yield TextField::new('language')->setLabel('Langue demandée');
+        yield IntegerField::new('price')->setLabel('Prix estimé (centimes)');
+        yield BooleanField::new('receiveByPaper')->setLabel('Réception par papier');
+        yield AssociationField::new('order')
+            ->setLabel('Commande liée')
+            ->formatValue(fn ($value, ClientDocument $entity) => $this->formatOrderSummary($entity))
+            ->renderAsHtml();
+        yield DateTimeField::new('uploadedAt')->setLabel('Date d’envoi');
+        yield UrlField::new('fileUrl')->setLabel('Fichier envoyé');
+        yield UrlField::new('documentTraduitUrl')->setLabel('Document traduit');
+    }
+
+    private function getFormFields(): iterable
+    {
+        yield FormField::addFieldset('Informations du dossier');
+        yield AssociationField::new('user')->setLabel('Client');
+        yield AssociationField::new('document')->setLabel('Document à traduire');
+        yield TextField::new('title')->setLabel('Nom du fichier envoyé');
+        yield TextField::new('language')->setLabel('Langue demandée');
+        yield ChoiceField::new('status')
+            ->setLabel('Statut du document')
+            ->setChoices(ClientDocument::getStatusChoices());
+
+        yield FormField::addFieldset('Tarification & livraison');
+        yield IntegerField::new('price')
+            ->setLabel('Prix estimé (centimes)')
+            ->setHelp('Montant en centimes — ex. 4500 = 45,00 €');
+        yield BooleanField::new('receiveByPaper')->setLabel('Réception par courrier');
+
+        yield FormField::addFieldset('Fichiers');
+        yield TextField::new('file')
+            ->setFormType(VichFileType::class)
+            ->setLabel('Fichier source')
+            ->setHelp('Document original envoyé par le client')
+            ->setFormTypeOptions([
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => static fn (ClientDocument $entity) => $entity->getFileUrl(),
+                'download_label' => static fn (ClientDocument $entity) => $entity->getFileName() ?? 'Télécharger',
+            ]);
+        yield TextField::new('translatedDocumentFile')
+            ->setFormType(VichFileType::class)
+            ->setLabel('Document traduit')
+            ->setHelp('Déposer ici la traduction finalisée')
+            ->setFormTypeOptions([
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => static fn (ClientDocument $entity) => $entity->getDocumentTraduitUrl(),
+                'download_label' => static fn (ClientDocument $entity) => $entity->getDocumentTraduit() ?? 'Télécharger',
+            ]);
     }
 
     private function formatOrderSummary(ClientDocument $entity): string

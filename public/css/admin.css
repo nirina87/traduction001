@@ -820,3 +820,1082 @@ body.page-dashboard .content-top.ea-search-disabled .content-search {
 .admin-table .ea-workflow-status-select {
     font-family: var(--font-body, inherit);
 }
+
+/* =========================================================
+   Document client — page détail
+   ========================================================= */
+
+body.page-doc-detail .content-header {
+    display: none;
+}
+
+body.page-doc-detail .content-top.ea-search-disabled {
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    block-size: auto;
+    justify-content: flex-end;
+    padding-block: 14px 0;
+}
+
+body.page-doc-detail .content-top.ea-search-disabled .content-search {
+    display: none;
+}
+
+.admin-doc-detail .doc-back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color .18s ease;
+}
+
+.admin-doc-detail .doc-back-link:hover {
+    color: var(--wine);
+}
+
+.admin-doc-detail .admin-topbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-doc-detail .admin-topbar-actions > *,
+.admin-doc-detail .admin-topbar-actions .btn,
+.admin-doc-detail .admin-topbar-actions a[class*="action-"],
+.admin-doc-detail .admin-topbar-actions button[class*="action-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    background: transparent;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+    box-shadow: none;
+}
+
+.admin-doc-detail .admin-topbar-actions > *:hover,
+.admin-doc-detail .admin-topbar-actions .btn:hover,
+.admin-doc-detail .admin-topbar-actions a[class*="action-"]:hover,
+.admin-doc-detail .admin-topbar-actions button[class*="action-"]:hover {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+}
+
+.admin-doc-detail .admin-topbar-actions .doc-action-delete,
+.admin-doc-detail .admin-topbar-actions .action-delete {
+    border-color: var(--wine);
+    color: var(--wine);
+}
+
+.admin-doc-detail .admin-topbar-actions .doc-action-delete:hover,
+.admin-doc-detail .admin-topbar-actions .action-delete:hover {
+    background: var(--wine);
+    color: var(--paper);
+}
+
+.admin-doc-detail .doc-file-card__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    background: transparent;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.admin-doc-detail .doc-file-card__action:hover {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+}
+
+.admin-doc-detail .kpi-card .value--sm {
+    font-size: 24px;
+}
+
+.admin-doc-detail .kpi-card .pill {
+    font-family: var(--font-body);
+}
+
+.admin-doc-detail .admin-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+    margin-bottom: 28px;
+}
+
+.admin-doc-detail .doc-dl {
+    margin: 0;
+    padding: 0;
+}
+
+.admin-doc-detail .doc-dl-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 34%) 1fr;
+    gap: 12px 20px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+}
+
+.admin-doc-detail .doc-dl-row:last-child {
+    border-bottom: none;
+}
+
+.admin-doc-detail .doc-dl dt {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+}
+
+.admin-doc-detail .doc-dl dd {
+    margin: 0;
+    font-size: 14px;
+    color: var(--slate);
+}
+
+.admin-doc-detail .admin-empty--compact {
+    padding: 24px;
+}
+
+.admin-doc-detail .doc-workflow-track {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    padding: 28px 24px 32px;
+    overflow-x: auto;
+}
+
+.admin-doc-detail .doc-workflow-step {
+    flex: 1 1 0;
+    min-width: 88px;
+    text-align: center;
+}
+
+.admin-doc-detail .doc-workflow-step__marker {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: var(--card);
+    color: var(--slate-faint);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+
+.admin-doc-detail .doc-workflow-step__label {
+    font-size: 12.5px;
+    color: var(--slate-faint);
+    line-height: 1.35;
+}
+
+.admin-doc-detail .doc-workflow-step.is-done .doc-workflow-step__marker {
+    background: #E4F3E7;
+    border-color: #2F7A4A;
+    color: #2F7A4A;
+}
+
+.admin-doc-detail .doc-workflow-step.is-done .doc-workflow-step__label {
+    color: var(--slate-soft);
+}
+
+.admin-doc-detail .doc-workflow-step.is-active .doc-workflow-step__marker {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+    box-shadow: 0 0 0 4px rgba(16, 25, 43, 0.12);
+}
+
+.admin-doc-detail .doc-workflow-step.is-active .doc-workflow-step__label {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.admin-doc-detail .doc-workflow-connector {
+    flex: 1 1 24px;
+    min-width: 16px;
+    height: 2px;
+    background: var(--line);
+    margin-top: 18px;
+}
+
+.admin-doc-detail .doc-workflow-connector.is-done {
+    background: #2F7A4A;
+}
+
+.admin-doc-detail .doc-files-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    padding: 24px;
+}
+
+.admin-doc-detail .doc-file-card {
+    border: 1px solid var(--line);
+    background: #FAF9F4;
+    padding: 20px 22px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-doc-detail .doc-file-card__head {
+    margin-bottom: 14px;
+}
+
+.admin-doc-detail .doc-file-card__head h3 {
+    font-size: 16px;
+    margin: 8px 0 0;
+}
+
+.admin-doc-detail .doc-file-card__badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    background: #EDEAE0;
+    color: var(--slate-soft);
+}
+
+.admin-doc-detail .doc-file-card__badge--translated {
+    background: #E8F4F8;
+    color: #2F667A;
+}
+
+.admin-doc-detail .doc-file-card__name {
+    flex: 1;
+    margin: 0 0 16px;
+    word-break: break-all;
+}
+
+.admin-doc-detail .doc-file-card__action {
+    align-self: flex-start;
+}
+
+@media (max-width: 1080px) {
+    .admin-doc-detail .admin-detail-grid,
+    .admin-doc-detail .doc-files-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-doc-detail .admin-topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-doc-detail .admin-topbar-actions {
+        justify-content: flex-start;
+    }
+
+    .admin-doc-detail .doc-dl-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .admin-doc-detail .doc-workflow-track {
+        padding-inline: 16px;
+    }
+
+    .admin-doc-detail .doc-workflow-step {
+        min-width: 72px;
+    }
+
+    .admin-doc-detail .doc-workflow-step__label {
+        font-size: 11px;
+    }
+
+    .admin-doc-detail .doc-files-grid {
+        padding: 16px;
+    }
+}
+
+/* =========================================================
+   Document client — page édition / création
+   ========================================================= */
+
+body.page-doc-edit .content-header {
+    display: none;
+}
+
+body.page-doc-edit .content-top.ea-search-disabled {
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    block-size: auto;
+    justify-content: flex-end;
+    padding-block: 14px 0;
+}
+
+body.page-doc-edit .content-top.ea-search-disabled .content-search {
+    display: none;
+}
+
+.admin-doc-edit .doc-back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color .18s ease;
+}
+
+.admin-doc-edit .doc-back-link:hover {
+    color: var(--wine);
+}
+
+.admin-doc-edit .admin-topbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-doc-edit .admin-topbar-actions > *,
+.admin-doc-edit .admin-topbar-actions a[class*="action-"],
+.admin-doc-edit .admin-topbar-actions button[class*="action-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    background: transparent;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+    box-shadow: none;
+}
+
+.admin-doc-edit .admin-topbar-actions > *:hover,
+.admin-doc-edit .admin-topbar-actions a[class*="action-"]:hover,
+.admin-doc-edit .admin-topbar-actions button[class*="action-"]:hover {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+}
+
+.admin-doc-edit .admin-topbar-actions .doc-action-delete,
+.admin-doc-edit .admin-topbar-actions .action-delete {
+    border-color: var(--wine);
+    color: var(--wine);
+}
+
+.admin-doc-edit .admin-topbar-actions .doc-action-delete:hover,
+.admin-doc-edit .admin-topbar-actions .action-delete:hover {
+    background: var(--wine);
+    color: var(--paper);
+}
+
+.admin-doc-edit .doc-edit-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 32px;
+    padding: 18px 24px;
+    margin-bottom: 28px;
+    background: var(--card);
+    border: 1px solid var(--line);
+}
+
+.admin-doc-edit .doc-edit-summary__item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-doc-edit .doc-edit-summary__item .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+}
+
+.admin-doc-edit .admin-panel--form {
+    margin-bottom: 28px;
+}
+
+.admin-doc-edit .doc-form-body {
+    padding: 24px;
+}
+
+.admin-doc-edit .doc-form-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--line);
+    background: #F5F3EC;
+}
+
+.admin-doc-edit .doc-form-footer > *,
+.admin-doc-edit .doc-form-footer .btn,
+.admin-doc-edit .doc-form-footer button[class*="action-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    border-radius: var(--radius);
+    margin: 0;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+    box-shadow: none;
+}
+
+.admin-doc-edit .doc-form-footer .action-saveAndReturn,
+.admin-doc-edit .doc-form-footer .btn-primary {
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    color: var(--paper);
+}
+
+.admin-doc-edit .doc-form-footer .action-saveAndReturn:hover,
+.admin-doc-edit .doc-form-footer .btn-primary:hover {
+    background: var(--ink-2);
+    border-color: var(--ink-2);
+    color: var(--paper);
+}
+
+.admin-doc-edit .doc-form-footer .action-saveAndContinue,
+.admin-doc-edit .doc-form-footer .action-saveAndAddAnother,
+.admin-doc-edit .doc-form-footer .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+}
+
+.admin-doc-edit .doc-form-footer .action-saveAndContinue:hover,
+.admin-doc-edit .doc-form-footer .action-saveAndAddAnother:hover,
+.admin-doc-edit .doc-form-footer .btn-secondary:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.admin-doc-edit .doc-form-body > form > .row {
+    margin-inline: 0;
+}
+
+.admin-doc-edit .doc-form-body .form-column {
+    padding-inline: 0;
+}
+
+.admin-doc-edit .doc-form-body .form-fieldset {
+    box-shadow: inset 0 0 0 1px var(--line);
+    border: none;
+    background: #FAF9F4;
+    margin-bottom: 24px;
+}
+
+.admin-doc-edit .doc-form-body .form-fieldset:last-of-type {
+    margin-bottom: 0;
+}
+
+.admin-doc-edit .doc-form-body .form-fieldset-header .form-fieldset-title-content {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    box-shadow: none;
+    padding-bottom: 0;
+}
+
+.admin-doc-edit .doc-form-body .form-fieldset-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+    background: var(--card);
+}
+
+.admin-doc-edit .doc-form-body .form-fieldset-body {
+    padding: 8px 22px 22px;
+}
+
+.admin-doc-edit .doc-form-body .form-fieldset-body.without-header {
+    padding-top: 22px;
+}
+
+.admin-doc-edit .doc-form-body .form-group {
+    padding-bottom: 18px;
+}
+
+.admin-doc-edit .doc-form-body .form-group label,
+.admin-doc-edit .doc-form-body .form-group legend.col-form-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+    font-weight: 600;
+    padding-bottom: 6px;
+}
+
+.admin-doc-edit .doc-form-body .form-widget .form-control,
+.admin-doc-edit .doc-form-body .form-widget .form-select,
+.admin-doc-edit .doc-form-body .form-widget textarea.form-control {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--slate);
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 14px;
+    box-shadow: none;
+}
+
+.admin-doc-edit .doc-form-body .form-widget .form-control:focus,
+.admin-doc-edit .doc-form-body .form-widget .form-select:focus,
+.admin-doc-edit .doc-form-body .form-widget textarea.form-control:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(169, 129, 46, 0.15);
+}
+
+.admin-doc-edit .doc-form-body .form-widget .form-help {
+    font-size: 12px;
+    color: var(--slate-faint);
+    margin-top: 6px;
+}
+
+.admin-doc-edit .doc-form-body .form-check-input:checked {
+    background-color: var(--ink);
+    border-color: var(--ink);
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file {
+    padding: 14px 16px;
+    border: 1px dashed var(--line);
+    background: var(--card);
+    border-radius: var(--radius);
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-doc-edit .doc-form-body .input-file-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--slate-soft);
+    text-decoration: none;
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file-name:hover {
+    color: var(--wine);
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file-actions .btn-secondary,
+.admin-doc-edit .doc-form-body .input-file-container {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 18px;
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file-actions .btn-secondary:hover,
+.admin-doc-edit .doc-form-body .input-file-container:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.admin-doc-edit .doc-form-body .ea-vich-file input[type="file"] {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.admin-doc-edit .doc-form-body .invalid-feedback {
+    font-size: 12px;
+    color: var(--wine);
+    margin-top: 6px;
+}
+
+@media (max-width: 1080px) {
+    .admin-doc-edit .doc-form-body .form-fieldset-body .row > [class*="col-md-6"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-doc-edit .admin-topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-doc-edit .admin-topbar-actions {
+        justify-content: flex-start;
+    }
+
+    .admin-doc-edit .doc-edit-summary {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .admin-doc-edit .doc-form-body {
+        padding: 16px;
+    }
+
+    .admin-doc-edit .doc-form-footer {
+        padding: 16px;
+        justify-content: stretch;
+    }
+
+    .admin-doc-edit .doc-form-footer > *,
+    .admin-doc-edit .doc-form-footer .btn,
+    .admin-doc-edit .doc-form-footer button[class*="action-"] {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+}
+
+/* =========================================================
+   Modal — confirmation suppression document client
+   ========================================================= */
+
+.doc-delete-modal .modal-content {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: 0 12px 40px rgba(16, 25, 43, 0.14);
+}
+
+.doc-delete-modal .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--line);
+    background: #FAF9F4;
+}
+
+.doc-delete-modal .modal-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    margin: 0;
+}
+
+.doc-delete-modal .modal-body {
+    padding: 24px;
+}
+
+.doc-delete-modal__message {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--slate-soft);
+}
+
+.doc-delete-modal .modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--line);
+    background: #F5F3EC;
+}
+
+.doc-delete-modal .modal-footer .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    border-radius: var(--radius);
+    margin: 0;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+
+.doc-delete-modal__cancel {
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+}
+
+.doc-delete-modal__cancel:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.doc-delete-modal__confirm {
+    background: var(--wine);
+    border: 1px solid var(--wine);
+    color: var(--paper);
+}
+
+.doc-delete-modal__confirm:hover {
+    background: var(--wine-dark);
+    border-color: var(--wine-dark);
+    color: var(--paper);
+}
+
+@media (max-width: 640px) {
+    .doc-delete-modal .modal-footer {
+        flex-direction: column-reverse;
+    }
+
+    .doc-delete-modal .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   Document client — page liste (index)
+   ========================================================= */
+
+body.page-doc-index .content-header {
+    display: none;
+}
+
+body.page-doc-index .content-top.ea-search-disabled {
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    block-size: auto;
+    justify-content: flex-end;
+    padding-block: 14px 0;
+}
+
+body.page-doc-index .content-top.ea-search-disabled .content-search {
+    display: none;
+}
+
+body.page-doc-index .content-top {
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    padding: 14px 0 0;
+    margin-bottom: 0;
+}
+
+body.page-doc-index .content-search {
+    max-width: 100%;
+    margin: 0 0 28px;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--line);
+}
+
+body.page-doc-index .content-search .form-control,
+body.page-doc-index .content-search input[type="search"] {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #FAF9F4;
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 14px;
+}
+
+body.page-doc-index .content-search .form-control:focus,
+body.page-doc-index .content-search input[type="search"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(169, 129, 46, 0.15);
+}
+
+.admin-doc-index .doc-back-link {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color .18s ease;
+}
+
+.admin-doc-index .doc-back-link:hover {
+    color: var(--wine);
+}
+
+.admin-doc-index .admin-panel-head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-doc-index .admin-panel-head-actions > *,
+.admin-doc-index .admin-panel-head-actions .btn,
+.admin-doc-index .admin-panel-head-actions a[class*="action-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    background: transparent;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+    box-shadow: none;
+}
+
+.admin-doc-index .admin-panel-head-actions > *:hover,
+.admin-doc-index .admin-panel-head-actions .btn:hover,
+.admin-doc-index .admin-panel-head-actions a[class*="action-"]:hover {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+}
+
+.admin-doc-index .doc-index-legend {
+    padding: 0 24px 8px;
+}
+
+.admin-doc-index .doc-index-legend-card {
+    margin-bottom: 0;
+    border: none;
+    border-radius: 0;
+    background: #FAF9F4;
+    box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.admin-doc-index .doc-index-table-wrap {
+    overflow-x: auto;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin: 0;
+    background: transparent;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--line);
+    background: #F5F3EC;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid thead th a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid thead th a:hover {
+    color: var(--wine);
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid tbody td {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--line);
+    color: var(--slate);
+    vertical-align: middle;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid tbody tr:hover td {
+    background: #FAF9F4;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid tbody tr.ea-clickable-row {
+    cursor: pointer;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid tbody tr.empty-row,
+.admin-doc-index .doc-index-table-wrap .table.datagrid tbody tr.no-results {
+    display: none;
+}
+
+.admin-doc-index .doc-index-empty-row td {
+    padding: 0;
+    border-bottom: none;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid td.batch-actions-selector,
+.admin-doc-index .doc-index-table-wrap .table.datagrid th:first-child:has(.form-batch-checkbox-all) {
+    display: none;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid td.actions {
+    width: 72px;
+    text-align: right;
+    padding-right: 24px;
+}
+
+.admin-doc-index .doc-index-table-wrap .table.datagrid td.field-text,
+.admin-doc-index .doc-index-table-wrap .table.datagrid td.field-integer,
+.admin-doc-index .doc-index-table-wrap .table.datagrid td.field-datetime,
+.admin-doc-index .doc-index-table-wrap .table.datagrid td.field-association {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--slate-soft);
+}
+
+.admin-doc-index .doc-index-table-wrap .content-panel-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--line);
+    background: #F5F3EC;
+}
+
+.admin-doc-index .list-pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.admin-doc-index .list-pagination-counter {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--slate-faint);
+}
+
+.admin-doc-index .list-pagination-paginator .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.admin-doc-index .list-pagination-paginator .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--slate);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.admin-doc-index .list-pagination-paginator .page-item.active .page-link,
+.admin-doc-index .list-pagination-paginator .page-link:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+}
+
+.admin-doc-index .list-pagination-paginator .page-item.disabled .page-link {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.admin-doc-index .ea-workflow-status-select,
+.admin-doc-index .ea-payment-status-select {
+    font-family: var(--font-body, inherit);
+}
+
+@media (max-width: 1080px) {
+    .admin-doc-index .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-doc-index .admin-topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-doc-index .admin-panel-head {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-doc-index .admin-panel-head-actions {
+        justify-content: stretch;
+    }
+
+    .admin-doc-index .admin-panel-head-actions > * {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .admin-doc-index .doc-index-legend,
+    .admin-doc-index .doc-index-table-wrap .table.datagrid thead th,
+    .admin-doc-index .doc-index-table-wrap .table.datagrid tbody td {
+        padding-inline: 16px;
+    }
+
+    body.page-doc-index .content-search {
+        padding: 12px 16px;
+    }
+}

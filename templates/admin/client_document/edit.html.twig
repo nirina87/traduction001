@@ -1,0 +1,94 @@
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% extends '@EasyAdmin/crud/edit.html.twig' %}
+
+{% set doc = entity.instance %}
+{% set isNew = pageName == 'new' %}
+
+{% block body_class %}page-content page-doc-edit ea-edit ea-edit-ClientDocument{% endblock %}
+
+{% block page_title %}
+    {%- if isNew -%}
+        Nouveau document client
+    {%- else -%}
+        Modifier DC-{{ '%04d'|format(doc.id) }} — {{ doc.title }}
+    {%- endif -%}
+{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_header_wrapper %}{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block main %}
+<div class="admin-dashboard admin-doc-edit">
+
+    <div class="admin-topbar">
+        <div>
+            {% if isNew %}
+                <a class="doc-back-link" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}">
+                    ← Documents clients
+                </a>
+                <h1>Nouveau document client</h1>
+                <p class="subtitle">Ajouter un dossier manuellement</p>
+            {% else %}
+                <a class="doc-back-link" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('detail').setEntityId(doc.id) }}">
+                    ← Retour au dossier
+                </a>
+                <h1>Modifier DC-{{ '%04d'|format(doc.id) }}</h1>
+                <p class="subtitle">{{ doc.title }}</p>
+            {% endif %}
+        </div>
+        {% if not isNew %}
+            <div class="admin-topbar-actions">
+                {% for item in entity.actions|reverse %}
+                    {% if item.name != 'saveAndReturn' and item.name != 'saveAndContinue' and item.name != 'saveAndAddAnother' %}
+                        {% if item.isActionGroup %}
+                            {{ include(item.templatePath, {group: item, entity: entity}, with_context: false) }}
+                        {% else %}
+                            {{ include(item.templatePath, {action: item, entity: entity}, with_context: false) }}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if not isNew %}
+        <div class="doc-edit-summary">
+            <div class="doc-edit-summary__item">
+                <span class="label">Statut</span>
+                <span class="pill {{ doc.workflowStatusPillClass }}">{{ doc.workflowStatusLabel }}</span>
+            </div>
+            <div class="doc-edit-summary__item">
+                <span class="label">Paiement</span>
+                <span class="ea-payment-status ea-payment-status--{{ doc.paymentStatus }}">
+                    <span class="ea-payment-status__dot" aria-hidden="true"></span>
+                    <span class="ea-payment-status__label">{{ doc.paymentStatusLabel }}</span>
+                </span>
+            </div>
+            <div class="doc-edit-summary__item">
+                <span class="label">Reçu le</span>
+                <span class="mono">{{ doc.uploadedAt ? doc.uploadedAt|date('d/m/Y à H:i') : '—' }}</span>
+            </div>
+        </div>
+    {% endif %}
+
+    <section class="admin-panel admin-panel--form">
+        <div class="doc-form-body">
+            {% block doc_form %}{{ form(edit_form) }}{% endblock %}
+        </div>
+        <div class="doc-form-footer">
+            {% for item in entity.actions|reverse %}
+                {% if item.name in ['saveAndReturn', 'saveAndContinue', 'saveAndAddAnother'] %}
+                    {% if item.isActionGroup %}
+                        {{ include(item.templatePath, {group: item, entity: entity}, with_context: false) }}
+                    {% else %}
+                        {{ include(item.templatePath, {action: item, entity: entity}, with_context: false) }}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+
+{% include 'admin/client_document/_delete_confirmation_modal.html.twig' %}
+{% endblock %}

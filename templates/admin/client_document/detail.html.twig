@@ -1,0 +1,260 @@
+{# @var entity \EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto #}
+{% extends '@EasyAdmin/crud/detail.html.twig' %}
+
+{% set doc = entity.instance %}
+{% set user = doc.user %}
+{% set order = doc.order %}
+{% set priceCents = doc.price ?? 0 %}
+{% if doc.receiveByPaper %}
+    {% set priceCents = priceCents + constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') %}
+{% endif %}
+{% set workflowSteps = [
+    { key: 'unpaid', label: 'Non-payé' },
+    { key: 'paid', label: 'Payé' },
+    { key: 'in_translation', label: 'En traduction' },
+    { key: 'translation_completed', label: 'Traduction terminée' },
+    { key: 'delivered', label: 'Livré' },
+] %}
+{% set workflowPositions = {
+    'unpaid': 0,
+    'paid': 1,
+    'in_translation': 2,
+    'translation_completed': 3,
+    'delivered': 4,
+} %}
+{% set currentStepIndex = workflowPositions[doc.workflowStatus]|default(0) %}
+
+{% block body_class %}page-content page-doc-detail ea-detail ea-detail-ClientDocument{% endblock %}
+
+{% block page_title %}DC-{{ '%04d'|format(doc.id) }} — {{ doc.title }}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_header_wrapper %}{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block main %}
+<div class="admin-dashboard admin-doc-detail">
+
+    <div class="admin-topbar">
+        <div>
+            <a class="doc-back-link" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}">
+                ← Documents clients
+            </a>
+            <h1>DC-{{ '%04d'|format(doc.id) }}</h1>
+            <p class="subtitle">{{ doc.title }} · reçu le {{ doc.uploadedAt ? doc.uploadedAt|date('d/m/Y à H:i') : '—' }}</p>
+        </div>
+        <div class="admin-topbar-actions">
+            {% for item in entity.actions|reverse %}
+                {% if item.isActionGroup %}
+                    {{ include(item.templatePath, {group: item, entity: entity}, with_context: false) }}
+                {% else %}
+                    {{ include(item.templatePath, {action: item, entity: entity}, with_context: false) }}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="label">Langue demandée</div>
+            <div class="value value--sm">{{ doc.language ?: '—' }}</div>
+            <div class="delta">{{ doc.document ? doc.document.name : 'Type non renseigné' }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Volume</div>
+            <div class="value">{{ doc.pageCount }}</div>
+            <div class="delta">page{{ doc.pageCount > 1 ? 's' : '' }} à traduire</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Prix estimé</div>
+            <div class="value value--sm">{{ (priceCents / 100)|number_format(2, ',', ' ') }} €</div>
+            <div class="delta{% if doc.receiveByPaper %} up{% endif %}">
+                {% if doc.receiveByPaper %}
+                    Livraison papier incluse (+{{ (constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') / 100)|number_format(0, ',', ' ') }} €)
+                {% else %}
+                    Livraison numérique
+                {% endif %}
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Statut actuel</div>
+            <div class="value value--sm">
+                <span class="pill {{ doc.workflowStatusPillClass }}">{{ doc.workflowStatusLabel }}</span>
+            </div>
+            <div class="delta mono">Réf. interne #{{ doc.id }}</div>
+        </div>
+    </div>
+
+    <section class="admin-panel">
+        <div class="admin-panel-head">
+            <h2>Progression du dossier</h2>
+        </div>
+        <div class="doc-workflow-track" aria-label="Progression du dossier">
+            {% for step in workflowSteps %}
+                {% set stepIndex = loop.index0 %}
+                {% set isDone = stepIndex < currentStepIndex %}
+                {% set isActive = stepIndex == currentStepIndex %}
+                <div class="doc-workflow-step{% if isDone %} is-done{% endif %}{% if isActive %} is-active{% endif %}">
+                    <div class="doc-workflow-step__marker" aria-hidden="true">
+                        {% if isDone %}✓{% else %}{{ loop.index }}{% endif %}
+                    </div>
+                    <div class="doc-workflow-step__label">{{ step.label }}</div>
+                </div>
+                {% if not loop.last %}
+                    <div class="doc-workflow-connector{% if isDone %} is-done{% endif %}" aria-hidden="true"></div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <div class="admin-detail-grid">
+        <section class="admin-panel">
+            <div class="admin-panel-head">
+                <h2>Client</h2>
+            </div>
+            {% if user %}
+                <dl class="doc-dl">
+                    <div class="doc-dl-row">
+                        <dt>Nom</dt>
+                        <dd>{{ user.firstName }} {{ user.lastName }}</dd>
+                    </div>
+                    <div class="doc-dl-row">
+                        <dt>E-mail</dt>
+                        <dd class="mono">{{ user.email }}</dd>
+                    </div>
+                    {% if user.phone %}
+                        <div class="doc-dl-row">
+                            <dt>Téléphone</dt>
+                            <dd class="mono">{{ user.phone }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if user.company %}
+                        <div class="doc-dl-row">
+                            <dt>Organisation</dt>
+                            <dd>{{ user.company }}</dd>
+                        </div>
+                    {% endif %}
+                    {% if user.createdAt %}
+                        <div class="doc-dl-row">
+                            <dt>Client depuis</dt>
+                            <dd class="mono">{{ user.createdAt|date('d/m/Y') }}</dd>
+                        </div>
+                    {% endif %}
+                </dl>
+            {% else %}
+                <div class="admin-empty">Aucun client associé à ce document</div>
+            {% endif %}
+        </section>
+
+        <section class="admin-panel">
+            <div class="admin-panel-head">
+                <h2>Statuts</h2>
+            </div>
+            <dl class="doc-dl">
+                <div class="doc-dl-row">
+                    <dt>Statut du dossier</dt>
+                    <dd>{% include 'admin/client_document/_workflow_status_select.html.twig' with { doc: doc } %}</dd>
+                </div>
+                <div class="doc-dl-row">
+                    <dt>Statut paiement</dt>
+                    <dd>{% include 'admin/client_document/_payment_status_select.html.twig' with { doc: doc } %}</dd>
+                </div>
+                <div class="doc-dl-row">
+                    <dt>Réception</dt>
+                    <dd>
+                        {% if doc.receiveByPaper %}
+                            <span class="pill pill-progress">Par courrier</span>
+                        {% else %}
+                            <span class="pill pill-completed">Numérique</span>
+                        {% endif %}
+                    </dd>
+                </div>
+            </dl>
+        </section>
+    </div>
+
+    <section class="admin-panel">
+        <div class="admin-panel-head">
+            <h2>Fichiers</h2>
+        </div>
+        <div class="doc-files-grid">
+            <div class="doc-file-card">
+                <div class="doc-file-card__head">
+                    <span class="doc-file-card__badge">Source</span>
+                    <h3>Fichier envoyé</h3>
+                </div>
+                {% if doc.fileName %}
+                    <p class="doc-file-card__name mono">{{ doc.fileName }}</p>
+                    <a class="btn btn-outline btn-sm doc-file-card__action" href="{{ doc.fileUrl }}" target="_blank" rel="noopener">
+                        Télécharger ↗
+                    </a>
+                {% else %}
+                    <div class="admin-empty admin-empty--compact">Aucun fichier source</div>
+                {% endif %}
+            </div>
+            <div class="doc-file-card">
+                <div class="doc-file-card__head">
+                    <span class="doc-file-card__badge doc-file-card__badge--translated">Traduit</span>
+                    <h3>Document traduit</h3>
+                </div>
+                {% if doc.documentTraduit %}
+                    <p class="doc-file-card__name mono">{{ doc.documentTraduit }}</p>
+                    <a class="btn btn-outline btn-sm doc-file-card__action" href="{{ doc.documentTraduitUrl }}" target="_blank" rel="noopener">
+                        Télécharger ↗
+                    </a>
+                {% else %}
+                    <div class="admin-empty admin-empty--compact">Traduction non encore déposée</div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-panel">
+        <div class="admin-panel-head">
+            <h2>Commande liée</h2>
+        </div>
+        {% if order %}
+            <dl class="doc-dl doc-dl--table">
+                <div class="doc-dl-row">
+                    <dt>N° facture</dt>
+                    <dd class="mono">{{ order.invoiceNumber ?: '—' }}</dd>
+                </div>
+                <div class="doc-dl-row">
+                    <dt>Montant</dt>
+                    <dd class="mono">{{ order.total|number_format(2, ',', ' ') }} {{ order.currency }}</dd>
+                </div>
+                <div class="doc-dl-row">
+                    <dt>Statut paiement</dt>
+                    <dd>
+                        {% if order.status == 'paid' %}
+                            <span class="ea-payment-status ea-payment-status--paid">
+                                <span class="ea-payment-status__dot" aria-hidden="true"></span>
+                                <span class="ea-payment-status__label">Payé</span>
+                            </span>
+                        {% else %}
+                            <span class="ea-payment-status ea-payment-status--pending">
+                                <span class="ea-payment-status__dot" aria-hidden="true"></span>
+                                <span class="ea-payment-status__label">Paiement en attente</span>
+                            </span>
+                        {% endif %}
+                    </dd>
+                </div>
+                <div class="doc-dl-row">
+                    <dt>Créée le</dt>
+                    <dd class="mono">{{ order.createdAt ? order.createdAt|date('d/m/Y à H:i') : '—' }}</dd>
+                </div>
+            </dl>
+        {% else %}
+            <div class="admin-empty">Ce document n'est rattaché à aucune commande</div>
+        {% endif %}
+    </section>
+
+</div>
+
+{% include 'admin/client_document/_delete_confirmation_modal.html.twig' %}
+{% endblock %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    {% include 'admin/client_document/_workflow_status_script.html.twig' %}
+    {% include 'admin/client_document/_payment_status_script.html.twig' %}
+{% endblock %}

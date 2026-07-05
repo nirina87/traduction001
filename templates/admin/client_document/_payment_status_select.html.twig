@@ -1,0 +1,17 @@
+{% set paymentStatus = doc.paymentStatus %}
+{% set canChangeStatus = doc.order is not null or doc.user is not null %}
+{% set updateUrl = ea_url()
+    .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
+    .setAction('updatePaymentStatus')
+    .setEntityId(doc.id) %}
+<select
+    class="ea-payment-status-select ea-payment-status-select--{{ paymentStatus }}"
+    data-url="{{ updateUrl }}"
+    data-previous-value="{{ paymentStatus }}"
+    aria-label="Statut paiement"
+    {% if not canChangeStatus %}disabled title="Client requis pour modifier le statut"{% endif %}
+>
+    <option value="paid"{% if paymentStatus == 'paid' %} selected{% endif %}{% if not canChangeStatus %} disabled{% endif %}>Payé</option>
+    <option value="pending"{% if paymentStatus == 'pending' %} selected{% endif %}{% if not canChangeStatus %} disabled{% endif %}>Paiement en attente</option>
+    <option value="none"{% if paymentStatus == 'none' %} selected{% endif %}>Non rattaché</option>
+</select>

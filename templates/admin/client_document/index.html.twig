@@ -1,51 +1,82 @@
 {% extends '@EasyAdmin/crud/index.html.twig' %}
 
+{% set stats = indexStats|default({ total: 0, unpaid: 0, inProgress: 0, delivered: 0 }) %}
+
+{% block body_class %}page-content page-doc-index ea-index ea-index-ClientDocument{% endblock %}
+
+{% block page_title %}Documents clients{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content_header_wrapper %}{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block entity_actions %}
+    <td class="admin-actions">
+        <a
+            class="icon-btn"
+            href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('detail').setEntityId(entity.primaryKeyValue) }}"
+            aria-label="Voir le document"
+        >↗</a>
+    </td>
+{% endblock %}
+
+{% block table_body_empty %}
+    <tr class="doc-index-empty-row">
+        <td colspan="100">
+            <div class="admin-empty">Aucun document client pour le moment</div>
+        </td>
+    </tr>
+{% endblock %}
+
 {% block main %}
-    {% include 'admin/client_document/_payment_status_legend.html.twig' %}
-    {{ parent() }}
+<div class="admin-dashboard admin-doc-index">
+
+    <div class="admin-topbar">
+        <div>
+            <a class="doc-back-link" href="{{ path('admin') }}">
+                ← Tableau de bord
+            </a>
+            <h1>Documents clients</h1>
+            <p class="subtitle">Gestion des dossiers — {{ stats.total }} document{{ stats.total > 1 ? 's' : '' }} au total</p>
+        </div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="label">Total dossiers</div>
+            <div class="value">{{ stats.total }}</div>
+            <div class="delta">documents enregistrés</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Non payés</div>
+            <div class="value">{{ stats.unpaid }}</div>
+            <div class="delta down">en attente de règlement</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">En cours</div>
+            <div class="value">{{ stats.inProgress }}</div>
+            <div class="delta">traduction en cours</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Livrés</div>
+            <div class="value">{{ stats.delivered }}</div>
+            <div class="delta up">dossiers finalisés</div>
+        </div>
+    </div>
+
+    <section class="admin-panel">
+        <div class="admin-panel-head">
+            <h2>Liste des documents</h2>
+        </div>
+
+        <div class="doc-index-table-wrap">
+            {{ parent() }}
+        </div>
+    </section>
+
+</div>
 {% endblock %}
 
 {% block body_javascript %}
     {{ parent() }}
     {% include 'admin/client_document/_workflow_status_script.html.twig' %}
-    <script>
-        document.addEventListener('change', async function (event) {
-            const select = event.target.closest('.ea-payment-status-select');
-            if (!select || select.disabled || select.dataset.loading === 'true') {
-                return;
-            }
-
-            const previousValue = select.dataset.previousValue || select.value;
-            const url = select.dataset.url;
-            const status = select.value;
-
-            select.dataset.loading = 'true';
-            select.classList.add('ea-payment-status-select--loading');
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: new URLSearchParams({ status }),
-                });
-
-                const payload = await response.json();
-                if (!response.ok || !payload.success) {
-                    throw new Error(payload.message || 'Impossible de mettre à jour le statut.');
-                }
-
-                select.dataset.previousValue = payload.status;
-                select.className = 'ea-payment-status-select ea-payment-status-select--' + payload.status;
-            } catch (error) {
-                select.value = previousValue;
-                window.alert(error.message || 'Impossible de mettre à jour le statut.');
-            } finally {
-                delete select.dataset.loading;
-                select.classList.remove('ea-payment-status-select--loading');
-            }
-        });
-    </script>
 {% endblock %}
