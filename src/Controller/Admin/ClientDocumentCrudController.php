@@ -56,6 +56,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'Nouveau document client')
             ->setDefaultSort(['uploadedAt' => 'DESC'])
             ->setSearchFields(null)
+            ->setDefaultRowAction(Action::DETAIL)
             ->overrideTemplate('crud/index', 'admin/client_document/index.html.twig')
             ->overrideTemplate('crud/detail', 'admin/client_document/detail.html.twig')
             ->overrideTemplate('crud/edit', 'admin/client_document/edit.html.twig')
@@ -80,7 +81,6 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf(static fn () => false))
-            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_DETAIL, Action::EDIT, fn (Action $action) => $action
                 ->setLabel('Modifier')
                 ->setCssClass('btn btn-outline btn-sm'))
@@ -106,7 +106,9 @@ class ClientDocumentCrudController extends AbstractCrudController
     {
         return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
             ->leftJoin('entity.order', 'paymentOrder')
-            ->addSelect('paymentOrder');
+            ->addSelect('paymentOrder')
+            ->leftJoin('entity.user', 'clientUser')
+            ->addSelect('clientUser');
     }
 
     public function configureFields(string $pageName): iterable
@@ -137,6 +139,9 @@ class ClientDocumentCrudController extends AbstractCrudController
 
     private function getIndexFields(): iterable
     {
+        yield AssociationField::new('user')
+            ->setLabel('Client')
+            ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—');
         yield TextField::new('title')->setLabel('Titre');
         yield TextField::new('language')->setLabel('Langue');
         yield TextField::new('workflowStatusLabel')
@@ -150,9 +155,6 @@ class ClientDocumentCrudController extends AbstractCrudController
         yield DateTimeField::new('uploadedAt')
             ->setLabel('Reçu le')
             ->setFormat('dd/MM/yyyy');
-        yield AssociationField::new('user')
-            ->setLabel('Client')
-            ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—');
     }
 
     private function getDetailFields(): iterable

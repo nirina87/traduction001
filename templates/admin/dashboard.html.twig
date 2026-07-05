@@ -16,25 +16,27 @@
         </div>
     </div>
 
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="label">Messages reçus</div>
-            <div class="value">{{ stats.contacts }}</div>
-            <div class="delta up">demandes de contact</div>
-        </div>
-        <div class="kpi-card">
-            <div class="label">Documents clients</div>
-            <div class="value">{{ stats.clientDocuments }}</div>
-        </div>
-        <div class="kpi-card">
-            <div class="label">CA du mois</div>
-            <div class="value">{{ stats.monthlyRevenue|number_format(0, ',', ' ') }} €</div>
-            <div class="delta up">{{ stats.monthlyPaidOrders }} commande{{ stats.monthlyPaidOrders > 1 ? 's' : '' }} payée{{ stats.monthlyPaidOrders > 1 ? 's' : '' }}</div>
-        </div>
-        <div class="kpi-card">
-            <div class="label">Délai moyen livraison</div>
-            <div class="value">1,8 j</div>
-            <div class="delta down">objectif : 2 j max</div>
+    <div class="admin-scroll-x admin-kpi-scroll">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="label">Messages reçus</div>
+                <div class="value">{{ stats.contacts }}</div>
+                <div class="delta up">demandes de contact</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Documents clients</div>
+                <div class="value">{{ stats.clientDocuments }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">CA du mois</div>
+                <div class="value">{{ stats.monthlyRevenue|number_format(0, ',', ' ') }} €</div>
+                <div class="delta up">{{ stats.monthlyPaidOrders }} commande{{ stats.monthlyPaidOrders > 1 ? 's' : '' }} payée{{ stats.monthlyPaidOrders > 1 ? 's' : '' }}</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Délai moyen livraison</div>
+                <div class="value">1,8 j</div>
+                <div class="delta down">objectif : 2 j max</div>
+            </div>
         </div>
     </div>
 
@@ -44,6 +46,7 @@
             <a class="btn btn-outline btn-sm" href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('index') }}">Voir tout</a>
         </div>
         {% if recentContacts is not empty %}
+            <div class="admin-scroll-x admin-table-scroll">
             <table class="admin-table">
                 <thead>
                     <tr>
@@ -77,6 +80,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% else %}
             <div class="admin-empty">Aucun message reçu pour le moment</div>
         {% endif %}
@@ -88,6 +92,7 @@
             <a class="btn btn-outline btn-sm" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}">Voir tout</a>
         </div>
         {% if recentClientDocuments is not empty %}
+            <div class="admin-scroll-x admin-table-scroll">
             <table class="admin-table">
                 <thead>
                     <tr>
@@ -116,6 +121,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
         {% else %}
             <div class="admin-empty">Aucun document client reçu</div>
         {% endif %}
