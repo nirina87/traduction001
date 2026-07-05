@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -56,9 +57,14 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->linkToCrudAction('updatePaymentStatus')
             ->displayIf(static fn () => false);
 
+        $updateWorkflowStatus = Action::new('updateWorkflowStatus', false)
+            ->linkToCrudAction('updateWorkflowStatus')
+            ->displayIf(static fn () => false);
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $updatePaymentStatus)
+            ->add(Crud::PAGE_INDEX, $updateWorkflowStatus)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('➕ Ajouter un document client'));
     }
 
@@ -81,16 +87,29 @@ class ClientDocumentCrudController extends AbstractCrudController
                 ->onlyOnIndex()
                 ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderPaymentStatusSelect($entity))
                 ->renderAsHtml(),
+            TextField::new('workflowStatusLabel')
+                ->setLabel('Statut')
+                ->onlyOnIndex()
+                ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
+                    'admin/client_document/_workflow_status_select.html.twig',
+                    ['doc' => $entity],
+                ))
+                ->renderAsHtml(),
+            ChoiceField::new('status')
+                ->setLabel('Statut du document')
+                ->setChoices(ClientDocument::getStatusChoices())
+                ->hideOnIndex(),
             AssociationField::new('document')->setLabel('Document à traduire'),
             TextField::new('title')->setLabel('Nom du fichier envoyé'),
             TextField::new('language')->setLabel('Langue demandée'),
             IntegerField::new('price')->setLabel('Prix estimé (centimes)'),
             BooleanField::new('receiveByPaper')->setLabel('Réception par papier'),
-            TextField::new('order')
+            AssociationField::new('order')
                 ->setLabel('Commande liée')
                 ->onlyOnDetail()
                 ->formatValue(fn ($value, ClientDocument $entity) => $this->formatOrderSummary($entity))
-                ->renderAsHtml(),
+                ->renderAsHtml()
+                ->hideOnForm(),
             DateTimeField::new('uploadedAt')->setLabel('Date d’envoi')->hideOnForm(),
             UrlField::new('fileUrl')
                 ->setLabel('Document')
@@ -100,6 +119,23 @@ class ClientDocumentCrudController extends AbstractCrudController
                 ->setLabel('Fichier envoyé')
                 ->onlyOnDetail(),
             TextField::new('file')->setFormType(VichFileType::class)->setLabel('Fichier envoyé')->hideOnIndex(),
+            UrlField::new('documentTraduitUrl')
+                ->setLabel('Document traduit')
+                ->onlyOnIndex()
+                ->formatValue(fn (?string $value, ClientDocument $entity) => $entity->getDocumentTraduit() ?? '—'),
+            UrlField::new('documentTraduitUrl')
+                ->setLabel('Document traduit')
+                ->onlyOnDetail(),
+            TextField::new('translatedDocumentFile')
+                ->setFormType(VichFileType::class)
+                ->setLabel('Document traduit')
+                ->setFormTypeOptions([
+                    'required' => false,
+                    'allow_delete' => true,
+                    'download_uri' => static fn (ClientDocument $entity) => $entity->getDocumentTraduitUrl(),
+                    'download_label' => static fn (ClientDocument $entity) => $entity->getDocumentTraduit() ?? 'Télécharger',
+                ])
+                ->hideOnIndex(),
         ];
     }
 
@@ -148,10 +184,62 @@ class ClientDocumentCrudController extends AbstractCrudController
         ]);
     }
 
+    #[AdminRoute(options: ['methods' => ['POST']])]
+    public function updateWorkflowStatus(AdminContext $context): Response
+    {
+        $entity = $context->getEntity()->getInstance();
+        if (!$entity instanceof ClientDocument) {
+            throw $this->createNotFoundException();
+        }
+
+        $status = (string) $context->getRequest()->request->get('status', '');
+        if (!\in_array($status, ClientDocument::STATUSES, true)) {
+            return new JsonResponse(['success' => false, 'message' => 'Statut invalide.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $this->applyWorkflowStatus($entity, $status);
+            $this->entityManager->flush();
+        } catch (\RuntimeException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'status' => $entity->getWorkflowStatus(),
+            'label' => $entity->getWorkflowStatusLabel(),
+            'pillClass' => $entity->getWorkflowStatusPillClass(),
+        ]);
+    }
+
+    private function applyWorkflowStatus(ClientDocument $document, string $status): void
+    {
+        if (ClientDocument::STATUS_UNPAID === $status) {
+            if ('paid' === $document->getPaymentStatus()) {
+                throw new \RuntimeException('Impossible de repasser en non-payé : la commande est déjà payée.');
+            }
+
+            $document->setStatus(ClientDocument::STATUS_UNPAID);
+
+            return;
+        }
+
+        if (\in_array($status, [ClientDocument::STATUS_PAID, ClientDocument::STATUS_IN_TRANSLATION, ClientDocument::STATUS_TRANSLATION_COMPLETED, ClientDocument::STATUS_DELIVERED], true)) {
+            if ('paid' !== $document->getPaymentStatus()) {
+                $this->applyPaymentStatus($document, 'paid');
+            }
+        }
+
+        $document->setStatus($status);
+    }
+
     private function applyPaymentStatus(ClientDocument $document, string $status): void
     {
         if ('none' === $status) {
             $document->setOrder(null);
+            if (!\in_array($document->getStatus(), [ClientDocument::STATUS_IN_TRANSLATION, ClientDocument::STATUS_TRANSLATION_COMPLETED, ClientDocument::STATUS_DELIVERED], true)) {
+                $document->setStatus(ClientDocument::STATUS_UNPAID);
+            }
 
             return;
         }
@@ -178,6 +266,12 @@ class ClientDocumentCrudController extends AbstractCrudController
         }
 
         $order->setStatus('paid' === $status ? 'paid' : 'pending');
+
+        if ('paid' === $status && ClientDocument::STATUS_UNPAID === $document->getStatus()) {
+            $document->setStatus(ClientDocument::STATUS_PAID);
+        } elseif ('pending' === $status && !\in_array($document->getStatus(), [ClientDocument::STATUS_IN_TRANSLATION, ClientDocument::STATUS_TRANSLATION_COMPLETED, ClientDocument::STATUS_DELIVERED], true)) {
+            $document->setStatus(ClientDocument::STATUS_UNPAID);
+        }
     }
 
     private function renderPaymentStatus(string $status): string

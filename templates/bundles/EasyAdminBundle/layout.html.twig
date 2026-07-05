@@ -1,0 +1,18 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block header_logo %}
+    <a class="logo" title="Traductions Légales" href="{{ path(ea.dashboardRouteName) }}">
+        <span class="logo-custom">
+            <img src="{{ asset('logo-tl.png') }}" alt="Traductions Légales — Traductions assermentées" class="ea-brand-logo">
+        </span>
+        <span class="logo-compact">
+            <img src="{{ asset('logo-tl.png') }}" alt="Traductions Légales" class="ea-brand-logo ea-brand-logo--compact">
+        </span>
+    </a>
+{% endblock header_logo %}
+
+{% block responsive_header_logo %}
+    <a class="responsive-logo" title="Traductions Légales" href="{{ path(ea.dashboardRouteName) }}">
+        <img src="{{ asset('logo-tl.png') }}" alt="Traductions Légales" class="ea-brand-logo ea-brand-logo--responsive">
+    </a>
+{% endblock responsive_header_logo %}

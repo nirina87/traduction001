@@ -130,6 +130,7 @@ class PageController extends AbstractController
         $clientDocument->setDocument($document);
         $clientDocument->setLanguage('' !== $language ? $language : null);
         $clientDocument->setPrice($totalPriceCents);
+        $clientDocument->setPageCount($pageCount);
         $clientDocument->setReceiveByPaper($receiveByPaper);
         $clientDocument->setFile($uploadedFile);
 

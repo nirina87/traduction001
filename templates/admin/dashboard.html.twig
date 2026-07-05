@@ -2,228 +2,165 @@
 
 {% block content_title %}{% endblock %}
 
+{% block content_header_wrapper %}{% endblock %}
+
+{% block body_class %}page-content page-dashboard{% endblock %}
+
 {% block main %}
 <div class="admin-dashboard">
 
-    {# ── En-tête ── #}
-    <header class="dash-hero">
+    <div class="admin-topbar">
         <div>
-            <h1 class="dash-hero__title">Tableau de bord</h1>
-            <p class="dash-hero__subtitle">Vue d'ensemble de votre plateforme de traduction</p>
-        </div>
-        <span class="dash-hero__date">
-            <i class="far fa-calendar-alt"></i>
-            {{ 'now'|date('l d F Y')|capitalize }}
-        </span>
-    </header>
-
-    {# ── Statistiques ── #}
-    <div class="dash-stats">
-        <a href="{{ ea_url().setController('App\\Controller\\Admin\\CategoryCrudController').setAction('index') }}" class="dash-stat-card">
-            <div class="dash-stat-card__top">
-                <span class="dash-stat-card__icon dash-stat-card__icon--indigo"><i class="fas fa-folder"></i></span>
-                <span class="dash-stat-card__value">{{ stats.categories }}</span>
-            </div>
-            <span class="dash-stat-card__label">Catégories</span>
-            <span class="dash-stat-card__link">Voir tout &rarr;</span>
-        </a>
-
-        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('index') }}" class="dash-stat-card">
-            <div class="dash-stat-card__top">
-                <span class="dash-stat-card__icon dash-stat-card__icon--blue"><i class="fas fa-file-alt"></i></span>
-                <span class="dash-stat-card__value">{{ stats.articles }}</span>
-            </div>
-            <span class="dash-stat-card__label">Articles</span>
-            <span class="dash-stat-card__link">Voir tout &rarr;</span>
-        </a>
-
-        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('index') }}" class="dash-stat-card">
-            <div class="dash-stat-card__top">
-                <span class="dash-stat-card__icon dash-stat-card__icon--rose"><i class="fas fa-envelope"></i></span>
-                <span class="dash-stat-card__value">{{ stats.contacts }}</span>
-            </div>
-            <span class="dash-stat-card__label">Contacts</span>
-            <span class="dash-stat-card__link">Voir tout &rarr;</span>
-        </a>
-
-        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}" class="dash-stat-card">
-            <div class="dash-stat-card__top">
-                <span class="dash-stat-card__icon dash-stat-card__icon--violet"><i class="fas fa-cloud-upload-alt"></i></span>
-                <span class="dash-stat-card__value">{{ stats.clientDocuments }}</span>
-            </div>
-            <span class="dash-stat-card__label">Documents clients</span>
-            <span class="dash-stat-card__link">Voir tout &rarr;</span>
-        </a>
-
-        <a href="{{ ea_url().setController('App\\Controller\\Admin\\DocumentCrudController').setAction('index') }}" class="dash-stat-card">
-            <div class="dash-stat-card__top">
-                <span class="dash-stat-card__icon dash-stat-card__icon--green"><i class="fas fa-book"></i></span>
-                <span class="dash-stat-card__value">{{ stats.documents }}</span>
-            </div>
-            <span class="dash-stat-card__label">Documents à traduire</span>
-            <span class="dash-stat-card__link">Voir tout &rarr;</span>
-        </a>
-
-        <a href="{{ ea_url().setController('App\\Controller\\Admin\\ProductCrudController').setAction('index') }}" class="dash-stat-card">
-            <div class="dash-stat-card__top">
-                <span class="dash-stat-card__icon dash-stat-card__icon--amber"><i class="fas fa-file-contract"></i></span>
-                <span class="dash-stat-card__value">{{ stats.products }}</span>
-            </div>
-            <span class="dash-stat-card__label">Docs administratifs</span>
-            <span class="dash-stat-card__link">Voir tout &rarr;</span>
-        </a>
-    </div>
-
-    {# ── Contenu principal ── #}
-    <div class="dash-layout">
-
-        {# Derniers contacts #}
-        <section class="dash-panel">
-            <div class="dash-panel__header">
-                <h2 class="dash-panel__title"><i class="fas fa-inbox"></i> Derniers contacts</h2>
-                <a href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('index') }}" class="dash-panel__action">
-                    Tous les contacts
-                </a>
-            </div>
-            <div class="dash-panel__body">
-                {% if recentContacts is not empty %}
-                    <div class="dash-table-wrap">
-                        <table class="dash-table">
-                            <thead>
-                                <tr>
-                                    <th>Contact</th>
-                                    <th>Coordonnées</th>
-                                    <th>Message</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for contact in recentContacts %}
-                                    <tr>
-                                        <td>
-                                            <div class="dash-table__name">{{ contact.prenom }} {{ contact.nom }}</div>
-                                        </td>
-                                        <td>
-                                            <div class="dash-table__meta">{{ contact.email }}</div>
-                                            {% if contact.telephone %}
-                                                <div class="dash-table__meta">{{ contact.telephone }}</div>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="dash-table__message">{{ contact.message|slice(0, 60) }}{% if contact.message|length > 60 %}…{% endif %}</div>
-                                        </td>
-                                        <td>
-                                            <div class="dash-table__meta">{{ contact.createdAt|date('d/m/Y H:i') }}</div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="dash-empty">
-                        <i class="far fa-envelope-open"></i>
-                        Aucun contact pour le moment
-                    </div>
-                {% endif %}
-            </div>
-        </section>
-
-        {# Colonne droite : actions + activité #}
-        <div class="dash-stack">
-            <section class="dash-panel">
-                <div class="dash-panel__header">
-                    <h2 class="dash-panel__title"><i class="fas fa-bolt"></i> Actions rapides</h2>
-                </div>
-                <div class="dash-actions">
-                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('new') }}" class="dash-action-btn">
-                        <i class="fas fa-plus-circle"></i> Nouvel article
-                    </a>
-                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\CategoryCrudController').setAction('new') }}" class="dash-action-btn">
-                        <i class="fas fa-folder-plus"></i> Nouvelle catégorie
-                    </a>
-                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\DocumentCrudController').setAction('new') }}" class="dash-action-btn">
-                        <i class="fas fa-file-medical"></i> Nouveau document à traduire
-                    </a>
-                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}" class="dash-action-btn">
-                        <i class="fas fa-cloud-download-alt"></i> Documents clients reçus
-                    </a>
-                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\TranslationRateCrudController').setAction('index') }}" class="dash-action-btn">
-                        <i class="fas fa-language"></i> Gérer les tarifs
-                    </a>
-                </div>
-            </section>
-
-            <section class="dash-panel">
-                <div class="dash-panel__header">
-                    <h2 class="dash-panel__title"><i class="fas fa-paperclip"></i> Derniers documents clients</h2>
-                    <a href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}" class="dash-panel__action">
-                        Voir tout
-                    </a>
-                </div>
-                <div class="dash-panel__body">
-                    {% if recentClientDocuments is not empty %}
-                        <ul class="dash-activity-list">
-                            {% for doc in recentClientDocuments %}
-                                <li class="dash-activity-item">
-                                    <span class="dash-activity-item__dot"></span>
-                                    <div>
-                                        <p class="dash-activity-item__title">{{ doc.title }}</p>
-                                        <p class="dash-activity-item__meta">
-                                            {% if doc.language %}
-                                                <span class="dash-badge">{{ doc.language }}</span>
-                                            {% endif %}
-                                            {{ doc.uploadedAt ? doc.uploadedAt|date('d/m/Y H:i') : '—' }}
-                                        </p>
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <div class="dash-empty">
-                            <i class="far fa-file"></i>
-                            Aucun document client reçu
-                        </div>
-                    {% endif %}
-                </div>
-            </section>
+            <h1>Tableau de bord</h1>
+            <p class="subtitle">Vue d'ensemble — {{ 'now'|date('l d F Y')|capitalize }}</p>
         </div>
     </div>
 
-    {# ── Derniers articles ── #}
-    <section class="dash-panel">
-        <div class="dash-panel__header">
-            <h2 class="dash-panel__title"><i class="fas fa-newspaper"></i> Derniers articles publiés</h2>
-            <a href="{{ ea_url().setController('App\\Controller\\Admin\\ArticleCrudController').setAction('index') }}" class="dash-panel__action">
-                Tous les articles
-            </a>
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="label">Messages reçus</div>
+            <div class="value">{{ stats.contacts }}</div>
+            <div class="delta up">demandes de contact</div>
         </div>
-        <div class="dash-panel__body">
-            {% if recentArticles is not empty %}
-                <ul class="dash-activity-list">
-                    {% for article in recentArticles %}
-                        <li class="dash-activity-item">
-                            <span class="dash-activity-item__dot"></span>
-                            <div>
-                                <p class="dash-activity-item__title">{{ article.title|slice(0, 80) }}{% if article.title|length > 80 %}…{% endif %}</p>
-                                <p class="dash-activity-item__meta">
-                                    {% if article.category %}
-                                        <span class="dash-badge">{{ article.category }}</span>
-                                    {% endif %}
-                                    {{ article.creation ? article.creation|date('d/m/Y') : '—' }}
-                                </p>
-                            </div>
-                        </li>
+        <div class="kpi-card">
+            <div class="label">Documents clients</div>
+            <div class="value">{{ stats.clientDocuments }}</div>
+            <div class="delta up">{{ stats.documents }} doc. à traduire</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">CA du mois</div>
+            <div class="value">{{ stats.monthlyRevenue|number_format(0, ',', ' ') }} €</div>
+            <div class="delta up">{{ stats.monthlyPaidOrders }} commande{{ stats.monthlyPaidOrders > 1 ? 's' : '' }} payée{{ stats.monthlyPaidOrders > 1 ? 's' : '' }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="label">Délai moyen livraison</div>
+            <div class="value">1,8 j</div>
+            <div class="delta down">objectif : 2 j max</div>
+        </div>
+    </div>
+
+    <section class="admin-panel" id="contacts">
+        <div class="admin-panel-head">
+            <h2>Messages récents</h2>
+            <a class="btn btn-outline btn-sm" href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('index') }}">Voir tout</a>
+        </div>
+        {% if recentContacts is not empty %}
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Réf.</th>
+                        <th>Contact</th>
+                        <th>Coordonnées</th>
+                        <th>Message</th>
+                        <th>Statut</th>
+                        <th>Reçu le</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in recentContacts %}
+                        <tr>
+                            <td class="mono">CT-{{ '%04d'|format(contact.id) }}</td>
+                            <td>{{ contact.prenom }} {{ contact.nom }}</td>
+                            <td>
+                                <div class="mono">{{ contact.email }}</div>
+                                {% if contact.telephone %}
+                                    <div class="mono">{{ contact.telephone }}</div>
+                                {% endif %}
+                            </td>
+                            <td>{{ contact.message|slice(0, 60) }}{% if contact.message|length > 60 %}…{% endif %}</td>
+                            <td><span class="pill pill-new">Nouveau</span></td>
+                            <td class="mono">{{ contact.createdAt|date('d/m/Y') }}</td>
+                            <td class="admin-actions">
+                                <a class="icon-btn" href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('edit').setEntityId(contact.id) }}" aria-label="Voir le message">↗</a>
+                            </td>
+                        </tr>
                     {% endfor %}
-                </ul>
-            {% else %}
-                <div class="dash-empty">
-                    <i class="far fa-newspaper"></i>
-                    Aucun article pour le moment
+                </tbody>
+            </table>
+        {% else %}
+            <div class="admin-empty">Aucun message reçu pour le moment</div>
+        {% endif %}
+    </section>
+
+    <section class="admin-panel">
+        <div class="admin-panel-head">
+            <h2>Documents clients récents</h2>
+            <a class="btn btn-outline btn-sm" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}">Voir tout</a>
+        </div>
+        {% if recentClientDocuments is not empty %}
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Réf.</th>
+                        <th>Titre</th>
+                        <th>Langue</th>
+                        <th>Statut</th>
+                        <th>Nbre de page</th>
+                        <th>Reçu le</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in recentClientDocuments %}
+                        <tr>
+                            <td class="mono">DC-{{ '%04d'|format(doc.id) }}</td>
+                            <td>{{ doc.title }}</td>
+                            <td class="mono">{{ doc.language ?: '—' }}</td>
+                            <td>{% include 'admin/client_document/_workflow_status_select.html.twig' with { doc: doc } %}</td>
+                            <td class="mono">{{ doc.pageCount }}</td>
+                            <td class="mono">{{ doc.uploadedAt ? doc.uploadedAt|date('d/m/Y') : '—' }}</td>
+                            <td class="admin-actions">
+                                <a class="icon-btn" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('detail').setEntityId(doc.id) }}" aria-label="Voir le document">↗</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="admin-empty">Aucun document client reçu</div>
+        {% endif %}
+    </section>
+
+    <section class="admin-panel">
+        <div class="admin-panel-head">
+            <h2>Répartition par secteur — 30 derniers jours</h2>
+        </div>
+        <div class="sector-bars">
+            <div>
+                <div class="sector-bar-row">
+                    <span>Avocats &amp; cabinets</span>
+                    <span class="mono">48 %</span>
                 </div>
-            {% endif %}
+                <div class="sector-bar-track">
+                    <div class="sector-bar-fill sector-bar-fill--wine" style="width:48%"></div>
+                </div>
+            </div>
+            <div>
+                <div class="sector-bar-row">
+                    <span>Administrations</span>
+                    <span class="mono">32 %</span>
+                </div>
+                <div class="sector-bar-track">
+                    <div class="sector-bar-fill sector-bar-fill--gold" style="width:32%"></div>
+                </div>
+            </div>
+            <div>
+                <div class="sector-bar-row">
+                    <span>Associations &amp; ONG</span>
+                    <span class="mono">20 %</span>
+                </div>
+                <div class="sector-bar-track">
+                    <div class="sector-bar-fill sector-bar-fill--ink" style="width:20%"></div>
+                </div>
+            </div>
         </div>
     </section>
 
 </div>
+{% endblock %}
+
+{% block body_javascript %}
+    {{ parent() }}
+    {% include 'admin/client_document/_workflow_status_script.html.twig' %}
 {% endblock %}

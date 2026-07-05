@@ -7,6 +7,7 @@
 
 {% block body_javascript %}
     {{ parent() }}
+    {% include 'admin/client_document/_workflow_status_script.html.twig' %}
     <script>
         document.addEventListener('change', async function (event) {
             const select = event.target.closest('.ea-payment-status-select');

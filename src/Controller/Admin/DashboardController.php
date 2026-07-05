@@ -14,6 +14,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\ClientDocumentRepository;
 use App\Repository\ContactRepository;
 use App\Repository\DocumentRepository;
+use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\TranslationRateRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -34,10 +35,14 @@ class DashboardController extends AbstractDashboardController
         private DocumentRepository $documentRepository,
         private TranslationRateRepository $translationRateRepository,
         private ProductRepository $productRepository,
+        private OrderRepository $orderRepository,
     ) {}
 
     public function index(): Response
     {
+        $monthStart = new \DateTimeImmutable('first day of this month midnight');
+        $monthEnd = $monthStart->modify('first day of next month');
+
         return $this->render('admin/dashboard.html.twig', [
             'stats' => [
                 'categories' => $this->categoryRepository->count([]),
@@ -47,9 +52,11 @@ class DashboardController extends AbstractDashboardController
                 'documents' => $this->documentRepository->count([]),
                 'translationRates' => $this->translationRateRepository->count([]),
                 'products' => $this->productRepository->count([]),
+                'monthlyRevenue' => $this->orderRepository->sumPaidTotalBetween($monthStart, $monthEnd),
+                'monthlyPaidOrders' => $this->orderRepository->countPaidBetween($monthStart, $monthEnd),
             ],
             'recentContacts' => $this->contactRepository->findBy([], ['createdAt' => 'DESC'], 5),
-            'recentClientDocuments' => $this->clientDocumentRepository->findBy([], ['uploadedAt' => 'DESC'], 5),
+            'recentClientDocuments' => $this->clientDocumentRepository->findRecentWithOrder(5),
             'recentArticles' => $this->articleRepository->findBy([], ['creation' => 'DESC'], 5),
         ]);
     }
@@ -57,12 +64,14 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('<span class="ea-brand-title">Traduction</span><span class="ea-brand-subtitle">Administration</span>');
+            ->setTitle('Traductions Légales');
     }
 
     public function configureAssets(): Assets
     {
         return Assets::new()
+            ->addCssFile('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap')
+            ->addCssFile('css/style.css')
             ->addCssFile('css/admin.css');
     }
 

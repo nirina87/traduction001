@@ -296,6 +296,11 @@ class CheckoutController extends AbstractController
             }
 
             $order->setStatus('paid');
+            foreach ($em->getRepository(ClientDocument::class)->findBy(['order' => $order]) as $clientDocument) {
+                if (ClientDocument::STATUS_UNPAID === $clientDocument->getStatus()) {
+                    $clientDocument->setStatus(ClientDocument::STATUS_PAID);
+                }
+            }
             $em->flush();
             $request->getSession()->remove('cart');
 

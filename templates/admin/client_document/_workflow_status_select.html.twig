@@ -1,0 +1,22 @@
+{% set workflowStatus = doc.workflowStatus %}
+{% set statusOptions = {
+    'Non-payé': 'unpaid',
+    'Payé': 'paid',
+    'En traduction': 'in_translation',
+    'Traduction terminée': 'translation_completed',
+    'Livré': 'delivered'
+} %}
+{% set updateUrl = ea_url()
+    .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
+    .setAction('updateWorkflowStatus')
+    .setEntityId(doc.id) %}
+<select
+    class="ea-workflow-status-select ea-workflow-status-select--{{ workflowStatus }}"
+    data-url="{{ updateUrl }}"
+    data-previous-value="{{ workflowStatus }}"
+    aria-label="Statut du document"
+>
+    {% for label, value in statusOptions %}
+        <option value="{{ value }}"{% if value == workflowStatus %} selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+</select>

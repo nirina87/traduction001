@@ -12,4 +12,18 @@ class ClientDocumentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ClientDocument::class);
     }
+
+    /**
+     * @return ClientDocument[]
+     */
+    public function findRecentWithOrder(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('cd')
+            ->leftJoin('cd.order', 'o')
+            ->addSelect('o')
+            ->orderBy('cd.uploadedAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
