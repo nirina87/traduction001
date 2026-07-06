@@ -179,6 +179,11 @@ body.page-dashboard .admin-dashboard .admin-table-scroll {
     background: #FAF9F4;
 }
 
+.admin-dashboard #contacts table.admin-table tbody tr.ea-clickable-row,
+.admin-dashboard #client-documents table.admin-table tbody tr.ea-clickable-row {
+    cursor: pointer;
+}
+
 .admin-dashboard .pill {
     display: inline-flex;
     align-items: center;
@@ -2073,10 +2078,9 @@ body.page-contact-index .content-top {
     display: none;
 }
 
-.admin-contact-index .contact-index-table-wrap .table.datagrid td.actions {
-    width: 72px;
-    text-align: right;
-    padding-right: 24px;
+.admin-contact-index .contact-index-table-wrap .table.datagrid td.actions,
+.admin-contact-index .contact-index-table-wrap .table.datagrid thead tr th:last-child {
+    display: none;
 }
 
 .admin-contact-index .contact-index-table-wrap .table.datagrid td.field-text,

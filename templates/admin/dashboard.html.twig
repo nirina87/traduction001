@@ -50,19 +50,21 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Réf.</th>
                         <th>Contact</th>
                         <th>Coordonnées</th>
                         <th>Message</th>
                         <th>Statut</th>
                         <th>Reçu le</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for contact in recentContacts %}
-                        <tr>
-                            <td class="mono">CT-{{ '%04d'|format(contact.id) }}</td>
+                        <tr
+                            class="ea-clickable-row"
+                            data-default-action-url="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('edit').setEntityId(contact.id) }}"
+                            role="link"
+                            tabindex="0"
+                        >
                             <td>{{ contact.prenom }} {{ contact.nom }}</td>
                             <td>
                                 <div class="mono">{{ contact.email }}</div>
@@ -73,9 +75,6 @@
                             <td>{{ contact.message|slice(0, 60) }}{% if contact.message|length > 60 %}…{% endif %}</td>
                             <td><span class="pill pill-new">Nouveau</span></td>
                             <td class="mono">{{ contact.createdAt|date('d/m/Y') }}</td>
-                            <td class="admin-actions">
-                                <a class="icon-btn" href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('edit').setEntityId(contact.id) }}" aria-label="Voir le message">↗</a>
-                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -86,7 +85,7 @@
         {% endif %}
     </section>
 
-    <section class="admin-panel">
+    <section class="admin-panel" id="client-documents">
         <div class="admin-panel-head">
             <h2>Documents clients récents</h2>
             <a class="btn btn-outline btn-sm" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index') }}">Voir tout</a>
@@ -96,27 +95,26 @@
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>Réf.</th>
                         <th>Titre</th>
                         <th>Langue</th>
                         <th>Statut</th>
                         <th>Nbre de page</th>
                         <th>Reçu le</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for doc in recentClientDocuments %}
-                        <tr>
-                            <td class="mono">DC-{{ '%04d'|format(doc.id) }}</td>
+                        <tr
+                            class="ea-clickable-row"
+                            data-default-action-url="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('detail').setEntityId(doc.id) }}"
+                            role="link"
+                            tabindex="0"
+                        >
                             <td>{{ doc.title }}</td>
                             <td class="mono">{{ doc.language ?: '—' }}</td>
                             <td>{% include 'admin/client_document/_workflow_status_select.html.twig' with { doc: doc } %}</td>
                             <td class="mono">{{ doc.pageCount }}</td>
                             <td class="mono">{{ doc.uploadedAt ? doc.uploadedAt|date('d/m/Y') : '—' }}</td>
-                            <td class="admin-actions">
-                                <a class="icon-btn" href="{{ ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('detail').setEntityId(doc.id) }}" aria-label="Voir le document">↗</a>
-                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

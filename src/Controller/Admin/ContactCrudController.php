@@ -36,6 +36,7 @@ class ContactCrudController extends AbstractCrudController
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->setSearchFields(null)
             ->setPaginatorPageSize(15)
+            ->setDefaultRowAction(Action::EDIT)
             ->overrideTemplate('crud/index', 'admin/contact/index.html.twig')
             ->overrideTemplate('crud/edit', 'admin/contact/edit.html.twig');
     }
@@ -45,7 +46,6 @@ class ContactCrudController extends AbstractCrudController
         return $actions
             ->disable(Action::BATCH_DELETE)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->displayIf(static fn () => false))
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf(static fn () => false))
             ->add(Crud::PAGE_EDIT, Action::INDEX)
             ->update(Crud::PAGE_EDIT, Action::INDEX, fn (Action $action) => $action->displayIf(static fn () => false))
@@ -86,9 +86,6 @@ class ContactCrudController extends AbstractCrudController
 
     private function getIndexFields(): iterable
     {
-        yield TextField::new('contactReference')
-            ->setLabel('Réf.')
-            ->formatValue(fn (?string $value, Contact $contact) => $contact->getContactReference());
         yield TextField::new('fullName')
             ->setLabel('Contact')
             ->formatValue(fn (?string $value, Contact $contact) => $contact->getFullName());

@@ -9,15 +9,7 @@
 {% block content_header_wrapper %}{% endblock %}
 {% block page_actions %}{% endblock %}
 
-{% block entity_actions %}
-    <td class="admin-actions">
-        <a
-            class="icon-btn"
-            href="{{ ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('edit').setEntityId(entity.primaryKeyValue) }}"
-            aria-label="Voir le message"
-        >↗</a>
-    </td>
-{% endblock %}
+{% block entity_actions %}{% endblock %}
 
 {% block table_body_empty %}
     <tr class="contact-index-empty-row">
