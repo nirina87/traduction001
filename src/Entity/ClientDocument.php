@@ -182,6 +182,10 @@ class ClientDocument
     public function setPageCount(int $pageCount): static { $this->pageCount = $pageCount; return $this; }
     public function isReceiveByPaper(): bool { return $this->receiveByPaper; }
     public function setReceiveByPaper(bool $receiveByPaper): static { $this->receiveByPaper = $receiveByPaper; return $this; }
+    public function getReceiveByPaperLabel(): string
+    {
+        return $this->receiveByPaper ? 'Par courrier' : 'Numérique';
+    }
     public function getFileName(): ?string { return $this->fileName; }
     public function setFileName(?string $fileName): static { $this->fileName = $fileName; return $this; }
     public function getUploadedAt(): ?\DateTimeImmutable { return $this->uploadedAt; }

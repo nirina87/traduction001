@@ -152,6 +152,13 @@ class ClientDocumentCrudController extends AbstractCrudController
             ))
             ->renderAsHtml();
         yield IntegerField::new('pageCount')->setLabel('Pages');
+        yield TextField::new('receiveByPaperLabel')
+            ->setLabel('Réception')
+            ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
+                'admin/client_document/_receive_by_paper_badge.html.twig',
+                ['doc' => $entity],
+            ))
+            ->renderAsHtml();
         yield DateTimeField::new('uploadedAt')
             ->setLabel('Reçu le')
             ->setFormat('dd/MM/yyyy');
