@@ -198,9 +198,27 @@
                 </div>
                 {% if doc.documentTraduit %}
                     <p class="doc-file-card__name mono">{{ doc.documentTraduit }}</p>
-                    <a class="btn btn-outline btn-sm doc-file-card__action" href="{{ doc.documentTraduitUrl }}" target="_blank" rel="noopener">
-                        Télécharger ↗
-                    </a>
+                    <div class="doc-file-card__actions">
+                        <a class="btn btn-outline btn-sm doc-file-card__action" href="{{ doc.documentTraduitUrl }}" target="_blank" rel="noopener">
+                            Télécharger ↗
+                        </a>
+                        {% if user and user.email %}
+                            {% set sendToClientUrl = ea_url()
+                                .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
+                                .setAction('sendToClient')
+                                .setEntityId(doc.id) %}
+                            <button
+                                type="button"
+                                class="btn btn-sm doc-file-card__action doc-file-card__action--send"
+                                id="doc-send-to-client-button"
+                                data-url="{{ sendToClientUrl }}"
+                                data-client-email="{{ user.email }}"
+                                data-document-title="{{ doc.title }}"
+                            >
+                                Envoyer au client
+                            </button>
+                        {% endif %}
+                    </div>
                 {% else %}
                     <div class="admin-empty admin-empty--compact">Traduction non encore déposée</div>
                 {% endif %}
@@ -251,10 +269,12 @@
 </div>
 
 {% include 'admin/client_document/_delete_confirmation_modal.html.twig' %}
+{% include 'admin/client_document/_send_to_client_modal.html.twig' %}
 {% endblock %}
 
 {% block body_javascript %}
     {{ parent() }}
     {% include 'admin/client_document/_workflow_status_script.html.twig' %}
     {% include 'admin/client_document/_payment_status_script.html.twig' %}
+    {% include 'admin/client_document/_send_to_client_script.html.twig' %}
 {% endblock %}

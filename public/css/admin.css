@@ -1139,6 +1139,42 @@ body.page-doc-detail .content-top.ea-search-disabled .content-search {
     align-self: flex-start;
 }
 
+.admin-doc-detail .doc-file-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.admin-doc-detail .doc-file-card__action--send {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.admin-doc-detail .doc-file-card__action--send:hover {
+    background: #081a38;
+    border-color: #081a38;
+    color: var(--paper);
+}
+
+.admin-doc-detail .doc-file-card__action--send:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.doc-send-modal__confirm {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+}
+
+.doc-send-modal__confirm:hover {
+    background: #081a38;
+    border-color: #081a38;
+    color: var(--paper);
+}
+
 @media (max-width: 1080px) {
     .admin-doc-detail .admin-detail-grid,
     .admin-doc-detail .doc-files-grid {

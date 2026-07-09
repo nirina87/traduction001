@@ -1,0 +1,84 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const triggerButton = document.getElementById('doc-send-to-client-button');
+    const modalElement = document.getElementById('doc-send-to-client-modal');
+    const messageElement = document.getElementById('doc-send-to-client-modal-message');
+    const confirmButton = document.getElementById('doc-send-to-client-modal-confirm');
+
+    if (!triggerButton || !modalElement || !messageElement || !confirmButton || typeof bootstrap === 'undefined') {
+        return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    let sendUrl = triggerButton.dataset.url || '';
+
+    triggerButton.addEventListener('click', function () {
+        const clientEmail = triggerButton.dataset.clientEmail || '';
+        const documentTitle = triggerButton.dataset.documentTitle || 'ce document';
+
+        messageElement.innerHTML = 'Vous allez envoyer <strong>' + escapeHtml(documentTitle) + '</strong> à l\'adresse '
+            + '<span class="mono">' + escapeHtml(clientEmail) + '</span>.<br><br>'
+            + 'Le client recevra un e-mail avec le lien de téléchargement de sa traduction assermentée.';
+
+        sendUrl = triggerButton.dataset.url || '';
+        confirmButton.disabled = false;
+        confirmButton.textContent = 'Confirmer l\'envoi';
+        modal.show();
+    });
+
+    confirmButton.addEventListener('click', async function () {
+        if (!sendUrl || confirmButton.disabled) {
+            return;
+        }
+
+        confirmButton.disabled = true;
+        confirmButton.textContent = 'Envoi en cours…';
+
+        try {
+            const response = await fetch(sendUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: new URLSearchParams(),
+            });
+
+            const payload = await response.json();
+            if (!response.ok || !payload.success) {
+                throw new Error(payload.message || 'Impossible d\'envoyer l\'e-mail au client.');
+            }
+
+            modal.hide();
+            window.alert(payload.message || 'Le document a été envoyé au client.');
+
+            const workflowSelect = document.querySelector('.ea-workflow-status-select');
+            if (workflowSelect && payload.status) {
+                workflowSelect.value = payload.status;
+                workflowSelect.dataset.previousValue = payload.status;
+                workflowSelect.className = 'ea-workflow-status-select ea-workflow-status-select--' + payload.status;
+            }
+
+            const statusPill = document.querySelector('.kpi-card .pill');
+            if (statusPill && payload.label && payload.pillClass) {
+                statusPill.textContent = payload.label;
+                statusPill.className = 'pill ' + payload.pillClass;
+            }
+        } catch (error) {
+            window.alert(error.message || 'Impossible d\'envoyer l\'e-mail au client.');
+        } finally {
+            confirmButton.disabled = false;
+            confirmButton.textContent = 'Confirmer l\'envoi';
+        }
+    });
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+});
+</script>

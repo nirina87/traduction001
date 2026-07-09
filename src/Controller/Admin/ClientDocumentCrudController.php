@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\ClientDocument;
 use App\Entity\Order;
 use App\Repository\ClientDocumentRepository;
+use App\Service\MailjetService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -294,6 +295,49 @@ class ClientDocumentCrudController extends AbstractCrudController
 
         return new JsonResponse([
             'success' => true,
+            'status' => $entity->getWorkflowStatus(),
+            'label' => $entity->getWorkflowStatusLabel(),
+            'pillClass' => $entity->getWorkflowStatusPillClass(),
+        ]);
+    }
+
+    #[AdminRoute(options: ['methods' => ['POST']])]
+    public function sendToClient(AdminContext $context, MailjetService $mailjetService): Response
+    {
+        $entity = $context->getEntity()->getInstance();
+        if (!$entity instanceof ClientDocument) {
+            throw $this->createNotFoundException();
+        }
+
+        if (null === $entity->getDocumentTraduit() || '' === $entity->getDocumentTraduit()) {
+            return new JsonResponse(['success' => false, 'message' => 'Aucun document traduit n\'est disponible.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = $entity->getUser();
+        if (!$user?->getEmail()) {
+            return new JsonResponse(['success' => false, 'message' => 'Aucune adresse e-mail client n\'est associée à ce dossier.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $mailjetService->sendTranslatedDocumentEmail(
+                $entity,
+                $context->getRequest()->getSchemeAndHttpHost(),
+            );
+
+            if (ClientDocument::STATUS_TRANSLATION_COMPLETED === $entity->getStatus()) {
+                $entity->setStatus(ClientDocument::STATUS_DELIVERED);
+                $this->entityManager->flush();
+            }
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $e->getMessage() ?: 'Impossible d\'envoyer l\'e-mail au client.',
+            ], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => sprintf('Le document a été envoyé à %s.', $user->getEmail()),
             'status' => $entity->getWorkflowStatus(),
             'label' => $entity->getWorkflowStatusLabel(),
             'pillClass' => $entity->getWorkflowStatusPillClass(),
