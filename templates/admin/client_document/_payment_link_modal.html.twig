@@ -22,7 +22,7 @@
                 </dl>
                 {% if doc.receiveByPaper %}
                     <p class="doc-payment-link-modal__hint">
-                        Livraison par courrier incluse (+{{ (constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') / 100)|number_format(0, ',', ' ') }} €).
+                        Livraison par courrier incluse dans le montant.
                     </p>
                 {% endif %}
             </div>

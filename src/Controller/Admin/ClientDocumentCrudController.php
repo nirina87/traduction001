@@ -500,9 +500,6 @@ class ClientDocumentCrudController extends AbstractCrudController
             }
 
             $priceCents = $document->getPrice() ?? 0;
-            if ($document->isReceiveByPaper()) {
-                $priceCents += ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS;
-            }
 
             $order = new Order();
             $order->setUser($user);

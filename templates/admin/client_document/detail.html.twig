@@ -5,9 +5,6 @@
 {% set user = doc.user %}
 {% set order = doc.order %}
 {% set priceCents = doc.price ?? 0 %}
-{% if doc.receiveByPaper %}
-    {% set priceCents = priceCents + constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') %}
-{% endif %}
 {% set workflowSteps = [
     { key: 'unpaid', label: 'Non-payé' },
     { key: 'paid', label: 'Payé' },
@@ -69,7 +66,7 @@
             <div class="value value--sm">{{ (priceCents / 100)|number_format(2, ',', ' ') }} €</div>
             <div class="delta{% if doc.receiveByPaper %} up{% endif %}">
                 {% if doc.receiveByPaper %}
-                    Livraison papier incluse (+{{ (constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') / 100)|number_format(0, ',', ' ') }} €)
+                    Livraison papier incluse
                 {% else %}
                     Livraison numérique
                 {% endif %}

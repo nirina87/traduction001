@@ -82,12 +82,7 @@ class StripePaymentLinkService
 
     private function resolveAmountCents(ClientDocument $document): int
     {
-        $amountCents = $document->getPrice() ?? 0;
-        if ($document->isReceiveByPaper()) {
-            $amountCents += ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS;
-        }
-
-        return $amountCents;
+        return $document->getPrice() ?? 0;
     }
 
     private function buildProductName(ClientDocument $document): string
