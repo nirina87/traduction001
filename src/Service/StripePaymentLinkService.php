@@ -39,6 +39,16 @@ class StripePaymentLinkService
                     'quantity' => 1,
                 ],
             ],
+            'metadata' => [
+                'client_document_id' => (string) ($document->getId() ?? ''),
+                'source' => 'client_document_payment_link',
+            ],
+            'payment_intent_data' => [
+                'metadata' => [
+                    'client_document_id' => (string) ($document->getId() ?? ''),
+                    'source' => 'client_document_payment_link',
+                ],
+            ],
         ]);
 
         if (null === $paymentLink->url || '' === $paymentLink->url) {

@@ -29,4 +29,14 @@ class ClientDocumentPaymentLinkRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findOneByStripePaymentLinkId(string $stripePaymentLinkId): ?ClientDocumentPaymentLink
+    {
+        return $this->findOneBy(['stripePaymentLinkId' => $stripePaymentLinkId]);
+    }
+
+    public function findOneByStripeCheckoutSessionId(string $stripeCheckoutSessionId): ?ClientDocumentPaymentLink
+    {
+        return $this->findOneBy(['stripeCheckoutSessionId' => $stripeCheckoutSessionId]);
+    }
 }

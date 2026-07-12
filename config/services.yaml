@@ -26,6 +26,7 @@ parameters:
 
     env(STRIPE_SECRET_KEY): ''
     env(STRIPE_PUBLIC_KEY): ''
+    env(STRIPE_WEBHOOK_SECRET): ''
     env(MAILJET_API_KEY): ''
     env(MAILJET_API_SECRET): ''
     env(MAILJET_TEMPLATE_CONFIRMATION_ID): '8108111'
@@ -60,6 +61,11 @@ services:
     App\Service\StripePaymentLinkService:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+
+    App\Service\StripeWebhookService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+            $stripeWebhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
 
     App\Service\MailjetService:
         arguments:
