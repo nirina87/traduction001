@@ -3,9 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\ClientDocument;
+use App\Entity\ClientDocumentPaymentLink;
 use App\Entity\Order;
+use App\Repository\ClientDocumentPaymentLinkRepository;
 use App\Repository\ClientDocumentRepository;
 use App\Service\MailjetService;
+use App\Service\StripePaymentLinkService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
@@ -39,6 +42,7 @@ class ClientDocumentCrudController extends AbstractCrudController
         private readonly EntityManagerInterface $entityManager,
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly ClientDocumentRepository $clientDocumentRepository,
+        private readonly ClientDocumentPaymentLinkRepository $clientDocumentPaymentLinkRepository,
     ) {
     }
     public static function getEntityFqcn(): string
@@ -74,11 +78,26 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->linkToCrudAction('updateWorkflowStatus')
             ->displayIf(static fn () => false);
 
+        $createPaymentLink = Action::new('createPaymentLink', false)
+            ->linkToCrudAction('createPaymentLink')
+            ->displayIf(static fn () => false);
+
+        $deletePaymentLink = Action::new('deletePaymentLink', false)
+            ->linkToCrudAction('deletePaymentLink')
+            ->displayIf(static fn () => false);
+
+        $sendToClient = Action::new('sendToClient', false)
+            ->linkToCrudAction('sendToClient')
+            ->displayIf(static fn () => false);
+
         return $actions
             ->disable(Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $updatePaymentStatus)
             ->add(Crud::PAGE_INDEX, $updateWorkflowStatus)
+            ->add(Crud::PAGE_DETAIL, $createPaymentLink)
+            ->add(Crud::PAGE_DETAIL, $deletePaymentLink)
+            ->add(Crud::PAGE_DETAIL, $sendToClient)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf(static fn () => false))
@@ -298,6 +317,103 @@ class ClientDocumentCrudController extends AbstractCrudController
             'status' => $entity->getWorkflowStatus(),
             'label' => $entity->getWorkflowStatusLabel(),
             'pillClass' => $entity->getWorkflowStatusPillClass(),
+        ]);
+    }
+
+    #[AdminRoute(options: ['methods' => ['POST']])]
+    public function createPaymentLink(
+        AdminContext $context,
+        StripePaymentLinkService $stripePaymentLinkService,
+        MailjetService $mailjetService,
+    ): Response {
+        $entity = $context->getEntity()->getInstance();
+        if (!$entity instanceof ClientDocument) {
+            throw $this->createNotFoundException();
+        }
+
+        if (ClientDocument::STATUS_UNPAID !== $entity->getWorkflowStatus()) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Un lien de paiement ne peut être créé que pour un dossier non payé.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (!$entity->getPaymentLinks()->isEmpty()) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Un lien de paiement existe déjà pour ce dossier.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $clientEmail = $entity->getUser()?->getEmail();
+        if (null === $clientEmail || '' === $clientEmail) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Aucune adresse e-mail client n\'est associée à ce dossier.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $paymentLink = $stripePaymentLinkService->createForClientDocument($entity);
+            $this->entityManager->persist($paymentLink);
+            $this->entityManager->flush();
+            $mailjetService->sendPaymentLinkEmail($entity, $paymentLink);
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $e->getMessage() ?: 'Impossible de créer ou d\'envoyer le lien de paiement.',
+            ], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => sprintf('Le lien de paiement a été créé et envoyé à %s.', $clientEmail),
+            'paymentLink' => [
+                'id' => $paymentLink->getId(),
+                'url' => $paymentLink->getUrl(),
+                'amountCents' => $paymentLink->getAmountCents(),
+                'amountLabel' => number_format($paymentLink->getAmountCents() / 100, 2, ',', ' ') . ' €',
+                'currency' => $paymentLink->getCurrency(),
+                'createdAt' => $paymentLink->getCreatedAt()?->format('d/m/Y à H:i'),
+            ],
+        ]);
+    }
+
+    #[AdminRoute(options: ['methods' => ['POST']])]
+    public function deletePaymentLink(AdminContext $context, StripePaymentLinkService $stripePaymentLinkService): Response
+    {
+        $entity = $context->getEntity()->getInstance();
+        if (!$entity instanceof ClientDocument) {
+            throw $this->createNotFoundException();
+        }
+
+        $paymentLinkId = (int) $context->getRequest()->request->get('paymentLinkId', 0);
+        if ($paymentLinkId <= 0) {
+            return new JsonResponse(['success' => false, 'message' => 'Lien de paiement invalide.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $paymentLink = $this->clientDocumentPaymentLinkRepository->find($paymentLinkId);
+        if (
+            !$paymentLink instanceof ClientDocumentPaymentLink
+            || $paymentLink->getClientDocument()?->getId() !== $entity->getId()
+        ) {
+            return new JsonResponse(['success' => false, 'message' => 'Lien de paiement introuvable.'], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $stripePaymentLinkService->deactivate($paymentLink);
+            $this->entityManager->remove($paymentLink);
+            $this->entityManager->flush();
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $e->getMessage() ?: 'Impossible de supprimer le lien de paiement.',
+            ], Response::HTTP_BAD_GATEWAY);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Le lien de paiement a été supprimé.',
         ]);
     }
 

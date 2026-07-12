@@ -18,6 +18,12 @@ parameters:
     app.mailjet.document_traduit_cc_emails:
         - 'info@traductions-legales.fr'
 
+    app.mailjet.payment_link_cc_emails:
+        - 'info@traductions-legales.fr'
+
+    app.mailjet.credentials_cc_emails:
+        - 'info@traductions-legales.fr'
+
     env(STRIPE_SECRET_KEY): ''
     env(STRIPE_PUBLIC_KEY): ''
     env(MAILJET_API_KEY): ''
@@ -27,6 +33,7 @@ parameters:
     env(MAILJET_TEMPLATE_CONTACT_ID): '8148551'
     env(MAILJET_TEMPLATE_TRAITEMENT_ID): '8148687'
     env(MAILJET_TEMPLATE_DOCUMENT_TRADUIT_ID): '8186658'
+    env(MAILJET_TEMPLATE_PAYMENT_LINK_ID): '0'
     env(MAILJET_SENDER_EMAIL): 'contact@traductions-legales.fr'
     env(MAILJET_TRAITEMENT_EMAIL): 'traitement@traductions-legales.fr'
     env(MAILJET_SUPPORT_EMAIL): 'support@traduction-legale.fr'
@@ -50,6 +57,10 @@ services:
         arguments:
             $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
 
+    App\Service\StripePaymentLinkService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
+
     App\Service\MailjetService:
         arguments:
             $apiKey: '%env(MAILJET_API_KEY)%'
@@ -59,12 +70,15 @@ services:
             $contactTemplateId: '%env(int:MAILJET_TEMPLATE_CONTACT_ID)%'
             $processingTemplateId: '%env(int:MAILJET_TEMPLATE_TRAITEMENT_ID)%'
             $translatedDocumentTemplateId: '%env(int:MAILJET_TEMPLATE_DOCUMENT_TRADUIT_ID)%'
+            $paymentLinkTemplateId: '%env(int:MAILJET_TEMPLATE_PAYMENT_LINK_ID)%'
             $senderEmail: '%env(MAILJET_SENDER_EMAIL)%'
             $supportEmail: '%env(MAILJET_SUPPORT_EMAIL)%'
             $processingEmail: '%env(MAILJET_TRAITEMENT_EMAIL)%'
             $contactCcEmails: '%app.mailjet.contact_cc_emails%'
             $processingCcEmails: '%app.mailjet.traitement_cc_emails%'
             $translatedDocumentCcEmails: '%app.mailjet.document_traduit_cc_emails%'
+            $paymentLinkCcEmails: '%app.mailjet.payment_link_cc_emails%'
+            $credentialsCcEmails: '%app.mailjet.credentials_cc_emails%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\ClientDocument;
+use App\Entity\ClientDocumentPaymentLink;
 use App\Entity\Order;
 use App\Entity\User;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -21,12 +22,15 @@ class MailjetService
         private readonly int $contactTemplateId,
         private readonly int $processingTemplateId,
         private readonly int $translatedDocumentTemplateId,
+        private readonly int $paymentLinkTemplateId,
         private readonly string $senderEmail,
         private readonly string $supportEmail,
         private readonly string $processingEmail,
         private readonly array $contactCcEmails,
         private readonly array $processingCcEmails,
         private readonly array $translatedDocumentCcEmails,
+        private readonly array $paymentLinkCcEmails,
+        private readonly array $credentialsCcEmails,
     ) {
     }
 
@@ -62,6 +66,8 @@ class MailjetService
             (string) $user->getEmail(),
             $this->credentialsTemplateId,
             $this->sanitizeTemplateVariables($this->buildAccountCredentialsVariables($user, $plainPassword)),
+            copySupport: false,
+            ccEmails: $this->credentialsCcEmails,
         );
     }
 
@@ -114,6 +120,35 @@ class MailjetService
             $this->sanitizeTemplateVariables($this->buildTranslatedDocumentVariables($document, $siteBaseUrl)),
             copySupport: false,
             ccEmails: $this->translatedDocumentCcEmails,
+            throwOnFailure: true,
+        );
+    }
+
+    public function sendPaymentLinkEmail(ClientDocument $document, ClientDocumentPaymentLink $paymentLink): void
+    {
+        if ('' === $this->apiKey || '' === $this->apiSecret) {
+            throw new \RuntimeException('La configuration Mailjet est incomplète.');
+        }
+
+        if (0 === $this->paymentLinkTemplateId) {
+            throw new \RuntimeException('Le modèle Mailjet du lien de paiement n\'est pas configuré.');
+        }
+
+        $user = $document->getUser();
+        if (!$user?->getEmail()) {
+            throw new \RuntimeException('Aucune adresse e-mail client n\'est associée à ce dossier.');
+        }
+
+        if (null === $paymentLink->getUrl() || '' === $paymentLink->getUrl()) {
+            throw new \RuntimeException('Aucun lien de paiement n\'est disponible pour ce dossier.');
+        }
+
+        $this->sendTemplateEmail(
+            (string) $user->getEmail(),
+            $this->paymentLinkTemplateId,
+            $this->sanitizeTemplateVariables($this->buildPaymentLinkVariables($document, $paymentLink)),
+            copySupport: false,
+            ccEmails: $this->paymentLinkCcEmails,
             throwOnFailure: true,
         );
     }
@@ -296,9 +331,6 @@ class MailjetService
     /**
      * @return array<string, string>
      */
-    /**
-     * @return array<string, string>
-     */
     private function buildTranslatedDocumentVariables(ClientDocument $document, string $siteBaseUrl): array
     {
         $user = $document->getUser();
@@ -319,6 +351,33 @@ class MailjetService
             'mode_livraison' => $document->getReceiveByPaperLabel(),
             'date_livraison' => $this->formatDocumentDeliveryDate($document),
             'lien_telechargement' => $downloadUrl,
+            'note_livraison' => $this->buildPaperDeliveryNoteHtml($document),
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function buildPaymentLinkVariables(ClientDocument $document, ClientDocumentPaymentLink $paymentLink): array
+    {
+        $user = $document->getUser();
+        $amountEuros = $paymentLink->getAmountCents() / 100;
+
+        return [
+            'email' => (string) $user?->getEmail(),
+            'prenom' => (string) $user?->getFirstName(),
+            'nom' => (string) $user?->getLastName(),
+            'numero_dossier' => sprintf('DC-%04d', $document->getId() ?? 0),
+            'titre_document' => (string) $document->getTitle(),
+            'type_document' => (string) ($document->getDocument()?->getName() ?? '—'),
+            'langue' => (string) ($document->getLanguage() ?? '—'),
+            'nombre_pages' => (string) $document->getPageCount(),
+            'mode_livraison' => $document->getReceiveByPaperLabel(),
+            'montant_total' => (string) $paymentLink->getAmountCents(),
+            'montant_total_affiche' => $this->formatMoney($amountEuros),
+            'devise' => (string) $paymentLink->getCurrency(),
+            'date_demande' => $this->formatPaymentLinkDate($paymentLink),
+            'lien_paiement' => (string) $paymentLink->getUrl(),
             'note_livraison' => $this->buildPaperDeliveryNoteHtml($document),
         ];
     }
@@ -421,6 +480,24 @@ class MailjetService
         }
 
         return $uploadedAt->format('d/m/Y');
+    }
+
+    private function formatPaymentLinkDate(ClientDocumentPaymentLink $paymentLink): string
+    {
+        $createdAt = $paymentLink->getCreatedAt();
+        if (!$createdAt) {
+            return '';
+        }
+
+        if (class_exists(\IntlDateFormatter::class)) {
+            $formatter = new \IntlDateFormatter('fr_FR', \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);
+            $formatted = $formatter->format($createdAt);
+            if (false !== $formatted) {
+                return $formatted;
+            }
+        }
+
+        return $createdAt->format('d/m/Y');
     }
 
     private function buildPaperDeliveryNoteHtml(ClientDocument $document): string

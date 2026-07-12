@@ -1,0 +1,43 @@
+<div id="doc-payment-link-modal" class="modal fade doc-delete-modal doc-payment-link-modal" tabindex="-1" aria-labelledby="doc-payment-link-modal-heading" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="doc-payment-link-modal-heading">Créer et envoyer le lien de paiement</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p class="doc-payment-link-modal__intro">
+                    Un lien de paiement sécurisé sera généré et envoyé automatiquement par e-mail au client pour régler ce dossier.
+                </p>
+                {% if user and user.email %}
+                    <p class="doc-payment-link-modal__recipient">
+                        Destinataire : <span class="mono">{{ user.email }}</span>
+                    </p>
+                {% endif %}
+                <dl class="doc-payment-link-modal__amount">
+                    <div class="doc-payment-link-modal__amount-row">
+                        <dt>Prix estimé</dt>
+                        <dd class="mono" id="doc-payment-link-modal-amount">{{ (priceCents / 100)|number_format(2, ',', ' ') }} €</dd>
+                    </div>
+                </dl>
+                {% if doc.receiveByPaper %}
+                    <p class="doc-payment-link-modal__hint">
+                        Livraison par courrier incluse (+{{ (constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') / 100)|number_format(0, ',', ' ') }} €).
+                    </p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline btn-sm doc-delete-modal__cancel" data-bs-dismiss="modal">
+                    Annuler
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-sm doc-delete-modal__confirm doc-payment-link-modal__confirm"
+                    id="doc-payment-link-modal-confirm"
+                >
+                    Créer et envoyer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ClientDocumentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -79,9 +81,15 @@ class ClientDocument
     #[Vich\UploadableField(mapping: 'client_translated_documents', fileNameProperty: 'documentTraduit')]
     private ?File $translatedDocumentFile = null;
 
+    /** @var Collection<int, ClientDocumentPaymentLink> */
+    #[ORM\OneToMany(mappedBy: 'clientDocument', targetEntity: ClientDocumentPaymentLink::class, cascade: ['persist'])]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
+    private Collection $paymentLinks;
+
     public function __construct()
     {
         $this->uploadedAt = new \DateTimeImmutable();
+        $this->paymentLinks = new ArrayCollection();
     }
 
     public function getId(): ?int { return $this->id; }
@@ -220,6 +228,24 @@ class ClientDocument
         }
 
         return '/uploads/client-translated-documents/' . $this->documentTraduit;
+    }
+
+    /**
+     * @return Collection<int, ClientDocumentPaymentLink>
+     */
+    public function getPaymentLinks(): Collection
+    {
+        return $this->paymentLinks;
+    }
+
+    public function addPaymentLink(ClientDocumentPaymentLink $paymentLink): static
+    {
+        if (!$this->paymentLinks->contains($paymentLink)) {
+            $this->paymentLinks->add($paymentLink);
+            $paymentLink->setClientDocument($this);
+        }
+
+        return $this;
     }
 
     public function __toString(): string

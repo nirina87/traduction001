@@ -1,0 +1,45 @@
+{% if paymentLinks is not empty %}
+    <div class="doc-payment-link-list">
+        <h3 class="doc-payment-link-list__title">Lien de paiement</h3>
+        <ul class="doc-payment-link-list__items" id="doc-payment-link-items">
+            {% for paymentLink in paymentLinks %}
+                <li class="doc-payment-link-item" data-payment-link-id="{{ paymentLink.id }}">
+                    <div class="doc-payment-link-item__meta">
+                        <span class="doc-payment-link-item__amount mono">{{ (paymentLink.amountCents / 100)|number_format(2, ',', ' ') }} €</span>
+                        <span class="doc-payment-link-item__date">{{ paymentLink.createdAt ? paymentLink.createdAt|date('d/m/Y à H:i') : '—' }}</span>
+                    </div>
+                    <div class="doc-payment-link-item__actions">
+                        <a
+                            class="doc-payment-link-item__url mono"
+                            href="{{ paymentLink.url }}"
+                            target="_blank"
+                            rel="noopener"
+                        >{{ paymentLink.url }}</a>
+                        <button
+                            type="button"
+                            class="btn btn-outline btn-sm doc-payment-link-item__copy"
+                            data-copy-url="{{ paymentLink.url }}"
+                            title="Copier le lien"
+                        >
+                            Copier
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-outline btn-sm doc-payment-link-item__delete"
+                            data-payment-link-id="{{ paymentLink.id }}"
+                            data-delete-url="{{ deletePaymentLinkUrl }}"
+                            title="Supprimer le lien"
+                        >
+                            Supprimer
+                        </button>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="doc-payment-link-list doc-payment-link-list--empty" id="doc-payment-link-list-empty">
+        <p class="doc-payment-link-list__empty">Aucun lien de paiement créé pour ce dossier.</p>
+    </div>
+    <ul class="doc-payment-link-list__items" id="doc-payment-link-items" hidden></ul>
+{% endif %}

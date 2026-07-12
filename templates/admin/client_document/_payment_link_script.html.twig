@@ -1,0 +1,307 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const triggerButton = document.getElementById('doc-payment-link-button');
+    const createSection = document.getElementById('doc-payment-link-create');
+    const modalElement = document.getElementById('doc-payment-link-modal');
+    const confirmButton = document.getElementById('doc-payment-link-modal-confirm');
+    const deleteModalElement = document.getElementById('doc-payment-link-delete-modal');
+    const deleteConfirmButton = document.getElementById('doc-payment-link-delete-modal-confirm');
+    const listContainer = document.getElementById('doc-payment-link-list');
+    const deletePaymentLinkUrl = listContainer ? (listContainer.dataset.deleteUrl || '') : '';
+
+    if (!listContainer || typeof bootstrap === 'undefined') {
+        return;
+    }
+
+    let modal = null;
+    let deleteModal = null;
+    let createUrl = triggerButton ? (triggerButton.dataset.url || '') : '';
+    let pendingDelete = null;
+
+    if (modalElement && confirmButton) {
+        modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    }
+
+    if (deleteModalElement && deleteConfirmButton) {
+        deleteModal = bootstrap.Modal.getOrCreateInstance(deleteModalElement);
+
+        deleteConfirmButton.addEventListener('click', async function () {
+            if (!pendingDelete || deleteConfirmButton.disabled) {
+                return;
+            }
+
+            const { paymentLinkId, url, triggerButton: deleteTriggerButton } = pendingDelete;
+            deleteConfirmButton.disabled = true;
+            deleteConfirmButton.textContent = 'Suppression…';
+
+            if (deleteTriggerButton) {
+                deleteTriggerButton.disabled = true;
+            }
+
+            try {
+                const entityId = listContainer.dataset.entityId || '';
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new URLSearchParams({
+                        paymentLinkId: paymentLinkId,
+                        entityId: entityId,
+                    }),
+                });
+
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Réponse serveur invalide. Vérifiez l\'URL de suppression du lien.');
+                }
+
+                const payload = await response.json();
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Impossible de supprimer le lien de paiement.');
+                }
+
+                deleteModal.hide();
+                pendingDelete = null;
+                removePaymentLinks();
+                showCreateSection();
+                window.alert(payload.message || 'Le lien de paiement a été supprimé.');
+            } catch (error) {
+                window.alert(error.message || 'Impossible de supprimer le lien de paiement.');
+                if (deleteTriggerButton) {
+                    deleteTriggerButton.disabled = false;
+                }
+            } finally {
+                deleteConfirmButton.disabled = false;
+                deleteConfirmButton.textContent = 'Valider la suppression';
+            }
+        });
+
+        deleteModalElement.addEventListener('hidden.bs.modal', function () {
+            pendingDelete = null;
+            deleteConfirmButton.disabled = false;
+            deleteConfirmButton.textContent = 'Valider la suppression';
+        });
+    }
+
+    if (triggerButton && modal && confirmButton) {
+        triggerButton.addEventListener('click', function () {
+            createUrl = triggerButton.dataset.url || '';
+            confirmButton.disabled = false;
+            confirmButton.textContent = 'Créer et envoyer';
+            modal.show();
+        });
+
+        confirmButton.addEventListener('click', async function () {
+            if (!createUrl || confirmButton.disabled) {
+                return;
+            }
+
+            confirmButton.disabled = true;
+            confirmButton.textContent = 'Création et envoi en cours…';
+
+            try {
+                const entityId = listContainer.dataset.entityId || '';
+                const response = await fetch(createUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new URLSearchParams(entityId ? { entityId: entityId } : {}),
+                });
+
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.includes('application/json')) {
+                    throw new Error('Réponse serveur invalide. Vérifiez l\'URL de suppression du lien.');
+                }
+
+                const payload = await response.json();
+                if (!response.ok || !payload.success) {
+                    throw new Error(payload.message || 'Impossible de créer le lien de paiement.');
+                }
+
+                modal.hide();
+                appendPaymentLink(payload.paymentLink);
+                hideCreateSection();
+                bindItemActions(listContainer);
+                window.alert(payload.message || 'Le lien de paiement a été créé et envoyé au client.');
+            } catch (error) {
+                window.alert(error.message || 'Impossible de créer ou d\'envoyer le lien de paiement.');
+            } finally {
+                confirmButton.disabled = false;
+                confirmButton.textContent = 'Créer et envoyer';
+            }
+        });
+    }
+
+    bindItemActions(listContainer);
+
+    function appendPaymentLink(paymentLink) {
+        if (!paymentLink || !paymentLink.url) {
+            return;
+        }
+
+        const emptyState = document.getElementById('doc-payment-link-list-empty');
+        if (emptyState) {
+            emptyState.remove();
+        }
+
+        let itemsList = document.getElementById('doc-payment-link-items');
+        if (!itemsList) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'doc-payment-link-list';
+            wrapper.innerHTML = '<h3 class="doc-payment-link-list__title">Lien de paiement</h3>';
+            itemsList = document.createElement('ul');
+            itemsList.className = 'doc-payment-link-list__items';
+            itemsList.id = 'doc-payment-link-items';
+            wrapper.appendChild(itemsList);
+            listContainer.appendChild(wrapper);
+        } else {
+            itemsList.hidden = false;
+            if (!itemsList.closest('.doc-payment-link-list')) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'doc-payment-link-list';
+                wrapper.innerHTML = '<h3 class="doc-payment-link-list__title">Lien de paiement</h3>';
+                itemsList.parentNode.insertBefore(wrapper, itemsList);
+                wrapper.appendChild(itemsList);
+            }
+        }
+
+        const deleteUrl = listContainer.dataset.deleteUrl || deletePaymentLinkUrl;
+        const item = document.createElement('li');
+        item.className = 'doc-payment-link-item';
+        if (paymentLink.id) {
+            item.dataset.paymentLinkId = String(paymentLink.id);
+        }
+
+        item.innerHTML = ''
+            + '<div class="doc-payment-link-item__meta">'
+            + '<span class="doc-payment-link-item__amount mono">' + escapeHtml(paymentLink.amountLabel || '') + '</span>'
+            + '<span class="doc-payment-link-item__date">' + escapeHtml(paymentLink.createdAt || '—') + '</span>'
+            + '</div>'
+            + '<div class="doc-payment-link-item__actions">'
+            + '<a class="doc-payment-link-item__url mono" href="' + escapeHtml(paymentLink.url) + '" target="_blank" rel="noopener">'
+            + escapeHtml(paymentLink.url)
+            + '</a>'
+            + '<button type="button" class="btn btn-outline btn-sm doc-payment-link-item__copy" data-copy-url="'
+            + escapeHtml(paymentLink.url)
+            + '" title="Copier le lien">Copier</button>'
+            + '<button type="button" class="btn btn-outline btn-sm doc-payment-link-item__delete" data-payment-link-id="'
+            + escapeHtml(paymentLink.id || '')
+            + '" data-delete-url="' + escapeHtml(deleteUrl)
+            + '" title="Supprimer le lien">Supprimer</button>'
+            + '</div>';
+
+        itemsList.replaceChildren(item);
+    }
+
+    function bindItemActions(root) {
+        bindCopyButtons(root);
+        bindDeleteButtons(root);
+    }
+
+    function bindCopyButtons(root) {
+        if (!root) {
+            return;
+        }
+
+        root.querySelectorAll('.doc-payment-link-item__copy').forEach(function (button) {
+            if (button.dataset.copyBound === '1') {
+                return;
+            }
+
+            button.dataset.copyBound = '1';
+            button.addEventListener('click', async function () {
+                const url = button.dataset.copyUrl || '';
+                if (!url) {
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(url);
+                    const previousLabel = button.textContent;
+                    button.textContent = 'Copié';
+                    window.setTimeout(function () {
+                        button.textContent = previousLabel;
+                    }, 1500);
+                } catch (error) {
+                    window.alert('Impossible de copier le lien dans le presse-papiers.');
+                }
+            });
+        });
+    }
+
+    function bindDeleteButtons(root) {
+        if (!root) {
+            return;
+        }
+
+        root.querySelectorAll('.doc-payment-link-item__delete').forEach(function (button) {
+            if (button.dataset.deleteBound === '1') {
+                return;
+            }
+
+            button.dataset.deleteBound = '1';
+            button.addEventListener('click', function () {
+                const paymentLinkId = button.dataset.paymentLinkId || '';
+                const url = button.dataset.deleteUrl || listContainer.dataset.deleteUrl || '';
+                if (!paymentLinkId || !url || button.disabled || !deleteModal) {
+                    return;
+                }
+
+                pendingDelete = {
+                    paymentLinkId: paymentLinkId,
+                    url: url,
+                    triggerButton: button,
+                };
+                deleteModal.show();
+            });
+        });
+    }
+
+    function hideCreateSection() {
+        if (createSection) {
+            createSection.hidden = true;
+        }
+    }
+
+    function showCreateSection() {
+        if (createSection) {
+            createSection.hidden = false;
+        }
+    }
+
+    function removePaymentLinks() {
+        const itemsList = document.getElementById('doc-payment-link-items');
+        const listWrapper = itemsList ? itemsList.closest('.doc-payment-link-list') : null;
+        if (listWrapper) {
+            listWrapper.remove();
+        }
+
+        if (!document.getElementById('doc-payment-link-list-empty')) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'doc-payment-link-list doc-payment-link-list--empty';
+            emptyState.id = 'doc-payment-link-list-empty';
+            emptyState.innerHTML = '<p class="doc-payment-link-list__empty">Aucun lien de paiement créé pour ce dossier.</p>';
+            listContainer.appendChild(emptyState);
+        }
+
+        const hiddenList = document.getElementById('doc-payment-link-items');
+        if (hiddenList) {
+            hiddenList.hidden = true;
+            hiddenList.replaceChildren();
+        }
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+});
+</script>

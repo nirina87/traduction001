@@ -172,6 +172,46 @@
         </section>
     </div>
 
+    {% if doc.workflowStatus == constant('App\\Entity\\ClientDocument::STATUS_UNPAID') %}
+        {% set createPaymentLinkUrl = path('admin_client_document_create_payment_link', { entityId: doc.id }) %}
+        {% set deletePaymentLinkUrl = path('admin_client_document_delete_payment_link', { entityId: doc.id }) %}
+        <section class="admin-panel doc-payment-link-panel">
+            <div class="admin-panel-head">
+                <h2>Envoyer un lien de paiement</h2>
+            </div>
+            <div
+                class="doc-payment-link-panel__body"
+                id="doc-payment-link-create"
+                {% if doc.paymentLinks is not empty %}hidden{% endif %}
+            >
+                <p class="doc-payment-link-panel__desc">
+                    Ce dossier est en attente de règlement. Créez un lien de paiement et envoyez-le automatiquement au client
+                    pour un montant de <strong class="mono">{{ (priceCents / 100)|number_format(2, ',', ' ') }} €</strong>.
+                </p>
+                <button
+                    type="button"
+                    class="btn btn-sm doc-payment-link-panel__button"
+                    id="doc-payment-link-button"
+                    data-amount-cents="{{ priceCents }}"
+                    data-url="{{ createPaymentLinkUrl }}"
+                    data-client-email="{{ doc.user ? doc.user.email : '' }}"
+                >
+                    Créer le lien de paiement et envoyer au client
+                </button>
+            </div>
+            <div
+                id="doc-payment-link-list"
+                data-delete-url="{{ deletePaymentLinkUrl }}"
+                data-entity-id="{{ doc.id }}"
+            >
+                {% include 'admin/client_document/_payment_link_list.html.twig' with {
+                    paymentLinks: doc.paymentLinks,
+                    deletePaymentLinkUrl: deletePaymentLinkUrl,
+                } %}
+            </div>
+        </section>
+    {% endif %}
+
     <section class="admin-panel">
         <div class="admin-panel-head">
             <h2>Fichiers</h2>
@@ -270,6 +310,10 @@
 
 {% include 'admin/client_document/_delete_confirmation_modal.html.twig' %}
 {% include 'admin/client_document/_send_to_client_modal.html.twig' %}
+{% if doc.workflowStatus == constant('App\\Entity\\ClientDocument::STATUS_UNPAID') %}
+    {% include 'admin/client_document/_payment_link_modal.html.twig' %}
+    {% include 'admin/client_document/_payment_link_delete_modal.html.twig' %}
+{% endif %}
 {% endblock %}
 
 {% block body_javascript %}
@@ -277,4 +321,7 @@
     {% include 'admin/client_document/_workflow_status_script.html.twig' %}
     {% include 'admin/client_document/_payment_status_script.html.twig' %}
     {% include 'admin/client_document/_send_to_client_script.html.twig' %}
+    {% if doc.workflowStatus == constant('App\\Entity\\ClientDocument::STATUS_UNPAID') %}
+        {% include 'admin/client_document/_payment_link_script.html.twig' %}
+    {% endif %}
 {% endblock %}
