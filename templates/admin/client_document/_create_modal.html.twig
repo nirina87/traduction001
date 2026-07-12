@@ -1,0 +1,133 @@
+<div id="doc-create-modal" class="modal fade doc-create-modal" tabindex="-1" aria-labelledby="doc-create-modal-heading" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="doc-create-modal-heading">Nouveau document client</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <form id="doc-create-form" class="doc-create-form" novalidate>
+                <div class="modal-body">
+                    <p class="doc-create-modal__intro">
+                        Créez un dossier client complet : client, type de document, tarification et fichier source.
+                    </p>
+                    <div id="doc-create-form-error" class="doc-create-form__error" hidden role="alert"></div>
+
+                    <fieldset class="doc-create-form__section">
+                        <legend>Client</legend>
+                        <div class="doc-create-form__mode">
+                            <label class="doc-create-form__radio">
+                                <input type="radio" name="userMode" value="new" checked>
+                                <span>Nouveau client</span>
+                            </label>
+                            <label class="doc-create-form__radio">
+                                <input type="radio" name="userMode" value="existing">
+                                <span>Client existant</span>
+                            </label>
+                        </div>
+
+                        <div id="doc-create-user-new" class="doc-create-form__grid">
+                            <div class="doc-create-form__field doc-create-form__field--full">
+                                <label for="doc-create-email">E-mail <span class="required">*</span></label>
+                                <input type="email" id="doc-create-email" name="email" autocomplete="off" required>
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-first-name">Prénom</label>
+                                <input type="text" id="doc-create-first-name" name="firstName" autocomplete="off">
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-last-name">Nom</label>
+                                <input type="text" id="doc-create-last-name" name="lastName" autocomplete="off">
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-company">Organisation</label>
+                                <input type="text" id="doc-create-company" name="company" autocomplete="off">
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-phone">Téléphone</label>
+                                <input type="text" id="doc-create-phone" name="phone" autocomplete="off">
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-password">Mot de passe</label>
+                                <input type="text" id="doc-create-password" name="password" autocomplete="new-password" placeholder="Généré automatiquement si vide">
+                            </div>
+                            <div class="doc-create-form__field doc-create-form__field--full">
+                                <label class="doc-create-form__checkbox">
+                                    <input type="checkbox" id="doc-create-send-credentials" name="sendCredentials" value="1" checked>
+                                    <span>Envoyer les identifiants par e-mail au client</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="doc-create-user-existing" class="doc-create-form__field doc-create-form__field--full" hidden>
+                            <label for="doc-create-existing-user">Client existant <span class="required">*</span></label>
+                            <select id="doc-create-existing-user" name="existingUserId">
+                                <option value="">— Sélectionner un client —</option>
+                                {% for existingUser in existingUsers|default([]) %}
+                                    <option value="{{ existingUser.id }}">
+                                        {{ existingUser.email }}
+                                        {% if existingUser.firstName or existingUser.lastName %}
+                                            — {{ existingUser.firstName }} {{ existingUser.lastName }}
+                                        {% endif %}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="doc-create-form__section">
+                        <legend>Dossier</legend>
+                        <div class="doc-create-form__grid">
+                            <div class="doc-create-form__field doc-create-form__field--full">
+                                <label for="doc-create-document">Type de document <span class="required">*</span></label>
+                                <select id="doc-create-document" name="documentId" required>
+                                    <option value="">— Sélectionner un document —</option>
+                                    {% for document in documentsFormData|default([]) %}
+                                        <option value="{{ document.id }}">{{ document.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="doc-create-form__field doc-create-form__field--full" id="doc-create-language-wrap" hidden>
+                                <label for="doc-create-language">Paire de langues <span class="required">*</span></label>
+                                <select id="doc-create-language" name="language">
+                                    <option value="">— Sélectionner une paire —</option>
+                                </select>
+                            </div>
+                            <div class="doc-create-form__field doc-create-form__field--full">
+                                <label for="doc-create-title">Titre du dossier</label>
+                                <input type="text" id="doc-create-title" name="title" placeholder="Rempli automatiquement depuis le fichier si vide">
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-page-count">Nombre de pages <span class="required">*</span></label>
+                                <input type="number" id="doc-create-page-count" name="pageCount" min="1" max="99" value="1" required>
+                            </div>
+                            <div class="doc-create-form__field">
+                                <label for="doc-create-price">Prix estimé (€) <span class="required">*</span></label>
+                                <input type="number" id="doc-create-price" name="priceEuros" min="0.01" step="0.01" required>
+                                <input type="hidden" id="doc-create-price-cents" name="price">
+                            </div>
+                            <div class="doc-create-form__field doc-create-form__field--full">
+                                <label class="doc-create-form__checkbox">
+                                    <input type="checkbox" id="doc-create-receive-by-paper" name="receiveByPaper" value="1">
+                                    <span>Livraison par courrier (+{{ (constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') / 100)|number_format(0, ',', ' ') }} € inclus dans le prix)</span>
+                                </label>
+                            </div>
+                            <div class="doc-create-form__field doc-create-form__field--full">
+                                <label for="doc-create-file">Fichier source</label>
+                                <input type="file" id="doc-create-file" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                <p class="doc-create-form__hint">PDF, Word ou image. Le nom du fichier peut servir de titre si celui-ci est vide.</p>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline btn-sm doc-create-modal__cancel" data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-sm doc-create-modal__confirm" id="doc-create-submit">
+                        Créer le dossier
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

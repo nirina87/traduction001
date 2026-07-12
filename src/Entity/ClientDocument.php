@@ -75,6 +75,9 @@ class ClientDocument
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $uploadedAt = null;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     #[Vich\UploadableField(mapping: 'client_documents', fileNameProperty: 'fileName')]
     private ?File $file = null;
 
@@ -198,15 +201,31 @@ class ClientDocument
     public function setFileName(?string $fileName): static { $this->fileName = $fileName; return $this; }
     public function getUploadedAt(): ?\DateTimeImmutable { return $this->uploadedAt; }
     public function setUploadedAt(?\DateTimeImmutable $uploadedAt): static { $this->uploadedAt = $uploadedAt; return $this; }
+    public function getUpdatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
     public function getFile(): ?File { return $this->file; }
-    public function setFile(?File $file = null): void { $this->file = $file; if (null !== $file) { $this->uploadedAt = new \DateTimeImmutable(); } }
+    public function setFile(?File $file = null): void
+    {
+        $this->file = $file;
+        if (null !== $file) {
+            $now = new \DateTimeImmutable();
+            $this->uploadedAt = $now;
+            $this->updatedAt = $now;
+        }
+    }
     public function getDocumentTraduit(): ?string { return $this->documentTraduit; }
     public function setDocumentTraduit(?string $documentTraduit): static { $this->documentTraduit = $documentTraduit; return $this; }
     public function getTranslatedDocumentFile(): ?File { return $this->translatedDocumentFile; }
     public function setTranslatedDocumentFile(?File $file = null): void
     {
         $this->translatedDocumentFile = $file;
-        if (null !== $file) {
+        if (null === $file) {
+            return;
+        }
+
+        $this->updatedAt = new \DateTimeImmutable();
+
+        if (!\in_array($this->status, [self::STATUS_TRANSLATION_COMPLETED, self::STATUS_DELIVERED], true)) {
             $this->status = self::STATUS_TRANSLATION_COMPLETED;
         }
     }

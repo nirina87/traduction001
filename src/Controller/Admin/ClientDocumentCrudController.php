@@ -4,9 +4,14 @@ namespace App\Controller\Admin;
 
 use App\Entity\ClientDocument;
 use App\Entity\ClientDocumentPaymentLink;
+use App\Entity\Document;
 use App\Entity\Order;
+use App\Entity\User;
 use App\Repository\ClientDocumentPaymentLinkRepository;
 use App\Repository\ClientDocumentRepository;
+use App\Repository\DocumentRepository;
+use App\Repository\TranslationRateRepository;
+use App\Repository\UserRepository;
 use App\Service\MailjetService;
 use App\Service\StripePaymentLinkService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,8 +37,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class ClientDocumentCrudController extends AbstractCrudController
@@ -43,6 +51,9 @@ class ClientDocumentCrudController extends AbstractCrudController
         private readonly AdminUrlGenerator $adminUrlGenerator,
         private readonly ClientDocumentRepository $clientDocumentRepository,
         private readonly ClientDocumentPaymentLinkRepository $clientDocumentPaymentLinkRepository,
+        private readonly DocumentRepository $documentRepository,
+        private readonly TranslationRateRepository $translationRateRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
     public static function getEntityFqcn(): string
@@ -90,9 +101,14 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->linkToCrudAction('sendToClient')
             ->displayIf(static fn () => false);
 
+        $createFromAdmin = Action::new('createFromAdmin', false)
+            ->linkToCrudAction('createFromAdmin')
+            ->displayIf(static fn () => false);
+
         return $actions
             ->disable(Action::BATCH_DELETE)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->add(Crud::PAGE_INDEX, $createFromAdmin)
             ->add(Crud::PAGE_INDEX, $updatePaymentStatus)
             ->add(Crud::PAGE_INDEX, $updateWorkflowStatus)
             ->add(Crud::PAGE_DETAIL, $createPaymentLink)
@@ -152,6 +168,12 @@ class ClientDocumentCrudController extends AbstractCrudController
     {
         if (Crud::PAGE_INDEX === $responseParameters->get('pageName')) {
             $responseParameters->set('indexStats', $this->clientDocumentRepository->getIndexStats());
+            $responseParameters->set('documentsFormData', $this->buildDocumentsFormData());
+            $responseParameters->set('existingUsers', $this->userRepository->findBy([], ['email' => 'ASC']));
+            $responseParameters->set('createClientDocumentUrl', $this->adminUrlGenerator
+                ->setController(self::class)
+                ->setAction('createFromAdmin')
+                ->generateUrl());
         }
 
         return $responseParameters;
@@ -263,6 +285,39 @@ class ClientDocumentCrudController extends AbstractCrudController
             $order->getTotal(),
             $order->getCreatedAt()?->format('d/m/Y H:i') ?? '—',
         );
+    }
+
+    #[AdminRoute(options: ['methods' => ['POST']])]
+    public function createFromAdmin(
+        AdminContext $context,
+        UserPasswordHasherInterface $passwordHasher,
+        MailjetService $mailjetService,
+    ): Response {
+        $request = $context->getRequest();
+
+        try {
+            $clientDocument = $this->buildClientDocumentFromAdminRequest($request, $passwordHasher, $mailjetService);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (\RuntimeException $e) {
+            return new JsonResponse(['success' => false, 'message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->entityManager->persist($clientDocument);
+        $this->entityManager->flush();
+
+        $detailUrl = $this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::DETAIL)
+            ->setEntityId($clientDocument->getId())
+            ->generateUrl();
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => sprintf('Le dossier DC-%04d a été créé.', $clientDocument->getId()),
+            'redirectUrl' => $detailUrl,
+            'entityId' => $clientDocument->getId(),
+        ]);
     }
 
     #[AdminRoute(options: ['methods' => ['POST']])]
@@ -458,6 +513,151 @@ class ClientDocumentCrudController extends AbstractCrudController
             'label' => $entity->getWorkflowStatusLabel(),
             'pillClass' => $entity->getWorkflowStatusPillClass(),
         ]);
+    }
+
+    /**
+     * @return list<array{
+     *     id: int,
+     *     name: string,
+     *     hasLanguagePairs: bool,
+     *     basePriceCents: int,
+     *     languagePairs: list<array{value: string, priceCents: int}>
+     * }>
+     */
+    private function buildDocumentsFormData(): array
+    {
+        $data = [];
+
+        foreach ($this->documentRepository->findBy(['active' => true], ['name' => 'ASC']) as $document) {
+            $id = $document->getId();
+            if (null === $id) {
+                continue;
+            }
+
+            $languagePairs = [];
+            foreach ($this->translationRateRepository->findActiveByDocument($document) as $rate) {
+                $languagePairs[] = [
+                    'value' => $rate->getLanguagePair(),
+                    'priceCents' => $rate->getPrice(),
+                ];
+            }
+
+            $data[] = [
+                'id' => $id,
+                'name' => (string) $document->getName(),
+                'hasLanguagePairs' => [] !== $languagePairs,
+                'basePriceCents' => ((int) ($document->getBasePrice() ?? 0)) * 100,
+                'languagePairs' => $languagePairs,
+            ];
+        }
+
+        return $data;
+    }
+
+    private function buildClientDocumentFromAdminRequest(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        MailjetService $mailjetService,
+    ): ClientDocument {
+        $userMode = (string) $request->request->get('userMode', 'new');
+        if (!\in_array($userMode, ['new', 'existing'], true)) {
+            throw new \InvalidArgumentException('Mode client invalide.');
+        }
+
+        $documentId = (int) $request->request->get('documentId', 0);
+        $document = $this->documentRepository->find($documentId);
+        if (!$document instanceof Document) {
+            throw new \InvalidArgumentException('Veuillez sélectionner un type de document valide.');
+        }
+
+        $languagePairs = $this->translationRateRepository->findActiveByDocument($document);
+        $hasLanguagePairs = [] !== $languagePairs;
+        $language = trim((string) $request->request->get('language', ''));
+
+        if ($hasLanguagePairs && '' === $language) {
+            throw new \InvalidArgumentException('Veuillez sélectionner une paire de langues.');
+        }
+
+        if ($hasLanguagePairs && null === $this->translationRateRepository->findActiveForDocumentAndPair($document, $language)) {
+            throw new \InvalidArgumentException('La paire de langues sélectionnée est invalide.');
+        }
+
+        if ('existing' === $userMode) {
+            $existingUserId = (int) $request->request->get('existingUserId', 0);
+            $user = $this->userRepository->find($existingUserId);
+            if (!$user instanceof User) {
+                throw new \InvalidArgumentException('Veuillez sélectionner un client existant.');
+            }
+        } else {
+            $email = mb_strtolower(trim((string) $request->request->get('email', '')));
+            if (!filter_var($email, \FILTER_VALIDATE_EMAIL)) {
+                throw new \InvalidArgumentException('Veuillez fournir une adresse e-mail valide.');
+            }
+
+            $existingUser = $this->userRepository->findOneBy(['email' => $email]);
+            if ($existingUser instanceof User) {
+                throw new \InvalidArgumentException('Cet e-mail est déjà utilisé. Sélectionnez le client existant.');
+            }
+
+            $plainPassword = (string) $request->request->get('password', '');
+            if ('' === $plainPassword) {
+                $plainPassword = bin2hex(random_bytes(8));
+            } elseif (strlen($plainPassword) < 8) {
+                throw new \InvalidArgumentException('Le mot de passe doit contenir au moins 8 caractères.');
+            }
+
+            $user = new User();
+            $user->setEmail($email);
+            $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            $user->setFirstName(trim((string) $request->request->get('firstName', '')) ?: null);
+            $user->setLastName(trim((string) $request->request->get('lastName', '')) ?: null);
+            $user->setCompany(trim((string) $request->request->get('company', '')) ?: null);
+            $user->setPhone(trim((string) $request->request->get('phone', '')) ?: null);
+            $this->entityManager->persist($user);
+
+            if ($request->request->getBoolean('sendCredentials')) {
+                try {
+                    $mailjetService->sendAccountCredentialsEmail($user, $plainPassword);
+                } catch (\Throwable) {
+                    throw new \RuntimeException('Le client a été préparé mais l\'envoi des identifiants par e-mail a échoué.');
+                }
+            }
+        }
+
+        $pageCount = max(1, min(99, (int) $request->request->get('pageCount', 1)));
+        $receiveByPaper = $request->request->getBoolean('receiveByPaper');
+        $priceCents = (int) $request->request->get('price', 0);
+        if ($priceCents <= 0) {
+            throw new \InvalidArgumentException('Veuillez indiquer un prix estimé valide.');
+        }
+
+        $title = trim((string) $request->request->get('title', ''));
+        $uploadedFile = $request->files->get('file');
+        if ($uploadedFile instanceof UploadedFile && $uploadedFile->isValid()) {
+            if ('' === $title) {
+                $title = $uploadedFile->getClientOriginalName();
+            }
+        }
+
+        if ('' === $title) {
+            throw new \InvalidArgumentException('Veuillez indiquer un titre ou joindre un fichier source.');
+        }
+
+        $clientDocument = new ClientDocument();
+        $clientDocument->setUser($user);
+        $clientDocument->setDocument($document);
+        $clientDocument->setTitle($title);
+        $clientDocument->setLanguage($hasLanguagePairs ? $language : null);
+        $clientDocument->setPageCount($pageCount);
+        $clientDocument->setPrice($priceCents);
+        $clientDocument->setReceiveByPaper($receiveByPaper);
+        $clientDocument->setStatus(ClientDocument::STATUS_UNPAID);
+
+        if ($uploadedFile instanceof UploadedFile && $uploadedFile->isValid()) {
+            $clientDocument->setFile($uploadedFile);
+        }
+
+        return $clientDocument;
     }
 
     private function applyWorkflowStatus(ClientDocument $document, string $status): void

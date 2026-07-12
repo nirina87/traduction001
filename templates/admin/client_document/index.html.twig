@@ -30,6 +30,16 @@
             <h1>Documents clients</h1>
             <p class="subtitle">Gestion des dossiers — {{ stats.total }} document{{ stats.total > 1 ? 's' : '' }} au total</p>
         </div>
+        <div class="admin-topbar-actions">
+            <button
+                type="button"
+                class="btn btn-sm doc-create-button"
+                id="doc-create-button"
+                data-url="{{ createClientDocumentUrl|default('') }}"
+            >
+                + Nouveau dossier
+            </button>
+        </div>
     </div>
 
     <div class="kpi-grid">
@@ -66,9 +76,12 @@
     </section>
 
 </div>
+
+{% include 'admin/client_document/_create_modal.html.twig' %}
 {% endblock %}
 
 {% block body_javascript %}
     {{ parent() }}
     {% include 'admin/client_document/_workflow_status_script.html.twig' %}
+    {% include 'admin/client_document/_create_script.html.twig' %}
 {% endblock %}

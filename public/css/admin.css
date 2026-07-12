@@ -2426,3 +2426,192 @@ body.page-contact-index .content-top {
         padding-inline: 16px;
     }
 }
+
+/* =========================================================
+   Document client — création depuis la liste
+   ========================================================= */
+
+.admin-doc-index .admin-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-doc-index .doc-create-button {
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+    padding: 10px 16px;
+}
+
+.admin-doc-index .doc-create-button:hover {
+    background: #0a1a38;
+    border-color: #0a1a38;
+    color: var(--paper);
+}
+
+.doc-create-modal .modal-content {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.14);
+}
+
+.doc-create-modal .modal-header,
+.doc-create-modal .modal-footer {
+    padding: 18px 24px;
+    border-color: var(--line);
+}
+
+.doc-create-modal .modal-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+}
+
+.doc-create-modal .modal-body {
+    padding: 0 24px 24px;
+}
+
+.doc-create-modal__intro {
+    margin: 0 0 20px;
+    color: var(--slate);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.doc-create-form__error {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid rgba(185, 28, 28, 0.25);
+    background: rgba(254, 226, 226, 0.55);
+    color: #991b1b;
+    font-size: 14px;
+}
+
+.doc-create-form__section {
+    margin: 0 0 22px;
+    padding: 0;
+    border: 0;
+}
+
+.doc-create-form__section legend {
+    width: 100%;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+}
+
+.doc-create-form__mode {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.doc-create-form__radio,
+.doc-create-form__checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.doc-create-form__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+}
+
+.doc-create-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.doc-create-form__field--full {
+    grid-column: 1 / -1;
+}
+
+.doc-create-form__field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.doc-create-form__field .required {
+    color: #b45309;
+}
+
+.doc-create-form__field input[type="text"],
+.doc-create-form__field input[type="email"],
+.doc-create-form__field input[type="number"],
+.doc-create-form__field input[type="file"],
+.doc-create-form__field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #FAF9F4;
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.doc-create-form__field input:focus,
+.doc-create-form__field select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(169, 129, 46, 0.15);
+}
+
+.doc-create-form__hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--slate-faint);
+    line-height: 1.45;
+}
+
+.doc-create-modal__cancel {
+    border-color: var(--line);
+    color: var(--slate);
+}
+
+.doc-create-modal__confirm {
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+}
+
+.doc-create-modal__confirm:hover:not(:disabled) {
+    background: #0a1a38;
+    border-color: #0a1a38;
+    color: var(--paper);
+}
+
+.doc-create-modal__confirm:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .admin-doc-index .admin-topbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-doc-index .doc-create-button {
+        width: 100%;
+    }
+
+    .doc-create-form__grid {
+        grid-template-columns: 1fr;
+    }
+}

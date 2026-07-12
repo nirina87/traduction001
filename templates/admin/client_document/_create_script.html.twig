@@ -1,0 +1,284 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const triggerButton = document.getElementById('doc-create-button');
+    const modalElement = document.getElementById('doc-create-modal');
+    const form = document.getElementById('doc-create-form');
+    const submitButton = document.getElementById('doc-create-submit');
+    const errorBox = document.getElementById('doc-create-form-error');
+    const userModeInputs = form ? form.querySelectorAll('input[name="userMode"]') : [];
+    const userNewSection = document.getElementById('doc-create-user-new');
+    const userExistingSection = document.getElementById('doc-create-user-existing');
+    const documentSelect = document.getElementById('doc-create-document');
+    const languageWrap = document.getElementById('doc-create-language-wrap');
+    const languageSelect = document.getElementById('doc-create-language');
+    const pageCountInput = document.getElementById('doc-create-page-count');
+    const receiveByPaperInput = document.getElementById('doc-create-receive-by-paper');
+    const priceEurosInput = document.getElementById('doc-create-price');
+    const priceCentsInput = document.getElementById('doc-create-price-cents');
+    const fileInput = document.getElementById('doc-create-file');
+    const titleInput = document.getElementById('doc-create-title');
+
+    const createUrl = triggerButton ? (triggerButton.dataset.url || '') : '';
+    const documentsData = {{ documentsFormData|default([])|json_encode|raw }};
+    const paperSurchargeCents = {{ constant('App\\Entity\\ClientDocument::PAPER_DELIVERY_SURCHARGE_CENTS') }};
+    let priceManuallyEdited = false;
+
+    if (!triggerButton || !modalElement || !form || typeof bootstrap === 'undefined') {
+        return;
+    }
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    const documentsById = Object.fromEntries(documentsData.map(function (document) {
+        return [String(document.id), document];
+    }));
+
+    function showError(message) {
+        if (!errorBox) {
+            window.alert(message);
+            return;
+        }
+
+        errorBox.textContent = message;
+        errorBox.hidden = false;
+    }
+
+    function clearError() {
+        if (!errorBox) {
+            return;
+        }
+
+        errorBox.textContent = '';
+        errorBox.hidden = true;
+    }
+
+    function getSelectedDocument() {
+        if (!documentSelect) {
+            return null;
+        }
+
+        return documentsById[documentSelect.value] || null;
+    }
+
+    function getUnitPriceCents(documentData) {
+        if (!documentData) {
+            return 0;
+        }
+
+        if (documentData.hasLanguagePairs) {
+            const selectedPair = languageSelect ? languageSelect.value : '';
+            const pair = documentData.languagePairs.find(function (item) {
+                return item.value === selectedPair;
+            });
+
+            return pair ? pair.priceCents : 0;
+        }
+
+        return documentData.basePriceCents || 0;
+    }
+
+    function updateLanguageOptions() {
+        const documentData = getSelectedDocument();
+        if (!languageSelect || !languageWrap) {
+            return;
+        }
+
+        languageSelect.innerHTML = '<option value="">— Sélectionner une paire —</option>';
+
+        if (!documentData || !documentData.hasLanguagePairs) {
+            languageWrap.hidden = true;
+            languageSelect.required = false;
+            return;
+        }
+
+        languageWrap.hidden = false;
+        languageSelect.required = true;
+
+        documentData.languagePairs.forEach(function (pair) {
+            const option = document.createElement('option');
+            option.value = pair.value;
+            option.textContent = pair.value + ' — ' + (pair.priceCents / 100).toLocaleString('fr-FR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }) + ' € / page';
+            languageSelect.appendChild(option);
+        });
+    }
+
+    function updateSuggestedPrice() {
+        if (!priceEurosInput || !priceCentsInput || priceManuallyEdited) {
+            return;
+        }
+
+        const documentData = getSelectedDocument();
+        const pageCount = Math.max(1, Math.min(99, parseInt(pageCountInput ? pageCountInput.value : '1', 10) || 1));
+        const unitPriceCents = getUnitPriceCents(documentData);
+        let totalCents = unitPriceCents * pageCount;
+
+        if (receiveByPaperInput && receiveByPaperInput.checked) {
+            totalCents += paperSurchargeCents;
+        }
+
+        priceCentsInput.value = String(totalCents);
+        priceEurosInput.value = totalCents > 0
+            ? (totalCents / 100).toFixed(2)
+            : '';
+    }
+
+    function syncPriceCentsFromEuros() {
+        if (!priceEurosInput || !priceCentsInput) {
+            return;
+        }
+
+        const euros = parseFloat(priceEurosInput.value.replace(',', '.'));
+        if (Number.isFinite(euros) && euros > 0) {
+            priceCentsInput.value = String(Math.round(euros * 100));
+        } else {
+            priceCentsInput.value = '';
+        }
+    }
+
+    function toggleUserSections() {
+        const mode = form.querySelector('input[name="userMode"]:checked');
+        const isExisting = mode && mode.value === 'existing';
+
+        if (userNewSection) {
+            userNewSection.hidden = isExisting;
+        }
+
+        if (userExistingSection) {
+            userExistingSection.hidden = !isExisting;
+        }
+
+        form.querySelectorAll('#doc-create-user-new [required]').forEach(function (field) {
+            field.required = !isExisting;
+        });
+
+        const existingUserSelect = document.getElementById('doc-create-existing-user');
+        if (existingUserSelect) {
+            existingUserSelect.required = !!isExisting;
+        }
+    }
+
+    function resetForm() {
+        form.reset();
+        clearError();
+        priceManuallyEdited = false;
+        toggleUserSections();
+        updateLanguageOptions();
+        updateSuggestedPrice();
+
+        const sendCredentials = document.getElementById('doc-create-send-credentials');
+        if (sendCredentials) {
+            sendCredentials.checked = true;
+        }
+    }
+
+    triggerButton.addEventListener('click', function () {
+        resetForm();
+        modal.show();
+    });
+
+    modalElement.addEventListener('hidden.bs.modal', resetForm);
+
+    userModeInputs.forEach(function (input) {
+        input.addEventListener('change', toggleUserSections);
+    });
+
+    if (documentSelect) {
+        documentSelect.addEventListener('change', function () {
+            updateLanguageOptions();
+            updateSuggestedPrice();
+        });
+    }
+
+    if (languageSelect) {
+        languageSelect.addEventListener('change', updateSuggestedPrice);
+    }
+
+    if (pageCountInput) {
+        pageCountInput.addEventListener('input', updateSuggestedPrice);
+    }
+
+    if (receiveByPaperInput) {
+        receiveByPaperInput.addEventListener('change', function () {
+            priceManuallyEdited = false;
+            updateSuggestedPrice();
+        });
+    }
+
+    if (priceEurosInput) {
+        priceEurosInput.addEventListener('input', function () {
+            priceManuallyEdited = true;
+            syncPriceCentsFromEuros();
+        });
+    }
+
+    if (fileInput && titleInput) {
+        fileInput.addEventListener('change', function () {
+            if (!titleInput.value && fileInput.files && fileInput.files[0]) {
+                titleInput.value = fileInput.files[0].name;
+            }
+        });
+    }
+
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        clearError();
+
+        if (!createUrl) {
+            showError('URL de création indisponible.');
+            return;
+        }
+
+        syncPriceCentsFromEuros();
+
+        if (!priceCentsInput || !priceCentsInput.value || parseInt(priceCentsInput.value, 10) <= 0) {
+            showError('Veuillez indiquer un prix estimé valide.');
+            return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Création…';
+
+        const formData = new FormData(form);
+        formData.set('price', priceCentsInput.value);
+        formData.delete('priceEuros');
+
+        if (!formData.has('receiveByPaper')) {
+            formData.set('receiveByPaper', '0');
+        }
+
+        if (!formData.has('sendCredentials')) {
+            formData.set('sendCredentials', '0');
+        }
+
+        try {
+            const response = await fetch(createUrl, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+            });
+
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('Réponse serveur invalide.');
+            }
+
+            const payload = await response.json();
+            if (!response.ok || !payload.success) {
+                throw new Error(payload.message || 'Impossible de créer le dossier.');
+            }
+
+            modal.hide();
+            window.location.href = payload.redirectUrl || window.location.href;
+        } catch (error) {
+            showError(error.message || 'Impossible de créer le dossier.');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Créer le dossier';
+        }
+    });
+});
+</script>
