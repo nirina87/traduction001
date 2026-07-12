@@ -208,7 +208,6 @@ class ClientDocument
         $this->translatedDocumentFile = $file;
         if (null !== $file) {
             $this->status = self::STATUS_TRANSLATION_COMPLETED;
-            $this->uploadedAt = new \DateTimeImmutable();
         }
     }
 
