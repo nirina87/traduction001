@@ -10,7 +10,6 @@
                     <p class="doc-create-modal__intro">
                         Créez un dossier client complet : client, type de document, tarification et fichier source.
                     </p>
-                    <div id="doc-create-form-error" class="doc-create-form__error" hidden role="alert"></div>
 
                     <fieldset class="doc-create-form__section">
                         <legend>Client</legend>
@@ -119,13 +118,16 @@
                         </div>
                     </fieldset>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline btn-sm doc-create-modal__cancel" data-bs-dismiss="modal">
-                        Annuler
-                    </button>
-                    <button type="submit" class="btn btn-sm doc-create-modal__confirm" id="doc-create-submit">
-                        Créer le dossier
-                    </button>
+                <div class="modal-footer doc-create-modal__footer">
+                    <div id="doc-create-form-error" class="doc-create-form__error" hidden role="alert"></div>
+                    <div class="doc-create-modal__footer-actions">
+                        <button type="button" class="btn btn-outline btn-sm doc-create-modal__cancel" data-bs-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-sm doc-create-modal__confirm" id="doc-create-submit">
+                            Créer le dossier
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

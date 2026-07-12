@@ -2518,16 +2518,43 @@ body.page-contact-index .content-top {
     color: var(--paper);
 }
 
+.doc-create-modal .modal-dialog {
+    max-height: calc(100vh - 2rem);
+    margin: 1rem auto;
+}
+
+.doc-create-modal .modal-dialog.modal-dialog-centered {
+    align-items: flex-start;
+    min-height: calc(100% - 2rem);
+}
+
 .doc-create-modal .modal-content {
     border: 1px solid var(--line);
     border-radius: var(--radius);
     box-shadow: 0 18px 48px rgba(15, 23, 42, 0.14);
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.doc-create-modal .doc-create-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .doc-create-modal .modal-header,
 .doc-create-modal .modal-footer {
     padding: 18px 24px;
     border-color: var(--line);
+    flex-shrink: 0;
+}
+
+.doc-create-modal .modal-header {
+    padding-bottom: 16px;
 }
 
 .doc-create-modal .modal-title {
@@ -2538,6 +2565,9 @@ body.page-contact-index .content-top {
 
 .doc-create-modal .modal-body {
     padding: 0 24px 24px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .doc-create-modal__intro {
@@ -2548,12 +2578,26 @@ body.page-contact-index .content-top {
 }
 
 .doc-create-form__error {
-    margin-bottom: 18px;
+    width: 100%;
+    margin: 0 0 14px;
     padding: 12px 14px;
     border: 1px solid rgba(185, 28, 28, 0.25);
     background: rgba(254, 226, 226, 0.55);
     color: #991b1b;
     font-size: 14px;
+}
+
+.doc-create-modal__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+}
+
+.doc-create-modal__footer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .doc-create-form__section {
@@ -2643,6 +2687,10 @@ body.page-contact-index .content-top {
     font-size: 12px;
     color: var(--slate-faint);
     line-height: 1.45;
+}
+
+.doc-create-modal__footer-actions .btn {
+    padding: 11px 22px;
 }
 
 .doc-create-modal__cancel {

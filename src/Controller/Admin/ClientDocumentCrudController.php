@@ -301,15 +301,45 @@ class ClientDocumentCrudController extends AbstractCrudController
         $request = $context->getRequest();
 
         try {
-            $clientDocument = $this->buildClientDocumentFromAdminRequest($request, $passwordHasher, $mailjetService);
+            $creation = $this->buildClientDocumentFromAdminRequest($request, $passwordHasher);
         } catch (\InvalidArgumentException $e) {
             return new JsonResponse(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (\RuntimeException $e) {
-            return new JsonResponse(['success' => false, 'message' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $clientDocument = $creation['clientDocument'];
         $this->entityManager->persist($clientDocument);
-        $this->entityManager->flush();
+
+        try {
+            $this->entityManager->flush();
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Impossible d\'enregistrer le dossier client.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (
+            $creation['isNewUser']
+            && $creation['sendCredentials']
+            && null !== $creation['plainPassword']
+        ) {
+            $user = $clientDocument->getUser();
+            if (!$user instanceof User || null === $user->getId() || null === $clientDocument->getId()) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Le dossier a été créé mais le client n\'a pas pu être confirmé pour l\'envoi des identifiants.',
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+
+            try {
+                $mailjetService->sendAccountCredentialsEmail($user, $creation['plainPassword']);
+            } catch (\Throwable $e) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Le dossier a été créé mais l\'envoi des identifiants par e-mail a échoué.',
+                ], Response::HTTP_BAD_GATEWAY);
+            }
+        }
 
         $detailUrl = $this->adminUrlGenerator
             ->setController(self::class)
@@ -600,15 +630,26 @@ class ClientDocumentCrudController extends AbstractCrudController
         return $data;
     }
 
+    /**
+     * @return array{
+     *     clientDocument: ClientDocument,
+     *     isNewUser: bool,
+     *     sendCredentials: bool,
+     *     plainPassword: ?string
+     * }
+     */
     private function buildClientDocumentFromAdminRequest(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
-        MailjetService $mailjetService,
-    ): ClientDocument {
+    ): array {
         $userMode = (string) $request->request->get('userMode', 'new');
         if (!\in_array($userMode, ['new', 'existing'], true)) {
             throw new \InvalidArgumentException('Mode client invalide.');
         }
+
+        $isNewUser = 'new' === $userMode;
+        $sendCredentials = false;
+        $plainPassword = null;
 
         $documentId = (int) $request->request->get('documentId', 0);
         $document = $this->documentRepository->find($documentId);
@@ -661,13 +702,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             $user->setPhone(trim((string) $request->request->get('phone', '')) ?: null);
             $this->entityManager->persist($user);
 
-            if ($request->request->getBoolean('sendCredentials')) {
-                try {
-                    $mailjetService->sendAccountCredentialsEmail($user, $plainPassword);
-                } catch (\Throwable) {
-                    throw new \RuntimeException('Le client a été préparé mais l\'envoi des identifiants par e-mail a échoué.');
-                }
-            }
+            $sendCredentials = $request->request->getBoolean('sendCredentials');
         }
 
         $pageCount = max(1, min(99, (int) $request->request->get('pageCount', 1)));
@@ -703,7 +738,12 @@ class ClientDocumentCrudController extends AbstractCrudController
             $clientDocument->setFile($uploadedFile);
         }
 
-        return $clientDocument;
+        return [
+            'clientDocument' => $clientDocument,
+            'isNewUser' => $isNewUser,
+            'sendCredentials' => $sendCredentials,
+            'plainPassword' => $plainPassword,
+        ];
     }
 
     private function applyWorkflowStatus(ClientDocument $document, string $status): void
