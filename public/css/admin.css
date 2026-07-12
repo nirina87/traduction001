@@ -1163,6 +1163,73 @@ body.page-doc-detail .content-top.ea-search-disabled .content-search {
     cursor: not-allowed;
 }
 
+.admin-doc-detail .doc-file-upload {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+}
+
+.admin-doc-detail .doc-file-upload__label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.admin-doc-detail .doc-file-upload__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.admin-doc-detail .doc-file-upload__controls input[type="file"] {
+    flex: 1 1 220px;
+    min-width: 0;
+    font-size: 13px;
+}
+
+.admin-doc-detail .doc-file-upload__submit {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+    padding: 11px 22px;
+}
+
+.admin-doc-detail .doc-file-upload__submit:hover:not(:disabled) {
+    background: #081a38;
+    border-color: #081a38;
+    color: var(--paper);
+}
+
+.admin-doc-detail .doc-file-upload__submit:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+}
+
+.admin-doc-detail .doc-file-upload__hint {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--slate-faint);
+    line-height: 1.45;
+}
+
+.admin-doc-detail .doc-file-upload__feedback {
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.admin-doc-detail .doc-file-upload__feedback.is-success {
+    color: #166534;
+}
+
+.admin-doc-detail .doc-file-upload__feedback.is-error {
+    color: #991b1b;
+}
+
 .doc-send-modal__confirm {
     background: var(--ink);
     border-color: var(--ink);

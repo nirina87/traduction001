@@ -1,0 +1,109 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const card = document.getElementById('doc-translated-file-card');
+    const form = document.getElementById('doc-upload-translated-form');
+    const fileInput = document.getElementById('doc-upload-translated-input');
+    const submitButton = document.getElementById('doc-upload-translated-submit');
+    const currentContainer = document.getElementById('doc-translated-file-current');
+    const feedback = document.getElementById('doc-upload-translated-feedback');
+
+    if (!card || !form || !fileInput || !submitButton || !currentContainer) {
+        return;
+    }
+
+    const uploadUrl = form.dataset.url || '';
+
+    form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        if (!uploadUrl) {
+            showFeedback('URL d\'upload indisponible.', true);
+            return;
+        }
+
+        if (!fileInput.files || !fileInput.files[0]) {
+            showFeedback('Veuillez sélectionner un fichier.', true);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        const entityId = form.dataset.entityId || '';
+        if (entityId) {
+            formData.append('entityId', entityId);
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Enregistrement…';
+        showFeedback('', false);
+
+        try {
+            const response = await fetch(uploadUrl, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+            });
+
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error('Réponse serveur invalide.');
+            }
+
+            const payload = await response.json();
+            if (!response.ok || !payload.success) {
+                throw new Error(payload.message || 'Impossible d\'enregistrer le document traduit.');
+            }
+
+            if (payload.html) {
+                currentContainer.innerHTML = payload.html;
+            }
+
+            fileInput.value = '';
+            showFeedback(payload.message || 'Le document traduit a été enregistré.', false);
+
+            updateWorkflowStatus(payload);
+        } catch (error) {
+            showFeedback(error.message || 'Impossible d\'enregistrer le document traduit.', true);
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = submitButton.dataset.defaultLabel || 'Enregistrer';
+        }
+    });
+
+    function showFeedback(message, isError) {
+        if (!feedback) {
+            if (message && isError) {
+                window.alert(message);
+            }
+            return;
+        }
+
+        feedback.textContent = message;
+        feedback.hidden = '' === message;
+        feedback.classList.toggle('is-error', !!isError);
+        feedback.classList.toggle('is-success', !!message && !isError);
+    }
+
+    function updateWorkflowStatus(payload) {
+        if (!payload.workflowStatus) {
+            return;
+        }
+
+        const workflowSelect = document.querySelector('.ea-workflow-status-select');
+        if (workflowSelect) {
+            workflowSelect.value = payload.workflowStatus;
+            workflowSelect.dataset.previousValue = payload.workflowStatus;
+            workflowSelect.className = 'ea-workflow-status-select ea-workflow-status-select--' + payload.workflowStatus;
+        }
+
+        const statusPill = document.querySelector('.kpi-card .pill');
+        if (statusPill && payload.workflowStatusLabel && payload.workflowStatusPillClass) {
+            statusPill.textContent = payload.workflowStatusLabel;
+            statusPill.className = 'pill ' + payload.workflowStatusPillClass;
+        }
+    }
+});
+</script>

@@ -101,6 +101,10 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->linkToCrudAction('sendToClient')
             ->displayIf(static fn () => false);
 
+        $uploadTranslatedDocument = Action::new('uploadTranslatedDocument', false)
+            ->linkToCrudAction('uploadTranslatedDocument')
+            ->displayIf(static fn () => false);
+
         $createFromAdmin = Action::new('createFromAdmin', false)
             ->linkToCrudAction('createFromAdmin')
             ->displayIf(static fn () => false);
@@ -114,6 +118,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $createPaymentLink)
             ->add(Crud::PAGE_DETAIL, $deletePaymentLink)
             ->add(Crud::PAGE_DETAIL, $sendToClient)
+            ->add(Crud::PAGE_DETAIL, $uploadTranslatedDocument)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->displayIf(static fn () => false))
             ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf(static fn () => false))
@@ -469,6 +474,47 @@ class ClientDocumentCrudController extends AbstractCrudController
         return new JsonResponse([
             'success' => true,
             'message' => 'Le lien de paiement a été supprimé.',
+        ]);
+    }
+
+    #[AdminRoute(options: ['methods' => ['POST']])]
+    public function uploadTranslatedDocument(AdminContext $context): Response
+    {
+        $entity = $context->getEntity()->getInstance();
+        if (!$entity instanceof ClientDocument) {
+            throw $this->createNotFoundException();
+        }
+
+        $uploadedFile = $context->getRequest()->files->get('file');
+        if (!$uploadedFile instanceof UploadedFile || !$uploadedFile->isValid()) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Veuillez sélectionner un fichier valide.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $entity->setTranslatedDocumentFile($uploadedFile);
+            $this->entityManager->flush();
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => $e->getMessage() ?: 'Impossible d\'enregistrer le document traduit.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'Le document traduit a été enregistré.',
+            'fileName' => $entity->getDocumentTraduit(),
+            'fileUrl' => $entity->getDocumentTraduitUrl(),
+            'workflowStatus' => $entity->getWorkflowStatus(),
+            'workflowStatusLabel' => $entity->getWorkflowStatusLabel(),
+            'workflowStatusPillClass' => $entity->getWorkflowStatusPillClass(),
+            'html' => $this->renderView('admin/client_document/_translated_file_current.html.twig', [
+                'doc' => $entity,
+                'user' => $entity->getUser(),
+            ]),
         ]);
     }
 

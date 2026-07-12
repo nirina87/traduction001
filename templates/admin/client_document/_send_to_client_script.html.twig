@@ -1,18 +1,24 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const triggerButton = document.getElementById('doc-send-to-client-button');
+    const card = document.getElementById('doc-translated-file-card');
     const modalElement = document.getElementById('doc-send-to-client-modal');
     const messageElement = document.getElementById('doc-send-to-client-modal-message');
     const confirmButton = document.getElementById('doc-send-to-client-modal-confirm');
 
-    if (!triggerButton || !modalElement || !messageElement || !confirmButton || typeof bootstrap === 'undefined') {
+    if (!card || !modalElement || !messageElement || !confirmButton || typeof bootstrap === 'undefined') {
         return;
     }
 
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    let sendUrl = triggerButton.dataset.url || '';
+    let sendUrl = '';
+    let activeTriggerButton = null;
 
-    triggerButton.addEventListener('click', function () {
+    card.addEventListener('click', function (event) {
+        const triggerButton = event.target.closest('#doc-send-to-client-button');
+        if (!triggerButton) {
+            return;
+        }
+
         const clientEmail = triggerButton.dataset.clientEmail || '';
         const documentTitle = triggerButton.dataset.documentTitle || 'ce document';
 
@@ -21,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             + 'Le client recevra un e-mail avec le lien de téléchargement de sa traduction assermentée.';
 
         sendUrl = triggerButton.dataset.url || '';
+        activeTriggerButton = triggerButton;
         confirmButton.disabled = false;
         confirmButton.textContent = 'Confirmer l\'envoi';
         modal.show();
@@ -33,6 +40,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         confirmButton.disabled = true;
         confirmButton.textContent = 'Envoi en cours…';
+
+        if (activeTriggerButton) {
+            activeTriggerButton.disabled = true;
+        }
 
         try {
             const response = await fetch(sendUrl, {
@@ -69,6 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
         } finally {
             confirmButton.disabled = false;
             confirmButton.textContent = 'Confirmer l\'envoi';
+            if (activeTriggerButton) {
+                activeTriggerButton.disabled = false;
+            }
+            activeTriggerButton = null;
         }
     });
 

@@ -1,0 +1,34 @@
+{% if doc.documentTraduit %}
+    <p class="doc-file-card__name mono" id="doc-translated-file-name">{{ doc.documentTraduit }}</p>
+    <div class="doc-file-card__actions" id="doc-translated-file-actions">
+        <a
+            class="btn btn-outline btn-sm doc-file-card__action"
+            id="doc-translated-file-download"
+            href="{{ doc.documentTraduitUrl }}"
+            target="_blank"
+            rel="noopener"
+        >
+            Télécharger ↗
+        </a>
+        {% if user and user.email %}
+            {% set sendToClientUrl = ea_url()
+                .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
+                .setAction('sendToClient')
+                .setEntityId(doc.id) %}
+            <button
+                type="button"
+                class="btn btn-sm doc-file-card__action doc-file-card__action--send"
+                id="doc-send-to-client-button"
+                data-url="{{ sendToClientUrl }}"
+                data-client-email="{{ user.email }}"
+                data-document-title="{{ doc.title }}"
+            >
+                Envoyer au client
+            </button>
+        {% endif %}
+    </div>
+{% else %}
+    <div class="admin-empty admin-empty--compact" id="doc-translated-file-empty">
+        Traduction non encore déposée
+    </div>
+{% endif %}
