@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class StripeWebhookController extends AbstractController
 {
-    #[Route('/webhook/stripe', name: 'stripe_webhook', methods: ['POST'])]
+    #[Route('/webhook/stripe', name: 'stripe_webhook', methods: ['POST'], priority: 10)]
     public function __invoke(Request $request, StripeWebhookService $stripeWebhookService): Response
     {
         try {
