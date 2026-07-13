@@ -1,31 +1,47 @@
 {% if doc.documentTraduit %}
-    <p class="doc-file-card__name mono" id="doc-translated-file-name">{{ doc.documentTraduit }}</p>
-    <div class="doc-file-card__actions" id="doc-translated-file-actions">
-        <a
-            class="btn btn-outline btn-sm doc-file-card__action"
-            id="doc-translated-file-download"
-            href="{{ doc.documentTraduitUrl }}"
-            target="_blank"
-            rel="noopener"
-        >
-            Télécharger ↗
-        </a>
-        {% if user and user.email %}
-            {% set sendToClientUrl = ea_url()
-                .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
-                .setAction('sendToClient')
-                .setEntityId(doc.id) %}
-            <button
-                type="button"
-                class="btn btn-sm doc-file-card__action doc-file-card__action--send"
-                id="doc-send-to-client-button"
-                data-url="{{ sendToClientUrl }}"
-                data-client-email="{{ user.email }}"
-                data-document-title="{{ doc.title }}"
+    {% set fileExtension = (doc.documentTraduit|split('.')|last)|upper %}
+    <div class="doc-file-uploaded" id="doc-translated-file-uploaded">
+        <div class="doc-file-uploaded__preview">
+            <div class="doc-file-uploaded__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7l-5-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    <path d="M14 2v5h5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    <path d="M9 13h6M9 17h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <span class="doc-file-uploaded__ext">{{ fileExtension }}</span>
+            </div>
+            <div class="doc-file-uploaded__meta">
+                <span class="doc-file-uploaded__status">Fichier déposé</span>
+                <p class="doc-file-uploaded__name mono" id="doc-translated-file-name">{{ doc.documentTraduit }}</p>
+            </div>
+        </div>
+        <div class="doc-file-card__actions" id="doc-translated-file-actions">
+            <a
+                class="btn btn-outline btn-sm doc-file-card__action"
+                id="doc-translated-file-download"
+                href="{{ doc.documentTraduitUrl }}"
+                target="_blank"
+                rel="noopener"
             >
-                Envoyer au client
-            </button>
-        {% endif %}
+                Télécharger ↗
+            </a>
+            {% if user and user.email %}
+                {% set sendToClientUrl = ea_url()
+                    .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
+                    .setAction('sendToClient')
+                    .setEntityId(doc.id) %}
+                <button
+                    type="button"
+                    class="btn btn-sm doc-file-card__action doc-file-card__action--send"
+                    id="doc-send-to-client-button"
+                    data-url="{{ sendToClientUrl }}"
+                    data-client-email="{{ user.email }}"
+                    data-document-title="{{ doc.title }}"
+                >
+                    Envoyer au client
+                </button>
+            {% endif %}
+        </div>
     </div>
 {% else %}
     <div class="admin-empty admin-empty--compact" id="doc-translated-file-empty">

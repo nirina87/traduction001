@@ -198,7 +198,8 @@ class ClientDocumentCrudController extends AbstractCrudController
                 ['doc' => $entity],
             ))
             ->renderAsHtml();
-        yield IntegerField::new('pageCount')->setLabel('Pages');
+        yield IntegerField::new('pageCount')->setLabel('Pages Initiales');
+        yield IntegerField::new('pageAfterTranslation')->setLabel('Pages Finales');
         yield TextField::new('receiveByPaperLabel')
             ->setLabel('Réception')
             ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
@@ -523,7 +524,10 @@ class ClientDocumentCrudController extends AbstractCrudController
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        $pageAfterTranslation = max(1, min(99, (int) $context->getRequest()->request->get('pageAfterTranslation', 1)));
+
         try {
+            $entity->setPageAfterTranslation($pageAfterTranslation);
             $entity->setTranslatedDocumentFile($uploadedFile);
             $this->entityManager->flush();
         } catch (\Throwable $e) {
@@ -541,6 +545,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             'workflowStatus' => $entity->getWorkflowStatus(),
             'workflowStatusLabel' => $entity->getWorkflowStatusLabel(),
             'workflowStatusPillClass' => $entity->getWorkflowStatusPillClass(),
+            'pageAfterTranslation' => $entity->getPageAfterTranslation(),
             'html' => $this->renderView('admin/client_document/_translated_file_current.html.twig', [
                 'doc' => $entity,
                 'user' => $entity->getUser(),

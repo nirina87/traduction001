@@ -56,13 +56,23 @@
             <div class="value value--sm">{{ doc.language ?: '—' }}</div>
             <div class="delta">{{ doc.document ? doc.document.name : 'Type non renseigné' }}</div>
         </div>
-        <div class="kpi-card">
+        <div class="kpi-card" id="doc-volume-kpi">
             <div class="label">Volume</div>
-            <div class="value">{{ doc.pageCount }}</div>
-            <div class="delta">page{{ doc.pageCount > 1 ? 's' : '' }} à traduire</div>
+            <div class="doc-volume-highlight doc-volume-highlight--initial">
+                <span class="doc-volume-highlight__value" id="doc-volume-value">{{ doc.pageCount }}</span>
+                <span class="doc-volume-highlight__label" id="doc-volume-delta">
+                    page{{ doc.pageCount > 1 ? 's' : '' }} avant traduction
+                </span>
+            </div>
+            <div class="doc-volume-highlight doc-volume-highlight--translated" id="doc-volume-translated"{% if not doc.documentTraduit %} hidden{% endif %}>
+                <span class="doc-volume-highlight__value" id="doc-volume-translated-value">{{ doc.pageAfterTranslation }}</span>
+                <span class="doc-volume-highlight__label" id="doc-volume-translated-label">
+                    page{{ doc.pageAfterTranslation > 1 ? 's' : '' }} après traduction
+                </span>
+            </div>
         </div>
         <div class="kpi-card">
-            <div class="label">Prix estimé</div>
+            <div class="label">Prix</div>
             <div class="value value--sm">{{ (priceCents / 100)|number_format(2, ',', ' ') }} €</div>
             <div class="delta{% if doc.receiveByPaper %} up{% endif %}">
                 {% if doc.receiveByPaper %}
@@ -228,7 +238,7 @@
                     <div class="admin-empty admin-empty--compact">Aucun fichier source</div>
                 {% endif %}
             </div>
-            <div class="doc-file-card" id="doc-translated-file-card">
+            <div class="doc-file-card{% if not doc.documentTraduit %} doc-file-card--no-translated{% endif %}" id="doc-translated-file-card">
                 <div class="doc-file-card__head">
                     <span class="doc-file-card__badge doc-file-card__badge--translated">Traduit</span>
                     <h3>Document traduit</h3>
@@ -236,39 +246,18 @@
                 <div id="doc-translated-file-current">
                     {% include 'admin/client_document/_translated_file_current.html.twig' %}
                 </div>
-                {% set uploadTranslatedUrl = ea_url()
-                    .setController('App\\Controller\\Admin\\ClientDocumentCrudController')
-                    .setAction('uploadTranslatedDocument')
-                    .setEntityId(doc.id) %}
-                <form
-                    id="doc-upload-translated-form"
-                    class="doc-file-upload"
-                    data-url="{{ uploadTranslatedUrl }}"
-                    data-entity-id="{{ doc.id }}"
-                >
-                    <label class="doc-file-upload__label" for="doc-upload-translated-input">
-                        Déposer ou remplacer la traduction
-                    </label>
-                    <div class="doc-file-upload__controls">
-                        <input
-                            type="file"
-                            id="doc-upload-translated-input"
-                            name="file"
-                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                            required
-                        >
+                {% if not doc.documentTraduit %}
+                    <div class="doc-file-card__upload-action" id="doc-upload-translated-action">
                         <button
-                            type="submit"
-                            class="btn btn-sm doc-file-upload__submit"
-                            id="doc-upload-translated-submit"
-                            data-default-label="Enregistrer"
+                            type="button"
+                            class="btn btn-sm doc-file-card__action doc-file-card__action--upload"
+                            id="doc-upload-translated-button"
                         >
-                            Enregistrer
+                            Enregistrer le fichier traduit
                         </button>
                     </div>
-                    <p class="doc-file-upload__hint">PDF, Word ou image — remplace le fichier existant le cas échéant.</p>
-                    <p id="doc-upload-translated-feedback" class="doc-file-upload__feedback" hidden role="status"></p>
-                </form>
+                {% endif %}
+                <p id="doc-upload-translated-card-feedback" class="doc-file-upload__feedback" hidden role="status"></p>
             </div>
         </div>
     </section>
@@ -317,6 +306,7 @@
 
 {% include 'admin/client_document/_delete_confirmation_modal.html.twig' %}
 {% include 'admin/client_document/_send_to_client_modal.html.twig' %}
+{% include 'admin/client_document/_upload_translated_modal.html.twig' %}
 {% if doc.workflowStatus == constant('App\\Entity\\ClientDocument::STATUS_UNPAID') %}
     {% include 'admin/client_document/_payment_link_modal.html.twig' %}
     {% include 'admin/client_document/_payment_link_delete_modal.html.twig' %}

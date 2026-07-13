@@ -60,6 +60,9 @@ class ClientDocument
     #[ORM\Column(options: ['default' => 1])]
     private int $pageCount = 1;
 
+    #[ORM\Column(name: 'page_after_translation', options: ['default' => 1])]
+    private int $pageAfterTranslation = 1;
+
     #[ORM\Column(options: ['default' => false])]
     private bool $receiveByPaper = false;
 
@@ -191,6 +194,8 @@ class ClientDocument
     public function setPrice(?int $price): static { $this->price = $price; return $this; }
     public function getPageCount(): int { return $this->pageCount; }
     public function setPageCount(int $pageCount): static { $this->pageCount = $pageCount; return $this; }
+    public function getPageAfterTranslation(): int { return $this->pageAfterTranslation; }
+    public function setPageAfterTranslation(int $pageAfterTranslation): static { $this->pageAfterTranslation = $pageAfterTranslation; return $this; }
     public function isReceiveByPaper(): bool { return $this->receiveByPaper; }
     public function setReceiveByPaper(bool $receiveByPaper): static { $this->receiveByPaper = $receiveByPaper; return $this; }
     public function getReceiveByPaperLabel(): string
