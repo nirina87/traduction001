@@ -15,9 +15,9 @@ class StripePaymentLinkService
     ) {
     }
 
-    public function createForClientDocument(ClientDocument $document): ClientDocumentPaymentLink
+    public function createForClientDocument(ClientDocument $document, ?int $amountCents = null): ClientDocumentPaymentLink
     {
-        $amountCents = $this->resolveAmountCents($document);
+        $amountCents = $amountCents ?? $this->resolveAmountCents($document);
         if ($amountCents <= 0) {
             throw new \RuntimeException('Impossible de créer un lien de paiement : le montant estimé est invalide.');
         }

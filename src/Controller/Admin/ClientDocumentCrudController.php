@@ -478,8 +478,16 @@ class ClientDocumentCrudController extends AbstractCrudController
             ], Response::HTTP_BAD_REQUEST);
         }
 
+        $amountCents = (int) $context->getRequest()->request->get('amountCents', 0);
+        if ($amountCents <= 0) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => 'Veuillez indiquer un montant valide supérieur à 0 €.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         try {
-            $paymentLink = $stripePaymentLinkService->createForClientDocument($entity);
+            $paymentLink = $stripePaymentLinkService->createForClientDocument($entity, $amountCents);
             $this->entityManager->persist($paymentLink);
             $this->entityManager->flush();
             $mailjetService->sendPaymentLinkEmail($entity, $paymentLink);

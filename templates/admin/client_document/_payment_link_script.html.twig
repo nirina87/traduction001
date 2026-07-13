@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const createSection = document.getElementById('doc-payment-link-create');
     const modalElement = document.getElementById('doc-payment-link-modal');
     const confirmButton = document.getElementById('doc-payment-link-modal-confirm');
+    const amountInput = document.getElementById('doc-payment-link-modal-amount');
     const deleteModalElement = document.getElementById('doc-payment-link-delete-modal');
     const deleteConfirmButton = document.getElementById('doc-payment-link-delete-modal-confirm');
     const listContainer = document.getElementById('doc-payment-link-list');
@@ -85,9 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    if (triggerButton && modal && confirmButton) {
+    if (triggerButton && modal && confirmButton && amountInput) {
         triggerButton.addEventListener('click', function () {
             createUrl = triggerButton.dataset.url || '';
+            const defaultAmountCents = parseInt(triggerButton.dataset.amountCents || '0', 10);
+            if (defaultAmountCents > 0) {
+                amountInput.value = (defaultAmountCents / 100).toFixed(2);
+            }
             confirmButton.disabled = false;
             confirmButton.textContent = 'Créer et envoyer';
             modal.show();
@@ -98,18 +103,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            const amountCents = parseAmountCents(amountInput.value);
+            if (amountCents <= 0) {
+                window.alert('Veuillez indiquer un montant valide supérieur à 0 €.');
+                amountInput.focus();
+                return;
+            }
+
             confirmButton.disabled = true;
             confirmButton.textContent = 'Création et envoi en cours…';
 
             try {
                 const entityId = listContainer.dataset.entityId || '';
+                const params = { amountCents: String(amountCents) };
+                if (entityId) {
+                    params.entityId = entityId;
+                }
+
                 const response = await fetch(createUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'X-Requested-With': 'XMLHttpRequest',
                     },
-                    body: new URLSearchParams(entityId ? { entityId: entityId } : {}),
+                    body: new URLSearchParams(params),
                 });
 
                 const contentType = response.headers.get('content-type') || '';
@@ -302,6 +319,15 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    function parseAmountCents(value) {
+        const euros = parseFloat(String(value).replace(',', '.').trim());
+        if (!Number.isFinite(euros) || euros <= 0) {
+            return 0;
+        }
+
+        return Math.round(euros * 100);
     }
 });
 </script>

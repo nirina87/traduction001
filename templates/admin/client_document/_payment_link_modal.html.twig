@@ -14,12 +14,19 @@
                         Destinataire : <span class="mono">{{ user.email }}</span>
                     </p>
                 {% endif %}
-                <dl class="doc-payment-link-modal__amount">
-                    <div class="doc-payment-link-modal__amount-row">
-                        <dt>Prix estimé</dt>
-                        <dd class="mono" id="doc-payment-link-modal-amount">{{ (priceCents / 100)|number_format(2, ',', ' ') }} €</dd>
-                    </div>
-                </dl>
+                <div class="doc-payment-link-modal__amount doc-create-form__field">
+                    <label for="doc-payment-link-modal-amount">Montant (€)</label>
+                    <input
+                        type="number"
+                        id="doc-payment-link-modal-amount"
+                        class="doc-payment-link-modal__amount-input mono"
+                        min="0.01"
+                        step="0.01"
+                        value="{{ (priceCents / 100)|number_format(2, '.', '') }}"
+                        required
+                    >
+                    <p class="doc-create-form__hint">Vous pouvez ajuster le montant avant l'envoi du lien de paiement.</p>
+                </div>
                 {% if doc.receiveByPaper %}
                     <p class="doc-payment-link-modal__hint">
                         Livraison par courrier incluse dans le montant.
