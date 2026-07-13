@@ -1,0 +1,6 @@
+{% set title = doc.title ?? '—' %}
+{% if title != '—' and title|length > 30 %}
+    <span class="doc-title-cell" title="{{ title }}">{{ title|slice(0, 30) }}...</span>
+{% else %}
+    <span class="doc-title-cell">{{ title }}</span>
+{% endif %}

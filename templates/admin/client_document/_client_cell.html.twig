@@ -1,0 +1,15 @@
+{% set user = doc.user %}
+{% if user %}
+    {% set fullName = (user.firstName ~ ' ' ~ user.lastName)|trim %}
+    <div class="doc-client-cell">
+        {% if fullName %}
+            <div class="doc-client-cell__name">{{ fullName }}</div>
+        {% endif %}
+        <div class="doc-client-cell__email mono">{{ user.email }}</div>
+        {% if user.phone %}
+            <div class="doc-client-cell__phone mono">{{ user.phone }}</div>
+        {% endif %}
+    </div>
+{% else %}
+    —
+{% endif %}

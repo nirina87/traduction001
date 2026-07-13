@@ -1,0 +1,9 @@
+{% set documentName = doc.document ? doc.document.name : null %}
+<div class="doc-document-language-cell">
+    <div class="doc-document-language-cell__type">
+        {{ documentName ?: 'Type non renseigné' }}
+    </div>
+    <div class="doc-document-language-cell__language mono">
+        {{ doc.language ?: 'Langue non renseignée' }}
+    </div>
+</div>

@@ -11,6 +11,8 @@
 
 {% block entity_actions %}{% endblock %}
 
+{% block search_wrapper %}{% endblock %}
+
 {% block table_body_empty %}
     <tr class="doc-index-empty-row">
         <td colspan="100">
@@ -68,6 +70,32 @@
     <section class="admin-panel">
         <div class="admin-panel-head">
             <h2>Liste des documents</h2>
+        </div>
+
+        <div class="doc-index-search">
+            {% set currentQuery = app.request.query.get('query') %}
+            {% set formActionUrl = ea_url().setController('App\\Controller\\Admin\\ClientDocumentCrudController').setAction('index').set('page', 1) %}
+            <form class="form-action-search doc-index-search-form mt-3" method="get" action="{{ formActionUrl }}">
+                <input type="hidden" name="crudAction" value="index">
+                <input type="hidden" name="crudControllerFqcn" value="App\Controller\Admin\ClientDocumentCrudController">
+                <input type="hidden" name="page" value="1">
+                <label class="doc-index-search-label" for="doc-index-search-input">
+                    Rechercher un client
+                </label>
+                <div class="doc-index-search-field">
+                    <input
+                        id="doc-index-search-input"
+                        class="form-control {{ currentQuery is null ? 'is-blank' }}"
+                        type="search"
+                        name="query"
+                        value="{{ currentQuery ?? '' }}"
+                        placeholder="E-mail, nom ou téléphone du client…"
+                        spellcheck="false"
+                        autocorrect="off"
+                    >
+
+                </div>
+            </form>
         </div>
 
         <div class="doc-index-table-wrap">

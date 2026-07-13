@@ -71,7 +71,7 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_EDIT, static fn (ClientDocument $doc) => sprintf('Modifier DC-%04d — %s', $doc->getId(), $doc->getTitle()))
             ->setPageTitle(Crud::PAGE_NEW, 'Nouveau document client')
             ->setDefaultSort(['uploadedAt' => 'DESC'])
-            ->setSearchFields(null)
+            ->setSearchFields(['user.email', 'user.firstName', 'user.lastName', 'user.phone'])
             ->setDefaultRowAction(Action::DETAIL)
             ->overrideTemplate('crud/index', 'admin/client_document/index.html.twig')
             ->overrideTemplate('crud/detail', 'admin/client_document/detail.html.twig')
@@ -149,7 +149,9 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->leftJoin('entity.order', 'paymentOrder')
             ->addSelect('paymentOrder')
             ->leftJoin('entity.user', 'clientUser')
-            ->addSelect('clientUser');
+            ->addSelect('clientUser')
+            ->leftJoin('entity.document', 'documentType')
+            ->addSelect('documentType');
     }
 
     public function configureFields(string $pageName): iterable
@@ -188,9 +190,25 @@ class ClientDocumentCrudController extends AbstractCrudController
     {
         yield AssociationField::new('user')
             ->setLabel('Client')
-            ->formatValue(fn ($value, ClientDocument $entity) => $entity->getUser()?->getEmail() ?? '—');
-        yield TextField::new('title')->setLabel('Titre');
-        yield TextField::new('language')->setLabel('Langue');
+            ->formatValue(fn ($value, ClientDocument $entity) => $this->renderView(
+                'admin/client_document/_client_cell.html.twig',
+                ['doc' => $entity],
+            ))
+            ->renderAsHtml();
+        yield TextField::new('title')
+            ->setLabel('Titre')
+            ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
+                'admin/client_document/_title_cell.html.twig',
+                ['doc' => $entity],
+            ))
+            ->renderAsHtml();
+        yield TextField::new('language')
+            ->setLabel('Document / Langue')
+            ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
+                'admin/client_document/_document_language_cell.html.twig',
+                ['doc' => $entity],
+            ))
+            ->renderAsHtml();
         yield TextField::new('workflowStatusLabel')
             ->setLabel('Statut')
             ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
@@ -198,8 +216,14 @@ class ClientDocumentCrudController extends AbstractCrudController
                 ['doc' => $entity],
             ))
             ->renderAsHtml();
-        yield IntegerField::new('pageCount')->setLabel('Pages Initiales');
-        yield IntegerField::new('pageAfterTranslation')->setLabel('Pages Finales');
+        yield IntegerField::new('pageCount')
+            ->setLabel('Init.')
+            ->setTextAlign('center')
+            ->addCssClass('doc-col-pages');
+        yield IntegerField::new('pageAfterTranslation')
+            ->setLabel('Fin.')
+            ->setTextAlign('center')
+            ->addCssClass('doc-col-pages');
         yield TextField::new('receiveByPaperLabel')
             ->setLabel('Réception')
             ->formatValue(fn (?string $value, ClientDocument $entity) => $this->renderView(
