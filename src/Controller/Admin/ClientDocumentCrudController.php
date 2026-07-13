@@ -246,6 +246,16 @@ class ClientDocumentCrudController extends AbstractCrudController
             ->setLabel('Statut du document')
             ->setChoices(ClientDocument::getStatusChoices());
 
+        yield FormField::addFieldset('Volume');
+        yield IntegerField::new('pageCount')
+            ->setLabel('Nombre de pages à traduire')
+            ->setHelp('Nombre de pages du document source.')
+            ->setFormTypeOption('attr', ['min' => 1, 'max' => 99]);
+        yield IntegerField::new('pageAfterTranslation')
+            ->setLabel('Nombre de pages après traduction')
+            ->setHelp('Nombre de pages du document traduit déposé.')
+            ->setFormTypeOption('attr', ['min' => 1, 'max' => 99]);
+
         yield FormField::addFieldset('Tarification & livraison');
         yield IntegerField::new('price')
             ->setLabel('Prix estimé (centimes)')
