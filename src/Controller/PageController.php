@@ -43,16 +43,15 @@ class PageController extends AbstractController
         return $this->render('page/accueil.html.twig', ['products' => $documents]);
     }
 
-    #[Route('/produit/{id}', name: 'produit_detail')]
-    public function produitDetail(
-        int $id,
-        DocumentRepository $productRepository,
-        EntityManagerInterface $em,
+    #[Route('/document/{slug}', name: 'document_detail')]
+    public function documentDetail(
+        string $slug,
+        DocumentRepository $documentRepository,
     ): Response {
-        $product = $productRepository->find($id);
+        $product = $documentRepository->findOneBy(['slug' => $slug, 'active' => true]);
 
-        if (!$product || !$product->isActive()) {
-            throw $this->createNotFoundException('Produit non trouvé.');
+        if (!$product) {
+            throw $this->createNotFoundException('Document non trouvé.');
         }
 
         $translationRates = [];
@@ -69,6 +68,18 @@ class PageController extends AbstractController
             'translationRates' => $translationRates,
             'basePriceCents' => ((int) ($product->getBasePrice() ?? 0)) * 100,
         ]);
+    }
+
+    #[Route('/produit/{id}', name: 'produit_detail', requirements: ['id' => '\d+'])]
+    public function produitDetailRedirect(int $id, DocumentRepository $documentRepository): Response
+    {
+        $document = $documentRepository->find($id);
+
+        if (!$document || !$document->isActive() || null === $document->getSlug() || '' === $document->getSlug()) {
+            throw $this->createNotFoundException('Document non trouvé.');
+        }
+
+        return $this->redirectToRoute('document_detail', ['slug' => $document->getSlug()], Response::HTTP_MOVED_PERMANENTLY);
     }
 
     #[Route('/panier', name: 'panier')]
@@ -98,7 +109,7 @@ class PageController extends AbstractController
         if (!$uploadedFile || !$uploadedFile->isValid()) {
             $this->addFlash('error', 'Veuillez joindre un document à traduire.');
 
-            return $this->redirectToRoute('produit_detail', ['id' => $id]);
+            return $this->redirectToRoute('document_detail', ['slug' => $document->getSlug()]);
         }
 
         $language = trim((string) $request->request->get('language', ''));
@@ -109,7 +120,7 @@ class PageController extends AbstractController
             if ('' === $language || null === $rate) {
                 $this->addFlash('error', 'Veuillez sélectionner une paire de langues valide.');
 
-                return $this->redirectToRoute('produit_detail', ['id' => $id]);
+                return $this->redirectToRoute('document_detail', ['slug' => $document->getSlug()]);
             }
 
             $unitPriceCents = $rate->getPrice();

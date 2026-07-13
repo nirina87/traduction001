@@ -34,8 +34,13 @@ final class SitemapService
         }
 
         foreach ($this->documentRepository->findBy(['active' => true], ['id' => 'ASC']) as $document) {
+            $slug = $document->getSlug();
+            if (null === $slug || '' === $slug) {
+                continue;
+            }
+
             $entries[] = [
-                'loc' => $this->absoluteUrl('produit_detail', ['id' => $document->getId()]),
+                'loc' => $this->absoluteUrl('document_detail', ['slug' => $slug]),
                 'lastmod' => null,
                 'changefreq' => 'weekly',
                 'priority' => '0.7',

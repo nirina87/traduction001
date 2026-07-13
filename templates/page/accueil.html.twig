@@ -39,7 +39,7 @@
     '@type': 'ListItem',
     'position': loop.index,
     'name': product.name,
-    'url': absolute_url(path('produit_detail', {id: product.id}))
+    'url': absolute_url(path('document_detail', {slug: product.slug}))
   }]) %}
 {% endfor %}
 <script type="application/ld+json">
@@ -225,7 +225,7 @@
       {% set activeProducts = products|filter(product => product.active) %}
       {% for product in activeProducts %}
         <article class="doc-card{% if loop.index > 6 %} doc-card-extra{% endif %}" role="listitem">
-          <a href="{{ path('produit_detail', {'id': product.id}) }}" aria-label="Voir le détail : {{ product.name }}">
+          <a href="{{ path('document_detail', {'slug': product.slug}) }}" aria-label="Voir le détail : {{ product.name }}">
             {% if product.image %}
               <img src="{{ asset('uploads/' ~ product.image) }}"
                    class="doc-thumb"

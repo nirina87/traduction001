@@ -23,7 +23,7 @@
     </button>
     <nav id="main-nav" class="main-nav" aria-label="Navigation principale">
       <a href="{{ path('accueil') }}" class="{{ current_route == 'accueil' ? 'is-active' : '' }}">Accueil</a>
-      <a href="{{ path('services') }}" class="{{ current_route in ['services', 'produit_detail'] ? 'is-active' : '' }}">Services</a>
+      <a href="{{ path('services') }}" class="{{ current_route in ['services', 'document_detail'] ? 'is-active' : '' }}">Services</a>
       <a href="{{ path('qui_sommes_nous') }}" class="{{ current_route == 'qui_sommes_nous' ? 'is-active' : '' }}">Qui sommes-nous</a>
       <a href="{{ path('contact') }}" class="{{ current_route == 'contact' ? 'is-active' : '' }}">Contact</a>
       <div class="nav-actions">

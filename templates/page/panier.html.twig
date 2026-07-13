@@ -47,13 +47,13 @@
     {% set lineQtyLd = item.quantity|default(1) %}
     {% set linePaperLd = item.paperSurchargeCents|default(0) %}
     {% set itemTitleLd = item.title %}
-    {% set itemUrlLd = products[item.documentId] is defined ? absolute_url(path('produit_detail', {id: item.documentId})) : page_url %}
+    {% set itemUrlLd = products[item.documentId] is defined and products[item.documentId].slug ? absolute_url(path('document_detail', {slug: products[item.documentId].slug})) : page_url %}
   {% else %}
     {% set linePriceLd = products[item.id].price %}
     {% set lineQtyLd = item.quantity %}
     {% set linePaperLd = 0 %}
     {% set itemTitleLd = item.title %}
-    {% set itemUrlLd = absolute_url(path('produit_detail', {id: item.id})) %}
+    {% set itemUrlLd = products[item.id].slug is defined and products[item.id].slug ? absolute_url(path('document_detail', {slug: products[item.id].slug})) : page_url %}
   {% endif %}
   {% set totalQtyLd = totalQtyLd + lineQtyLd %}
   {% set totalCentsLd = totalCentsLd + (linePriceLd * lineQtyLd) + linePaperLd %}
@@ -267,7 +267,7 @@
               {% set linePaper = item.paperSurchargeCents|default(0) %}
               {% set lineTotal = linePrice * lineQty + linePaper %}
               {% set itemTitle = item.title %}
-              {% set itemLink = product ? path('produit_detail', {id: item.documentId}) : null %}
+              {% set itemLink = product and product.slug ? path('document_detail', {slug: product.slug}) : null %}
               {% set itemImage = product ? asset(product.image) : asset('logo-tl.png') %}
             {% else %}
               {% set product = products[item.id] %}
@@ -276,7 +276,7 @@
               {% set linePaper = 0 %}
               {% set lineTotal = linePrice * lineQty %}
               {% set itemTitle = item.title %}
-              {% set itemLink = path('produit_detail', {id: item.id}) %}
+              {% set itemLink = product.slug ? path('document_detail', {slug: product.slug}) : null %}
               {% set itemImage = asset(product.image) %}
             {% endif %}
 

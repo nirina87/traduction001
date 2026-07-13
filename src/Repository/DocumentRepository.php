@@ -14,7 +14,7 @@ class DocumentRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, array{title: string, description: ?string, image: string, price: int}>
+     * @return array<int, array{title: string, description: ?string, image: string, slug: ?string, price: int}>
      */
     public function buildCatalog(): array
     {
@@ -32,6 +32,7 @@ class DocumentRepository extends ServiceEntityRepository
                 'image' => $document->getImage()
                     ? 'uploads/' . $document->getImage()
                     : 'img/logos/logo-1.png',
+                'slug' => $document->getSlug(),
                 // basePrice is stored in euros for Document; convert to cents for cart/Stripe.
                 'price' => ((int) ($document->getBasePrice() ?? 0)) * 100,
             ];

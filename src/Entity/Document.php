@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 #[ORM\Table(name: 'document')]
 class Document
@@ -18,6 +20,9 @@ class Document
 
     #[ORM\Column(length: 150)]
     private ?string $name = null;
+
+    #[ORM\Column(length: 191, unique: true, nullable: true)]
+    private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -55,6 +60,18 @@ class Document
     public function setName(string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }
@@ -139,6 +156,13 @@ class Document
     public function __toString(): string
     {
         return $this->name ?? 'Document';
+    }
+
+    public function generateSlug(SluggerInterface $slugger): void
+    {
+        if ($this->name) {
+            $this->slug = strtolower($slugger->slug($this->name));
+        }
     }
 
     public function getImage(): ?string

@@ -42,7 +42,7 @@
 {% set document_items = [] %}
 {% set catalog_offers = [] %}
 {% for product in catalogProducts %}
-  {% set detail_url = absolute_url(path('produit_detail', {id: product.id})) %}
+  {% set detail_url = absolute_url(path('document_detail', {slug: product.slug})) %}
   {% set document_items = document_items|merge([{
     '@type': 'ListItem',
     'position': loop.index,
@@ -201,10 +201,10 @@
               <div class="product-price">À partir de {{ product.basePrice }}€ / page</div>
             {% endif %}
             <div class="product-actions">
-              <a href="{{ path('produit_detail', {'id': product.id}) }}"
+              <a href="{{ path('document_detail', {'slug': product.slug}) }}"
                  class="btn-outline"
                  aria-label="Voir le détail de la traduction assermentée : {{ product.name }}">Voir le détail</a>
-              <a href="{{ path('produit_detail', {'id': product.id}) }}"
+              <a href="{{ path('document_detail', {'slug': product.slug}) }}"
                  class="btn-outline btn-add"
                  aria-label="Commander la traduction assermentée : {{ product.name }}">Commander</a>
             </div>

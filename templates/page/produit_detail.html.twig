@@ -5,7 +5,7 @@
 {% set seo_keywords = "traduction assermentée " ~ product.name|lower ~ ", traduction " ~ (product.category|default('document officiel')|lower) ~ ", traducteur cour d'appel, traduction certifiée, commande traduction en ligne" %}
 {% set accueil_url = absolute_url(path('accueil')) %}
 {% set services_url = absolute_url(path('services')) %}
-{% set page_url = absolute_url(path('produit_detail', {id: product.id})) %}
+{% set page_url = absolute_url(path('document_detail', {slug: product.slug})) %}
 {% set og_image = product.image ? absolute_url(asset('uploads/' ~ product.image)) : absolute_url(asset('logo-tl.png')) %}
 
 {% block title %}{{ seo_title }}{% endblock %}
