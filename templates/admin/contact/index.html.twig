@@ -11,6 +11,8 @@
 
 {% block entity_actions %}{% endblock %}
 
+{% block search_wrapper %}{% endblock %}
+
 {% block table_body_empty %}
     <tr class="contact-index-empty-row">
         <td colspan="100">
@@ -58,6 +60,31 @@
     <section class="admin-panel">
         <div class="admin-panel-head">
             <h2>Liste des messages</h2>
+        </div>
+
+        <div class="contact-index-search">
+            {% set currentQuery = app.request.query.get('query') %}
+            {% set formActionUrl = ea_url().setController('App\\Controller\\Admin\\ContactCrudController').setAction('index').set('page', 1) %}
+            <form class="form-action-search contact-index-search-form mt-3" method="get" action="{{ formActionUrl }}">
+                <input type="hidden" name="crudAction" value="index">
+                <input type="hidden" name="crudControllerFqcn" value="App\Controller\Admin\ContactCrudController">
+                <input type="hidden" name="page" value="1">
+                <label class="contact-index-search-label" for="contact-index-search-input">
+                    Rechercher un contact
+                </label>
+                <div class="contact-index-search-field">
+                    <input
+                        id="contact-index-search-input"
+                        class="form-control {{ currentQuery is null ? 'is-blank' }}"
+                        type="search"
+                        name="query"
+                        value="{{ currentQuery ?? '' }}"
+                        placeholder="Nom, prénom, e-mail ou téléphone…"
+                        spellcheck="false"
+                        autocorrect="off"
+                    >
+                </div>
+            </form>
         </div>
 
         <div class="contact-index-table-wrap">

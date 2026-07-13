@@ -2611,6 +2611,19 @@ body.page-contact-index .content-top.ea-search-disabled .content-search {
     display: none;
 }
 
+body.page-contact-index .content-top.ea-search-enabled .content-search {
+    display: none;
+}
+
+body.page-contact-index .content-top.ea-search-enabled {
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    block-size: auto;
+    justify-content: flex-end;
+    padding-block: 14px 0;
+}
+
 body.page-contact-index .content-top {
     background: transparent;
     border-bottom: none;
@@ -2633,6 +2646,44 @@ body.page-contact-index .content-top {
 
 .admin-contact-index .doc-back-link:hover {
     color: var(--wine);
+}
+
+.admin-contact-index .contact-index-search {
+    padding: 0 24px 20px;
+    border-bottom: 1px solid var(--line);
+}
+
+.admin-contact-index .contact-index-search-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--slate-faint);
+    margin-bottom: 8px;
+}
+
+.admin-contact-index .contact-index-search-field {
+    position: relative;
+    max-width: 420px;
+}
+
+.admin-contact-index .contact-index-search-field .form-control,
+.admin-contact-index .contact-index-search-field input[type="search"] {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: #FAF9F4;
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 14px;
+}
+
+.admin-contact-index .contact-index-search-field .form-control:focus,
+.admin-contact-index .contact-index-search-field input[type="search"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(169, 129, 46, 0.15);
+    outline: none;
 }
 
 .admin-contact-index .contact-index-table-wrap {

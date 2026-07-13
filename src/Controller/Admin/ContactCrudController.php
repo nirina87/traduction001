@@ -34,7 +34,7 @@ class ContactCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'Messages reçus')
             ->setPageTitle(Crud::PAGE_EDIT, static fn (Contact $contact) => sprintf('%s — %s', $contact->getContactReference(), $contact->getFullName()))
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setSearchFields(null)
+            ->setSearchFields(['prenom', 'nom', 'email', 'telephone'])
             ->setPaginatorPageSize(15)
             ->setDefaultRowAction(Action::EDIT)
             ->overrideTemplate('crud/index', 'admin/contact/index.html.twig')
