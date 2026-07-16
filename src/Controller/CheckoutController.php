@@ -269,7 +269,24 @@ class CheckoutController extends AbstractController
         $em->persist($order);
         $em->flush();
 
-        return $this->redirect($session->url, 303);
+        // Temporaire : paiement Stripe indisponible — redirection vers la page de maintenance.
+        // return $this->redirect($session->url, 303);
+        $request->getSession()->remove('cart');
+
+        return $this->redirectToRoute('commande_maintenance', ['id' => $order->getId()]);
+    }
+
+    #[Route('/commande/maintenance/{id}', name: 'commande_maintenance')]
+    public function maintenance(int $id, EntityManagerInterface $em): Response
+    {
+        $order = $em->getRepository(Order::class)->find($id);
+        if (!$order || $order->getUser() !== $this->getUser()) {
+            throw $this->createNotFoundException('Commande introuvable.');
+        }
+
+        return $this->render('page/commande_maintenance.html.twig', [
+            'order' => $order,
+        ]);
     }
 
     #[Route('/commande/succes', name: 'commande_succes')]

@@ -1,0 +1,208 @@
+{% extends 'base_tl.html.twig' %}
+
+{% set seo_title = "Paiement temporairement indisponible — Commande enregistrée | Traduction Légale" %}
+{% set seo_description = "Votre commande de traduction assermentée est bien enregistrée. Le paiement en ligne est temporairement indisponible — notre équipe vous recontactera dès que le service est rétabli." %}
+{% set seo_keywords = "paiement indisponible traduction, maintenance paiement stripe, commande enregistrée traduction assermentée, traduction légale" %}
+{% set accueil_url = absolute_url(path('accueil')) %}
+{% set panier_url = absolute_url(path('panier')) %}
+{% set commande_url = absolute_url(path('commande')) %}
+{% set contact_url = absolute_url(path('contact')) %}
+{% set page_url = absolute_url(path('commande_maintenance', {id: order.id})) %}
+{% set og_image = absolute_url(asset('logo-tl.png')) %}
+{% set og_image_alt = 'Traduction Légale — Paiement temporairement indisponible' %}
+
+{% block title %}{{ seo_title }}{% endblock %}
+
+{% block meta_description %}{{ seo_description }}{% endblock %}
+
+{% block canonical %}{{ page_url }}{% endblock %}
+
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block meta_keywords %}
+<meta name="keywords" content="{{ seo_keywords }}">
+{% endblock %}
+
+{% block social_meta %}
+<meta property="og:locale" content="fr_FR">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Traduction Légale">
+<meta property="og:title" content="{{ seo_title }}">
+<meta property="og:description" content="{{ seo_description }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:alt" content="{{ og_image_alt }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title }}">
+<meta name="twitter:description" content="{{ seo_description }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="twitter:image:alt" content="{{ og_image_alt }}">
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+  .order-success-icon--maintenance{
+    background:rgba(10,32,71,0.07);
+    color:var(--ink);
+    position:relative;
+  }
+  .order-success-icon--maintenance::after{
+    content:"";
+    position:absolute;
+    inset:-4px;
+    border-radius:50%;
+    border:1.5px dashed rgba(10,32,71,0.22);
+    animation:maintenance-pulse 2.4s ease-in-out infinite;
+  }
+  .order-success-badge--maintenance{
+    background:rgba(10,32,71,0.08);
+    color:var(--ink);
+  }
+  .order-maintenance-steps{
+    display:grid;
+    gap:14px;
+    margin:0 0 28px;
+    text-align:left;
+  }
+  .order-maintenance-step{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    padding:14px 16px;
+    border:1px solid var(--line);
+    border-radius:4px;
+    background:var(--paper-deep);
+  }
+  .order-maintenance-step__num{
+    flex-shrink:0;
+    width:28px;
+    height:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:var(--mono);
+    font-size:0.75rem;
+    font-weight:600;
+  }
+  .order-maintenance-step__body strong{
+    display:block;
+    font-size:0.92rem;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:2px;
+  }
+  .order-maintenance-step__body span{
+    font-size:0.86rem;
+    color:var(--ink-soft);
+    line-height:1.45;
+  }
+  @keyframes maintenance-pulse{
+    0%, 100%{ opacity:0.45; transform:scale(1); }
+    50%{ opacity:1; transform:scale(1.04); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .order-success-icon--maintenance::after{ animation:none; }
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<div class="page-header" aria-labelledby="page-title">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Paiement en ligne</span>
+      <h1 id="page-title">Maintenance temporaire</h1>
+    </div>
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ path('accueil') }}">Accueil</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('panier') }}">Panier</a>
+      <span aria-hidden="true">›</span>
+      <a href="{{ path('commande') }}">Commande</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Maintenance</span>
+    </nav>
+  </div>
+</div>
+
+<section class="order-success-page" id="order-maintenance" aria-labelledby="order-maintenance-title">
+  <div class="wrap">
+    <div class="order-success-card">
+      <div class="order-success-icon order-success-icon--maintenance" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+        </svg>
+      </div>
+
+      <h2 id="order-maintenance-title" class="order-success-title">
+        Votre commande est bien enregistrée
+      </h2>
+
+      <p class="order-success-lede">
+        Le paiement en ligne est temporairement indisponible. Pas d’inquiétude&nbsp;: aucun montant n’a été débité. Notre équipe vous recontactera dès que possible pour finaliser le règlement, dès le rétablissement du service.
+      </p>
+
+      {% if order %}
+        <dl class="order-success-details">
+          <div class="order-success-details__line">
+            <dt>Numéro de commande</dt>
+            <dd>{{ order.invoiceNumber }}</dd>
+          </div>
+          <div class="order-success-details__line">
+            <dt>Montant</dt>
+            <dd>{{ order.total|number_format(2, ',', ' ') }} €</dd>
+          </div>
+          <div class="order-success-details__line">
+            <dt>Statut</dt>
+            <dd>
+              <span class="order-success-badge order-success-badge--maintenance">En attente de paiement</span>
+            </dd>
+          </div>
+        </dl>
+      {% endif %}
+
+      <div class="order-maintenance-steps" aria-label="Prochaines étapes">
+        <div class="order-maintenance-step">
+          <span class="order-maintenance-step__num" aria-hidden="true">1</span>
+          <div class="order-maintenance-step__body">
+            <strong>Commande enregistrée</strong>
+            <span>Vos documents et le détail de la commande sont bien pris en compte.</span>
+          </div>
+        </div>
+        <div class="order-maintenance-step">
+          <span class="order-maintenance-step__num" aria-hidden="true">2</span>
+          <div class="order-maintenance-step__body">
+            <strong>Paiement en pause</strong>
+            <span>Le service de paiement sécurisé est momentanément hors service.</span>
+          </div>
+        </div>
+        <div class="order-maintenance-step">
+          <span class="order-maintenance-step__num" aria-hidden="true">3</span>
+          <div class="order-maintenance-step__body">
+            <strong>Nous vous recontactons</strong>
+            <span>Dès le rétablissement, notre équipe vous écrira pour finaliser le paiement.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-success-actions">
+        <a href="{{ path('accueil') }}" class="btn-primary btn-block">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg>
+          Retour à l'accueil
+        </a>
+        <a href="{{ path('contact') }}" class="btn-outline btn-block">Nous contacter</a>
+      </div>
+
+      <p class="order-success-trust">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg>
+        Merci de votre patience — nous traitons chaque demande avec soin, dès que le paiement est de nouveau opérationnel.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
